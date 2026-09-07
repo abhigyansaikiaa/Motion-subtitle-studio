@@ -20,7 +20,7 @@ const { createJob, processJob, COST } = require('./engine/JobEngine');
 
 async function runTests() {
   try {
-    console.log('--- STARTING REEL TYPE TESTS ---');
+    console.log('--- STARTING Motion Subtitle TESTS ---');
     initDB();
 
     console.log('\n[Test 1] User sign up and 300 credit initialization');

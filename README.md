@@ -1,4 +1,4 @@
-# Reel Type — stylish auto-caption generator
+# Motion Subtitle — stylish auto-caption generator
 
 Upload a video → free transcript → pick a caption style (Neon Glow, Hype Pop,
 Minimal Clean, Karaoke Highlight, TikTok Bold, Gradient Fire) → burn captions
