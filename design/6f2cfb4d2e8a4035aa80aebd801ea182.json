@@ -1,0 +1,21 @@
+﻿{
+    "screenshot":  {
+                       "name":  "projects/16876445237355691958/screens/6f2cfb4d2e8a4035aa80aebd801ea182/fileEntries/screenshot",
+                       "downloadUrl":  "https://lh3.googleusercontent.com/aida/AEtjO1XMnldMa3oxf_LApMxSwp9PXUesUOjGOOQPWUii2E6vVY4CziRTV3A1a_A5QRFVBhi90o8uUbxKeO1EVuOyfE5DMQhyIY85Qy290dUOJ1znEDp_cMDGwilS-qeFVKd8-M6YLg-vV441EyyvVfNQtNB8EGr20Zny9V-hLSDpNkLypzDS6cMUvUd5Ip6NqIVcBnetxR5zEIGS3fsaffxcroxpC1ZiQxm78vqOCL5rct7d_MhAU3qteBtk8Rh-"
+                   },
+    "id":  "6f2cfb4d2e8a4035aa80aebd801ea182",
+    "generatedBy":  "interactive_ui_controller",
+    "width":  "1376",
+    "height":  "768",
+    "title":  "Cinematic 35mm film still from an intimate documentary interview. A thoughtful craftsman in a warm sunlit woodworking or ceramic studio, soft side lighting, rich grain, muted natural grading, atmospheric film photography, high resolution.",
+    "prompt":  "Cinematic 35mm film still from an intimate documentary interview. A thoughtful craftsman in a warm sunlit woodworking or ceramic studio, soft side lighting, rich grain, muted natural grading, atmospheric film photography, high resolution.",
+    "name":  "projects/16876445237355691958/screens/6f2cfb4d2e8a4035aa80aebd801ea182",
+    "theme":  {
+
+              },
+    "screenType":  "IMAGE",
+    "screenMetadata":  {
+                           "agentType":  "PRO_AGENT",
+                           "status":  "COMPLETE"
+                       }
+}

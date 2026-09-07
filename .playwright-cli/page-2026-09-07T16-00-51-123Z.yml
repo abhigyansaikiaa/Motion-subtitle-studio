@@ -1,0 +1,168 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - link "MOTION SUBTITLE" [ref=e7] [cursor=pointer]:
+        - /url: "#/"
+      - navigation [ref=e12]:
+        - link "Features" [ref=e13] [cursor=pointer]:
+          - /url: "#features"
+        - link "Templates" [ref=e14] [cursor=pointer]:
+          - /url: "#templates"
+        - link "Pricing" [ref=e15] [cursor=pointer]:
+          - /url: "#pricing"
+      - generic [ref=e16]:
+        - link "Log in" [ref=e17] [cursor=pointer]:
+          - /url: "#/auth?mode=login"
+        - link "Get Started" [ref=e18] [cursor=pointer]:
+          - /url: "#/auth?mode=signup"
+  - main [ref=e19]:
+    - generic [ref=e21]:
+      - generic [ref=e22]: Motion Subtitle Studio 2.0
+      - generic [ref=e27]:
+        - heading "Make every word move with the story." [level=1] [ref=e28]
+        - paragraph [ref=e29]: The premium video caption editor designed for tactile kinetic typography. Build dynamic, word-timed cinematic experiences directly in your browser.
+        - generic [ref=e30]:
+          - link "Start Creating" [ref=e31] [cursor=pointer]:
+            - /url: "#/studio"
+          - link "Explore Styles" [ref=e35] [cursor=pointer]:
+            - /url: "#templates"
+      - generic [ref=e36]:
+        - generic [ref=e37] [cursor=pointer]
+        - generic [ref=e41]: WE BUILD DIFFERENT.
+    - generic [ref=e46]:
+      - heading "Designed for impact. Built for creators." [level=2] [ref=e48]
+      - generic [ref=e49]:
+        - generic [ref=e54]:
+          - heading "Kinetic Typography" [level=3] [ref=e55]
+          - paragraph [ref=e56]: Words don't just appear. They move, scale, and color-fill in perfect sync with your voice. Built with hardware-accelerated transforms.
+        - generic [ref=e57]:
+          - heading "Editorial Composition" [level=3] [ref=e62]
+          - paragraph [ref=e63]: Ditch the ugly lower-thirds. Our templates treat your video like a premium magazine spread.
+        - generic [ref=e64]:
+          - heading "Word-Level Control" [level=3] [ref=e68]
+          - paragraph [ref=e69]: Make any word a Hero word with a single click. Total control over timing and style.
+        - generic [ref=e77]:
+          - heading "Advanced Customization" [level=3] [ref=e78]
+          - paragraph [ref=e79]: Tune typography, layout, color palettes, and animation physics globally or clip-by-clip.
+    - generic [ref=e81]:
+      - heading "From raw to rendered in minutes." [level=2] [ref=e83]
+      - generic [ref=e84]:
+        - generic [ref=e86]:
+          - generic [ref=e87]: "01"
+          - heading "Upload" [level=3] [ref=e88]
+          - paragraph [ref=e89]: Drop your video. Our AI generates perfect word-level timestamps in seconds.
+        - generic [ref=e90]:
+          - generic [ref=e91]: "02"
+          - heading "Choose" [level=3] [ref=e92]
+          - paragraph [ref=e93]: Select from our premium kinetic typography templates.
+        - generic [ref=e94]:
+          - generic [ref=e95]: "03"
+          - heading "Edit" [level=3] [ref=e96]
+          - paragraph [ref=e97]: Correct text, set Hero words, and adjust colors in real-time.
+        - generic [ref=e98]:
+          - generic [ref=e99]: "04"
+          - heading "Render" [level=3] [ref=e100]
+          - paragraph [ref=e101]: Export high-quality MP4 with hard-burned subtitles instantly.
+    - generic [ref=e103]:
+      - generic [ref=e105]:
+        - heading "Premium Styles" [level=2] [ref=e106]
+        - paragraph [ref=e107]: Stop using the same templates as everyone else. Stand out with carefully crafted typography inspired by editorial design.
+      - generic [ref=e108]:
+        - generic [ref=e109] [cursor=pointer]:
+          - generic [ref=e110]: THIS IS EDITORIAL
+          - generic [ref=e111]:
+            - generic [ref=e112]: TEMPLATE
+            - generic [ref=e113]: Large red bold-italic hero word with small supporting words. Classic editorial typography.
+        - generic [ref=e114] [cursor=pointer]:
+          - generic [ref=e115]: THIS IS EDITORIAL DARK
+          - generic [ref=e116]:
+            - generic [ref=e117]: TEMPLATE
+            - generic [ref=e118]: White small supporting words, large red hero. For dark video backgrounds.
+        - generic [ref=e119] [cursor=pointer]:
+          - generic [ref=e120]: THIS IS SERIF BLOOM
+          - generic [ref=e121]:
+            - generic [ref=e122]: TEMPLATE
+            - generic [ref=e123]: Elegant serif typography with warm tones and editorial composition.
+        - generic [ref=e124] [cursor=pointer]:
+          - generic [ref=e125]: THIS IS SIGNAL
+          - generic [ref=e126]:
+            - generic [ref=e127]: TEMPLATE
+            - generic [ref=e128]: Bold sans-serif, compact word grouping, strong readability.
+    - generic [ref=e130]:
+      - heading "Simple pricing." [level=2] [ref=e131]
+      - paragraph [ref=e132]: Start for free. Upgrade when you need more power.
+      - generic [ref=e133]:
+        - generic [ref=e134]:
+          - heading "Creator" [level=3] [ref=e135]
+          - generic [ref=e136]: $0/mo
+          - list [ref=e137]:
+            - listitem [ref=e138]: 10 mins of generation
+            - listitem [ref=e142]: 720p export
+            - listitem [ref=e146]: Basic templates
+          - button "Start Free" [ref=e150]
+        - generic [ref=e151]:
+          - heading "Pro" [level=3] [ref=e156]
+          - generic [ref=e157]: $15/mo
+          - list [ref=e158]:
+            - listitem [ref=e159]: 120 mins of generation
+            - listitem [ref=e163]: 4K export
+            - listitem [ref=e167]: Premium templates
+            - listitem [ref=e171]: No watermark
+          - button "Upgrade to Pro" [ref=e175]
+    - generic [ref=e177]:
+      - heading "Frequently asked questions" [level=2] [ref=e178]
+      - generic [ref=e179]:
+        - generic [ref=e180]:
+          - heading "What video formats do you support?" [level=3] [ref=e181]
+          - paragraph [ref=e182]: We support MP4, MOV, and WebM files up to 200MB or 10 minutes in length.
+        - generic [ref=e183]:
+          - heading "Do you support languages other than English?" [level=3] [ref=e184]
+          - paragraph [ref=e185]: Yes, our AI transcription engine supports over 90 languages including Spanish, French, Hindi, and Japanese.
+        - generic [ref=e186]:
+          - heading "Can I use my own custom fonts?" [level=3] [ref=e187]
+          - paragraph [ref=e188]: Custom font upload is available on our Pro plan. For Creator users, we provide a curated selection of 20+ premium fonts.
+  - contentinfo [ref=e189]:
+    - generic [ref=e190]:
+      - generic [ref=e191]:
+        - generic [ref=e192]: MOTION SUBTITLE
+        - paragraph [ref=e197]: The premium video caption editor designed for tactile kinetic typography. Build dynamic cinematic experiences directly in your browser.
+      - generic [ref=e198]:
+        - generic [ref=e199]:
+          - heading "Product" [level=4] [ref=e200]
+          - link "Studio" [ref=e201] [cursor=pointer]:
+            - /url: "#/studio"
+          - link "Templates" [ref=e202] [cursor=pointer]:
+            - /url: "#templates"
+          - link "Pricing" [ref=e203] [cursor=pointer]:
+            - /url: "#pricing"
+        - generic [ref=e204]:
+          - heading "Company" [level=4] [ref=e205]
+          - link "About" [ref=e206] [cursor=pointer]:
+            - /url: "#about"
+          - link "Blog" [ref=e207] [cursor=pointer]:
+            - /url: "#blog"
+          - link "Careers" [ref=e208] [cursor=pointer]:
+            - /url: "#careers"
+        - generic [ref=e209]:
+          - heading "Resources" [level=4] [ref=e210]
+          - link "Help Center" [ref=e211] [cursor=pointer]:
+            - /url: "#help"
+          - link "Tutorials" [ref=e212] [cursor=pointer]:
+            - /url: "#tutorials"
+          - link "API Docs" [ref=e213] [cursor=pointer]:
+            - /url: "#api"
+        - generic [ref=e214]:
+          - heading "Social" [level=4] [ref=e215]
+          - link "Twitter (X)" [ref=e216] [cursor=pointer]:
+            - /url: "#twitter"
+          - link "Instagram" [ref=e217] [cursor=pointer]:
+            - /url: "#instagram"
+          - link "YouTube" [ref=e218] [cursor=pointer]:
+            - /url: "#youtube"
+    - generic [ref=e219]:
+      - generic [ref=e220]: © 2026 Motion Subtitle Studio. All rights reserved.
+      - generic [ref=e221]:
+        - link "Privacy Policy" [ref=e222] [cursor=pointer]:
+          - /url: "#privacy"
+        - link "Terms of Service" [ref=e223] [cursor=pointer]:
+          - /url: "#terms"

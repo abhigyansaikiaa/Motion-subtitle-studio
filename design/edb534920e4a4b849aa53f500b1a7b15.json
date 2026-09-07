@@ -1,0 +1,21 @@
+﻿{
+    "screenshot":  {
+                       "name":  "projects/16876445237355691958/screens/edb534920e4a4b849aa53f500b1a7b15/fileEntries/screenshot",
+                       "downloadUrl":  "https://lh3.googleusercontent.com/aida/AEtjO1XOEF-1dp9LJNHDFwMKbK6qRgyAcwA-Q0wD2mPvusVpLDwaIuskSuhFlUKCGi-wSB3YzlFDWHbWF0Vz1wh3zxsr2UY0YFr2CgAPsVZGNWsv-1RMNvTP4yHhXMUS4CPecralL5OxYEOxjbA0ckEHWn38NPyn2XkFabfYaS9VO7JMFU4_Bx4ngDm-KG3E515GE510qA-4r0iK_uhSERdDIjT9ivUIBG37DSuG2DDGpWgQiL53NIOu-pg0c39-"
+                   },
+    "id":  "edb534920e4a4b849aa53f500b1a7b15",
+    "generatedBy":  "interactive_ui_controller",
+    "width":  "1376",
+    "height":  "768",
+    "title":  "Cinematic 35mm film still from a documentary feature. Close-up profile of an architect or designer reviewing sketches near a brutalist concrete window with overcast daylight, muted shadows, 35mm grain, subdued natural tones.",
+    "prompt":  "Cinematic 35mm film still from a documentary feature. Close-up profile of an architect or designer reviewing sketches near a brutalist concrete window with overcast daylight, muted shadows, 35mm grain, subdued natural tones.",
+    "name":  "projects/16876445237355691958/screens/edb534920e4a4b849aa53f500b1a7b15",
+    "theme":  {
+
+              },
+    "screenType":  "IMAGE",
+    "screenMetadata":  {
+                           "agentType":  "PRO_AGENT",
+                           "status":  "COMPLETE"
+                       }
+}

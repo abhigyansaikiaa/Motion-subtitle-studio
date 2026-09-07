@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WEB VERSE</title>
+    <style>
+        /* A vibrant, smooth backdrop that complements pastel 3D clay shapes */
+        body {
+            margin: 0;
+            padding: 40px 20px;
+            font-family: 'Quicksand', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #a5f3fc 0%, #c7d2fe 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1e1b4b;
+        }
+
+        /* The Main Claymorphic Container Block */
+        .clay-container {
+            max-width: 650px;
+            width: 100%;
+            padding: 40px;
+            
+            /* Core Claymorphism Primitives */
+            background: #ffffff; 
+            border-radius: 36px; /* Thick, hyper-rounded pill corners */
+            
+            /* The Clay Magic: Inner white highlights + Inner dark shadows + External soft drop shadow */
+            box-shadow: 
+                inset 0 -12px 24px rgba(165, 180, 252, 0.4),  /* Puffy base inner shadow */
+                inset 0 12px 24px rgba(255, 255, 255, 0.9),  /* Bright top inner light bounce */
+                0 20px 40px rgba(99, 102, 241, 0.15);         /* Soft external float shadow */
+            
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+        }
+
+        /* Interactive squishy pop effect on hover */
+        .clay-container:hover {
+            transform: scale(1.02) translateY(-4px);
+            box-shadow: 
+                inset 0 -8px 16px rgba(165, 180, 252, 0.4),
+                inset 0 8px 16px rgba(255, 255, 255, 0.9),
+                0 30px 50px rgba(99, 102, 241, 0.25);
+        }
+
+        /* Friendly typography settings */
+        h1, h2, h3, h4, h5, h6 {
+            margin-top: 0;
+            color: #312e81;
+            font-weight: 800;
+        }
+        
+        .headings-box {
+            border-bottom: 3px dashed #e0e7ff;
+            padding-bottom: 25px;
+            margin-bottom: 25px;
+        }
+
+        p {
+            line-height: 1.6;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        /* Upgraded link button using colorful accent Claymorphism */
+        .link-btn {
+            display: inline-block;
+            padding: 14px 28px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            color: #ffffff;
+            background: #6366f1;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            
+            /* Button-specific clay shadows */
+            box-shadow: 
+                inset 0 -6px 12px rgba(0, 0, 0, 0.25),
+                inset 0 6px 12px rgba(255, 255, 255, 0.35),
+                0 10px 20px rgba(99, 102, 241, 0.3);
+            
+            transition: all 0.2s ease;
+        }
+        .link-btn:hover {
+            background: #4f46e5;
+            box-shadow: 
+                inset 0 -4px 8px rgba(0, 0, 0, 0.3),
+                inset 0 4px 8px rgba(255, 255, 255, 0.4),
+                0 12px 24px rgba(99, 102, 241, 0.4);
+        }
+
+        /* Nested inner clay panel for the Koala workspace */
+        .koala-section {
+            background: #f8fafc;
+            border-radius: 28px;
+            padding: 30px;
+            
+            /* Layered clay look (inset appearance) */
+            box-shadow: 
+                inset 0 8px 16px rgba(148, 163, 184, 0.15),
+                inset 0 -8px 16px rgba(255, 255, 255, 0.8),
+                0 2px 4px rgba(0, 0, 0, 0.02);
+        }
+
+        .koala-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            color: #1e1b4b;
+            margin-bottom: 20px;
+        }
+
+        /* Puffy frame border wrapper for image assets */
+        .koala-img-wrapper {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 24px;
+            display: inline-block;
+            margin: 0 auto 25px auto;
+            left: 50%;
+            transform: translateX(-50%);
+            position: relative;
+            
+            box-shadow: 
+                inset 0 -6px 10px rgba(148, 163, 184, 0.2),
+                0 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        
+        .koala-img {
+            display: block;
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+        }
+
+        /* Squishy tag badge element */
+        .tag-label {
+            background-color: #ff8787;
+            color: white;
+            padding: 8px 18px;
+            border-radius: 14px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+            
+            box-shadow: 
+                inset 0 -4px 8px rgba(0, 0, 0, 0.2),
+                inset 0 4px 8px rgba(255, 255, 255, 0.3);
+        }
+
+        hr {
+            border: 0;
+            height: 4px;
+            background: #e2e8f0;
+            border-radius: 2px;
+            margin: 25px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main puffy clay block -->
+    <div class="clay-container">
+        
+        <div class="headings-box">
+            <h1>My First Heading</h1>
+            <h2>My Second Heading</h2>
+            <h3>My Third Heading</h3>
+            <h4>My Fourth Heading</h4>
+            <h5>My Fifth Heading</h5>
+            <h6 style="color: #ec4899; margin-bottom: 0; font-weight: 800;">My Sixth Heading</h6>
+        </div>
+
+        <p>My First Paragraph.</p>
+
+        <!-- Dynamic Action Button customized with high-contrast clay shadows -->
+        <a href="https://www.brandcey.in" class="link-btn">This is the link for BRANDCEY</a>
+
+        <!-- Matte Interior Content Card for the profile logs -->
+        <div class="koala-section">
+            <h3 class="koala-title">Koala</h3>
+
+            <div class="koala-img-wrapper">
+                <img src="Screenshot 2026-08-17 at 2.13.44 PM.png" alt="Koala Image" width="400" height="350" class="koala-img">
+            </div>
+            
+            <br>
+            <div class="tag-label">Koala</div>
+            
+            <p>
+                The koala <br>
+                (Phascolarctos cinereus) is an arboreal, herbivorous marsupial native to Australia. Often inaccurately called a "koala bear," it is actually a marsupial that carries its developing young in a pouch.
+            </p>
+            
+            <hr>
+            
+            <p>
+                <b>Physical <mark style="background-color: #f472b6; color: white; padding: 4px 10px; border-radius: 8px;">Traits</mark></b><br>
+                <i style="color: #475569;"><u>Koalas</u> have stout, tailless bodies covered in thick ash-grey fur with cream-coloured chests. They possess large, round ears, a prominent black leathery nose, and long, muscular limbs equipped with sharp claws designed for climbing.</i>
+            </p>
+            
+            <hr>
+            
+            <p>
+                <b style="font-size: 1.1rem; color: #1e1b4b;"><sup>Conservation</sup> <sub>Status:</sub></b><br>
+                Koalas face severe threats from habitat loss, urbanization, climate change, bushfires, and diseases like Chlamydia. In February 2022, the Australian government officially listed the koala as Endangered across Queensland, New South Wales, and the Australian Capital Territory.
+            </p>
+        </div>
+
+    </div>
+
+</body>
+</html>

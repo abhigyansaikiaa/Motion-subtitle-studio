@@ -1,0 +1,169 @@
+@import "tailwindcss";
+@source "./public/*.html";
+
+@theme {
+  --color-on-surface-variant: #70706e;
+  --color-primary-container: #ffdfd6;
+  --color-secondary-container: #e6e6e2;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-fixed: #dde3ff;
+  --color-surface-container-high: #eaeae8;
+  --color-surface-tint: #e65c40;
+  --color-on-primary-fixed: #3d140b;
+  --color-tertiary-fixed-dim: #b8c4ff;
+  --color-on-tertiary-fixed-variant: #424c77;
+  --color-on-surface: #1a1a1a;
+  --color-surface-container-lowest: #ffffff;
+  --color-secondary: #5d5d5b;
+  --color-error: #ba1a1a;
+  --color-on-primary: #ffffff;
+  --color-secondary-fixed: #e2e2e0;
+  --color-tertiary-container: #dde3ff;
+  --color-on-error: #ffffff;
+  --color-primary-fixed-dim: #ffb4a4;
+  --color-surface-dim: #e0e0de;
+  --color-outline-variant: #d1d1cf;
+  --color-tertiary: #5a648f;
+  --color-background: #f9f9f7;
+  --color-on-secondary: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-primary: #e65c40;
+  --color-surface-container-low: #fdfdfc;
+  --color-surface-variant: #e0e0de;
+  --color-on-secondary-fixed-variant: #454543;
+  --color-on-tertiary-fixed: #171f48;
+  --color-on-error-container: #410002;
+  --color-primary-fixed: #ffdad3;
+  --color-on-primary-container: #3d140b;
+  --color-inverse-surface: #313030;
+  --color-surface: #ffffff;
+  --color-inverse-on-surface: #f4f0ef;
+  --color-outline: #8c8c8a;
+  --color-on-tertiary-container: #171f48;
+  --color-surface-container: #f3f3f1;
+  --color-inverse-primary: #ffb4a4;
+  --color-on-primary-fixed-variant: #782918;
+  --color-surface-bright: #ffffff;
+  --color-surface-container-highest: #e0e0de;
+  --color-on-secondary-fixed: #191c1b;
+  --color-on-secondary-container: #191c1b;
+  --color-on-background: #1a1a1a;
+  --color-secondary-fixed-dim: #c5c5c3;
+  
+  --color-border: #e0e0de;
+  --color-card: #ffffff;
+  --color-on-card: #1a1a1a;
+  --color-muted: #f3f3f1;
+  --color-on-muted: #70706e;
+  --spacing-panel-header-height: 2.5rem;
+  --spacing-gutter-workspace: 1px;
+  --spacing-space-2xs: 0.125rem;
+  --spacing-space-lg: 1.5rem;
+  --spacing-space-xl: 2rem;
+  --spacing-space-md: 0.75rem;
+  --spacing-timeline-track-height: 1.75rem;
+  --spacing-space-base: 1rem;
+  --spacing-space-sm: 0.5rem;
+  --spacing-dock-padding: 0.75rem;
+  --spacing-space-2xl: 3rem;
+  --spacing-space-xs: 0.25rem;
+  --radius: 0.125rem;
+  --radius-lg: 0.25rem;
+  --radius-xl: 0.5rem;
+  --radius-full: 0.75rem;
+  --font-label-md: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-md: 'Newsreader', sans-serif;
+  --font-headline-lg-mobile: 'Newsreader', sans-serif;
+  --font-display-hero-mobile: 'Newsreader', sans-serif;
+  --font-label-sm: 'Plus Jakarta Sans', sans-serif;
+  --font-body-lg: 'Plus Jakarta Sans', sans-serif;
+  --font-body-md: 'Plus Jakarta Sans', sans-serif;
+  --font-display-hero: 'Newsreader', sans-serif;
+  --font-timecode-mono: 'Plus Jakarta Sans', sans-serif;
+  --font-headline-lg: 'Newsreader', sans-serif;
+  --font-headline-sm: 'Newsreader', sans-serif;
+  --font-body-sm: 'Plus Jakarta Sans', sans-serif;
+  --text-label-md: 12px;
+  --text-label-md--line-height: 16px;
+  --text-label-md--letter-spacing: 0.04em;
+  --text-label-md--font-weight: 600;
+  --text-headline-md: 22px;
+  --text-headline-md--line-height: 28px;
+  --text-headline-md--letter-spacing: -0.005em;
+  --text-headline-md--font-weight: 500;
+  --text-headline-lg-mobile: 26px;
+  --text-headline-lg-mobile--line-height: 32px;
+  --text-headline-lg-mobile--letter-spacing: -0.01em;
+  --text-headline-lg-mobile--font-weight: 400;
+  --text-display-hero-mobile: 38px;
+  --text-display-hero-mobile--line-height: 44px;
+  --text-display-hero-mobile--letter-spacing: -0.015em;
+  --text-display-hero-mobile--font-weight: 400;
+  --text-label-sm: 10px;
+  --text-label-sm--line-height: 14px;
+  --text-label-sm--letter-spacing: 0.06em;
+  --text-label-sm--font-weight: 600;
+  --text-body-lg: 16px;
+  --text-body-lg--line-height: 26px;
+  --text-body-lg--letter-spacing: -0.005em;
+  --text-body-lg--font-weight: 400;
+  --text-body-md: 14px;
+  --text-body-md--line-height: 22px;
+  --text-body-md--font-weight: 400;
+  --text-display-hero: 56px;
+  --text-display-hero--line-height: 64px;
+  --text-display-hero--letter-spacing: -0.02em;
+  --text-display-hero--font-weight: 400;
+  --text-timecode-mono: 11px;
+  --text-timecode-mono--line-height: 14px;
+  --text-timecode-mono--letter-spacing: 0.08em;
+  --text-timecode-mono--font-weight: 500;
+  --text-headline-lg: 32px;
+  --text-headline-lg--line-height: 40px;
+  --text-headline-lg--letter-spacing: -0.01em;
+  --text-headline-lg--font-weight: 400;
+  --text-headline-sm: 18px;
+  --text-headline-sm--line-height: 24px;
+  --text-headline-sm--font-weight: 500;
+  --text-body-sm: 12px;
+  --text-body-sm--line-height: 18px;
+  --text-body-sm--font-weight: 400;
+}
+
+@layer utilities {
+  .clay-surface {
+    background: #ffffff;
+    box-shadow: 
+        inset 0 -12px 24px rgba(165, 180, 252, 0.15),
+        inset 0 12px 24px rgba(255, 255, 255, 0.9),
+        0 20px 40px rgba(0, 0, 0, 0.04);
+  }
+  
+  .clay-surface-sm {
+    background: #ffffff;
+    box-shadow: 
+        inset 0 -6px 12px rgba(165, 180, 252, 0.1),
+        inset 0 6px 12px rgba(255, 255, 255, 0.8),
+        0 10px 20px rgba(0, 0, 0, 0.03);
+  }
+
+  .clay-elevation {
+    box-shadow: 0 30px 50px rgba(0, 0, 0, 0.06);
+  }
+
+  .clay-btn {
+    box-shadow: 
+        inset 0 -4px 8px rgba(0, 0, 0, 0.1),
+        inset 0 4px 8px rgba(255, 255, 255, 0.2),
+        0 8px 16px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  
+  .clay-btn:active {
+    box-shadow: 
+        inset 0 2px 4px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 4px rgba(255, 255, 255, 0.2),
+        0 2px 4px rgba(0, 0, 0, 0.05);
+    transform: translateY(2px);
+  }
+}

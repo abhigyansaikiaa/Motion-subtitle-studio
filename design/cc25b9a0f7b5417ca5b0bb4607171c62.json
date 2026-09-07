@@ -1,0 +1,357 @@
+﻿{
+    "screenshot":  {
+                       "name":  "projects/16876445237355691958/screens/cc25b9a0f7b5417ca5b0bb4607171c62/fileEntries/screenshot",
+                       "downloadUrl":  "https://lh3.googleusercontent.com/aida/AEtjO1WLhUJ2qn7JvsopT6fF5WNQfyf_XT0Yi1ne3YkAseE8mK0Bo1t8gVScFtyhewhEh_V7Kk0ZPjbKvmWS3RErNfGcaYwCfDVlgziflUauoiw2HP3fmA2yNmBbCyHWmGLa26l37ymNPdLBP3VQyRJdepuOlJ6tIQdOVk9cZ51U66MR0buo45H_PVtLokqrLhaghHa2GR0PFZCd93yS-FNp1LLGKI4mRZnkWd5sY-dIQbsJbluX4bEzCH7ybrN9"
+                   },
+    "htmlCode":  {
+                     "name":  "projects/16876445237355691958/screens/cc25b9a0f7b5417ca5b0bb4607171c62/fileEntries/html",
+                     "downloadUrl":  "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1YWFkMWJmOWI0MzYwMzM4NWI5OWVmMmU2NWVkEgsSBxDR_ZLBhBYYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjg3NjQ0NTIzNzM1NTY5MTk1OA\u0026filename=\u0026opi=89354086",
+                     "mimeType":  "text/html"
+                 },
+    "id":  "cc25b9a0f7b5417ca5b0bb4607171c62",
+    "generatedBy":  "figaro_agent",
+    "width":  "780",
+    "height":  "2264",
+    "title":  "Reel Type — Sign Up \u0026 Access",
+    "prompt":  "Design the Reel Type Sign Up \u0026 Log In mobile experience.\nDedicated high-craft editorial authentication screen:\n- Header: \u0027Create your studio account\u0027 with understated subtext: \u0027Receive 300 free credits immediately upon registration. Valid for 3 1080p video renders.\u0027\n- Form elements:\n  - Work Email field with crisp hairline border (#E2DDD5), subtle focus state, bone background.\n  - Password field with minimal \u0027Show\u0027 toggle.\n  - Professional role selector: \u0027Documentary Director\u0027, \u0027Agency Editor\u0027, \u0027Brand Creator\u0027, \u0027Post-Production Studio\u0027.\n- Primary action: \u0027Claim 300 Credits \u0026 Sign Up\u0027 (Oxblood #842327 button, clean type, no arrows).\n- Alternative single-sign-on: \u0027Continue with Google\u0027, \u0027Continue with Apple\u0027 styled with clean monochrome rules.\n- Transparent guarantee note: \u0027Each 1080p render uses exactly 100 credits. Accounts include 3 video project slots. No recurring subscription unless chosen.\u0027\n- Login toggle: \u0027Already registered? Access your library\u0027.\n- Visual restraint: No emojis, no illustrations, pure typographic dignity, warm paper backdrop #FBF9F5.",
+    "name":  "projects/16876445237355691958/screens/cc25b9a0f7b5417ca5b0bb4607171c62",
+    "theme":  {
+                  "colorMode":  "LIGHT",
+                  "font":  "NEWSREADER",
+                  "roundness":  "ROUND_FOUR",
+                  "customColor":  "#842327",
+                  "headlineFont":  "NEWSREADER",
+                  "bodyFont":  "INTER",
+                  "labelFont":  "INTER",
+                  "namedColors":  {
+                                      "error":  "#ba1a1a",
+                                      "surface_tint":  "#a43a3c",
+                                      "surface_bright":  "#fdf8f6",
+                                      "error_container":  "#ffdad6",
+                                      "tertiary_container":  "#00504e",
+                                      "on_primary_container":  "#ff9996",
+                                      "primary_container":  "#842327",
+                                      "secondary_fixed_dim":  "#eac080",
+                                      "on_error_container":  "#93000a",
+                                      "on_primary_fixed_variant":  "#842327",
+                                      "primary_fixed":  "#ffdad8",
+                                      "surface_container":  "#f2edeb",
+                                      "on_tertiary_fixed":  "#00201f",
+                                      "tertiary":  "#003736",
+                                      "surface_variant":  "#e6e2df",
+                                      "on_tertiary_container":  "#82c1be",
+                                      "on_tertiary":  "#ffffff",
+                                      "on_surface_variant":  "#564241",
+                                      "surface_container_lowest":  "#ffffff",
+                                      "surface_container_low":  "#f7f3f0",
+                                      "primary_fixed_dim":  "#ffb3b0",
+                                      "surface_dim":  "#ddd9d7",
+                                      "on_primary":  "#ffffff",
+                                      "secondary":  "#785924",
+                                      "on_background":  "#1c1b1a",
+                                      "on_error":  "#ffffff",
+                                      "outline":  "#8a7170",
+                                      "secondary_fixed":  "#ffddae",
+                                      "on_surface":  "#1c1b1a",
+                                      "on_secondary_fixed_variant":  "#5e410d",
+                                      "surface_container_highest":  "#e6e2df",
+                                      "surface_container_high":  "#ece7e5",
+                                      "outline_variant":  "#ddc0be",
+                                      "inverse_on_surface":  "#f5f0ee",
+                                      "on_primary_fixed":  "#410006",
+                                      "on_tertiary_fixed_variant":  "#00504e",
+                                      "inverse_primary":  "#ffb3b0",
+                                      "secondary_container":  "#ffd392",
+                                      "tertiary_fixed":  "#aeeeeb",
+                                      "on_secondary_fixed":  "#281800",
+                                      "on_secondary_container":  "#795924",
+                                      "tertiary_fixed_dim":  "#93d2cf",
+                                      "background":  "#fdf8f6",
+                                      "primary":  "#650a13",
+                                      "on_secondary":  "#ffffff",
+                                      "surface":  "#fdf8f6",
+                                      "inverse_surface":  "#32302f"
+                                  },
+                  "colorVariant":  "FIDELITY",
+                  "overridePrimaryColor":  "#842327",
+                  "overrideSecondaryColor":  "#a37f46",
+                  "overrideNeutralColor":  "#181716",
+                  "spacingScale":  2,
+                  "typography":  {
+                                     "headline-sm":  {
+                                                         "fontFamily":  "Newsreader",
+                                                         "fontSize":  "18px",
+                                                         "fontWeight":  "500",
+                                                         "lineHeight":  "24px"
+                                                     },
+                                     "body-md":  {
+                                                     "fontFamily":  "Inter",
+                                                     "fontSize":  "14px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "22px"
+                                                 },
+                                     "display-lg":  {
+                                                        "fontFamily":  "Newsreader",
+                                                        "fontSize":  "48px",
+                                                        "fontWeight":  "400",
+                                                        "lineHeight":  "56px",
+                                                        "letterSpacing":  "-0.02em"
+                                                    },
+                                     "display-sm":  {
+                                                        "fontFamily":  "Newsreader",
+                                                        "fontSize":  "32px",
+                                                        "fontWeight":  "400",
+                                                        "lineHeight":  "40px",
+                                                        "letterSpacing":  "-0.015em"
+                                                    },
+                                     "body-lg":  {
+                                                     "fontFamily":  "Inter",
+                                                     "fontSize":  "16px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "26px"
+                                                 },
+                                     "display-lg-mobile":  {
+                                                               "fontFamily":  "Newsreader",
+                                                               "fontSize":  "32px",
+                                                               "fontWeight":  "400",
+                                                               "lineHeight":  "40px",
+                                                               "letterSpacing":  "-0.015em"
+                                                           },
+                                     "headline-md":  {
+                                                         "fontFamily":  "Newsreader",
+                                                         "fontSize":  "22px",
+                                                         "fontWeight":  "500",
+                                                         "lineHeight":  "28px",
+                                                         "letterSpacing":  "-0.01em"
+                                                     },
+                                     "body-sm":  {
+                                                     "fontFamily":  "Inter",
+                                                     "fontSize":  "12px",
+                                                     "fontWeight":  "400",
+                                                     "lineHeight":  "18px"
+                                                 },
+                                     "timecode-md":  {
+                                                         "fontFamily":  "Inter",
+                                                         "fontSize":  "13px",
+                                                         "fontWeight":  "500",
+                                                         "lineHeight":  "16px",
+                                                         "letterSpacing":  "0.02em"
+                                                     },
+                                     "label-md":  {
+                                                      "fontFamily":  "Inter",
+                                                      "fontSize":  "12px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "16px",
+                                                      "letterSpacing":  "0.04em"
+                                                  },
+                                     "label-sm":  {
+                                                      "fontFamily":  "Inter",
+                                                      "fontSize":  "11px",
+                                                      "fontWeight":  "600",
+                                                      "lineHeight":  "14px",
+                                                      "letterSpacing":  "0.06em"
+                                                  },
+                                     "display-sm-mobile":  {
+                                                               "fontFamily":  "Newsreader",
+                                                               "fontSize":  "26px",
+                                                               "fontWeight":  "400",
+                                                               "lineHeight":  "34px",
+                                                               "letterSpacing":  "-0.01em"
+                                                           }
+                                 },
+                  "spacing":  {
+                                  "space-2xs":  "0.25rem",
+                                  "space-lg":  "1.5rem",
+                                  "space-xs":  "0.5rem",
+                                  "margin-desktop":  "3rem",
+                                  "margin-mobile":  "1.25rem",
+                                  "space-2xl":  "3rem",
+                                  "gutter-desktop":  "1.5rem",
+                                  "space-sm":  "0.75rem",
+                                  "gutter-mobile":  "1rem",
+                                  "space-md":  "1rem",
+                                  "space-3xl":  "4.5rem",
+                                  "space-xl":  "2rem"
+                              },
+                  "headlineFontFamily":  "Newsreader",
+                  "bodyFontFamily":  "Inter",
+                  "labelFontFamily":  "Inter"
+              },
+    "deviceType":  "MOBILE",
+    "screenType":  "DESIGN",
+    "screenMetadata":  {
+                           "agentType":  "PRO_AGENT",
+                           "status":  "COMPLETE"
+                       },
+    "designSystem":  {
+                         "name":  "assets/61a332a0447340b7805c8525488919a3",
+                         "designSystem":  {
+                                              "displayName":  "Editorial Darkroom",
+                                              "styleGuidelines":  "### 🎨 Visual Identity: Safe\n- **Palette \u0026 Typography:** A disciplined, traditional editorial approach pairing literary serif titles with utilitarian UI precision over tactile warm paper surfaces.\n\n## Brand \u0026 Style\n\nThe design system embodies the discipline of an archival darkroom combined with modern typographic craft. Targeted at documentary filmmakers, brand editors, and cinematic creators, it avoids fleeting SaaS trends, garish AI accents, and synthetic glow effects. Instead, it creates an environment of quiet, tactile confidence reminiscent of heavy-stock monographs, hot-metal typesetting, and post-production suites.\n\nThe visual language balances two complementary worlds:\n1. **The Warm Paper Archive (Light Mode):** An editorial layout plane built on warm bone surfaces, fine hairline rules, deep carbon ink, and restrained oxblood seals.\n2. **The Obsidian Cutting Room (Dark Canvas):** A focused matte slate surface designed specifically for video preview canvases, scrubbing timelines, and optical caption adjustments.\n\nKey brand characteristics:\n- **Quiet Authority:** Typography dominates through scale, proportions, and deliberate hierarchy rather than loud decorative treatments.\n- **Physical Print Tactility:** Subtle natural paper tones and razor-sharp typographic rules substitute for generic soft drop shadows.\n- **Surgical Utility:** Dense metadata, timecode ledgers, and transcription stems are treated with absolute precision.\n\n## Layout \u0026 Spacing\n\nThe layout is grounded in asymmetric balance, drawing cues from broadsheet newspaper pages and multi-pane non-linear editing (NLE) suites.\n\n### Grid \u0026 Architecture\n- **Desktop (1200px+):** A 3-pane asymmetrical studio workspace.\n  - **Left Rail (Fixed 320px):** Script transcript, speaker stems, and text-based editing.\n  - **Center Canvas (Flexible / Fluid):** Obsidian darkroom viewport for real-time video framing, typographic overlays, and safe-margin bounding guides.\n  - **Right Inspector (Fixed 280px):** Optical typography engine (tracking, leading, baseline shift, and font pairing rules).\n- **Tablet (768px – 1199px):** Canvas stacks above the transcript; Inspector transitions into a bottom-docked slide-over drawer.\n- **Mobile (\u003c 768px):** Viewport prioritizes playback frame and active subtitle phrase scrub. Secondary settings tuck into an uncurved, full-width sheet.\n\n### Spacing Rhythm\nSpacing is structured around a baseline grid of 4px and 8px units. Generous white space surrounds high-level titles, while dense, 4px micro-spacing packages related control groups (such as kerning pairs, aspect-ratio toggles, and timecode brackets).\n\n## Elevation \u0026 Depth\n\nThis design system deliberately eschews standard diffuse blur shadows in favor of **structural physical layering** and **hairline edge definition**.\n\n1. **Flat Structural Plane:** Depth is communicated through tonal shifts rather than simulated atmospheric elevation. A raised panel sits on `#FFFFFF`, recessed wells drop to `#F2EFE9`, and the main board rests on `#FBF9F5`.\n2. **Hairline Rules:** Layers are separated by crisp, 1px solid borders (`#E2DDD5` on light surfaces; `#36322F` on obsidian surfaces). \n3. **Ghost Boundaries:** Popovers, contextual menus, and font dropdowns utilize a single, solid 1px border paired with a minimal, darkroom-inspired physical shadow: `box-shadow: 0 4px 12px rgba(24, 23, 22, 0.06), 0 1px 2px rgba(24, 23, 22, 0.04)`.\n4. **The Obsidian Well:** The video canvas operates as an inverse light-trap: a dark `#141312` surface inset inside the warm editorial frame, focusing the editor\u0027s eye strictly on the footage and subtitle legibility.\n\n## Components\n\n### Buttons\n- **Primary Action (Oxblood Seal):** Background `#842327`, text `#FFFFFF`, border `1px solid transparent`, radius `4px`. On hover: subtle shift to `#6E1B1F`. On active press: `#571418`.\n- **Secondary Action (Inked Paper):** Background `#FFFFFF`, text `#181716`, border `1px solid #E2DDD5`, radius `4px`. On hover: background `#F2EFE9`.\n- **Ghost / Directorial:** Background transparent, text `#5F5B57`, radius `4px`. On hover: text `#181716`, background `rgba(24, 23, 22, 0.04)`.\n\n### Input Fields \u0026 Selectors\n- Background `#FFFFFF`, border `1px solid #E2DDD5`, text `#181716`, font `Inter`, radius `4px`, padding `8px 12px`.\n- Focus state: border `1px solid #181716` with zero fuzzy glow ring; instead, a crisp `1px solid #181716` outline offset by `1px`.\n- Timestamp inputs enforce monospaced tabular numerals (`Inter`, `tnum`).\n\n### Chips \u0026 Metadata Tags\n- Height `24px`, padding `2px 8px`, border `1px solid #E2DDD5`, background `#F2EFE9`, radius `4px`.\n- Typography: `label-sm` (uppercase, letter-spaced, graphite tone `#5F5B57`).\n- Active / Selected State: Background `#842327`, text `#FFFFFF`, border `1px solid #842327`.\n\n### Lists \u0026 Dialogue Ledger\n- Transcript blocks are presented as an alternating ledger.\n- Inactive phrases: Text `#5F5B57` on transparent background.\n- Active scrubbed phrase: Background `#FFFFFF`, border-left `2px solid #842327`, text `#181716`, padding `12px 16px`, subtle hairline bottom border `#E2DDD5`.\n- Speaker labels: Rendered in Newsreader italic with accompanying timestamp in `#A37F46`.\n\n### Video Canvas \u0026 Caption Bounding Box\n- Viewport background: `#141312`.\n- Safe margin guide overlay: Inset 10% dashed hairline `#36322F`.\n- Caption text bounding box: Solid hairline border `#A37F46` with 4px corner drag handles when selected for optical reflow.\n\n### Checkboxes \u0026 Segmented Controls\n- Segmented switches: Contained within a `#F2EFE9` channel, 1px border `#E2DDD5`. Active segment slides with pure `#FFFFFF` fill and a single hairline border.\n- Checkboxes: 16x16px square, radius `2px`, border `1.5px solid #5F5B57`. Checked state: `#842327` fill with clean white checkmark.",
+                                              "theme":  {
+                                                            "colorMode":  "LIGHT",
+                                                            "font":  "NEWSREADER",
+                                                            "roundness":  "ROUND_FOUR",
+                                                            "customColor":  "#842327",
+                                                            "headlineFont":  "NEWSREADER",
+                                                            "bodyFont":  "INTER",
+                                                            "labelFont":  "INTER",
+                                                            "namedColors":  {
+                                                                                "secondary_fixed":  "#ffddae",
+                                                                                "tertiary_fixed_dim":  "#93d2cf",
+                                                                                "background":  "#fdf8f6",
+                                                                                "on_error":  "#ffffff",
+                                                                                "on_secondary_fixed":  "#281800",
+                                                                                "on_primary_container":  "#ff9996",
+                                                                                "tertiary_fixed":  "#aeeeeb",
+                                                                                "surface_tint":  "#a43a3c",
+                                                                                "surface_container_lowest":  "#ffffff",
+                                                                                "inverse_on_surface":  "#f5f0ee",
+                                                                                "inverse_primary":  "#ffb3b0",
+                                                                                "on_surface":  "#1c1b1a",
+                                                                                "outline_variant":  "#ddc0be",
+                                                                                "surface_container_high":  "#ece7e5",
+                                                                                "on_primary_fixed_variant":  "#842327",
+                                                                                "inverse_surface":  "#32302f",
+                                                                                "secondary_fixed_dim":  "#eac080",
+                                                                                "on_secondary_fixed_variant":  "#5e410d",
+                                                                                "on_secondary_container":  "#795924",
+                                                                                "on_background":  "#1c1b1a",
+                                                                                "on_primary":  "#ffffff",
+                                                                                "on_surface_variant":  "#564241",
+                                                                                "primary":  "#650a13",
+                                                                                "surface_container_low":  "#f7f3f0",
+                                                                                "surface":  "#fdf8f6",
+                                                                                "error_container":  "#ffdad6",
+                                                                                "on_tertiary_fixed_variant":  "#00504e",
+                                                                                "primary_fixed_dim":  "#ffb3b0",
+                                                                                "on_tertiary_container":  "#82c1be",
+                                                                                "secondary_container":  "#ffd392",
+                                                                                "secondary":  "#785924",
+                                                                                "surface_container":  "#f2edeb",
+                                                                                "error":  "#ba1a1a",
+                                                                                "on_tertiary_fixed":  "#00201f",
+                                                                                "surface_variant":  "#e6e2df",
+                                                                                "on_tertiary":  "#ffffff",
+                                                                                "on_secondary":  "#ffffff",
+                                                                                "on_primary_fixed":  "#410006",
+                                                                                "on_error_container":  "#93000a",
+                                                                                "surface_dim":  "#ddd9d7",
+                                                                                "primary_fixed":  "#ffdad8",
+                                                                                "tertiary":  "#003736",
+                                                                                "outline":  "#8a7170",
+                                                                                "tertiary_container":  "#00504e",
+                                                                                "primary_container":  "#842327",
+                                                                                "surface_container_highest":  "#e6e2df",
+                                                                                "surface_bright":  "#fdf8f6"
+                                                                            },
+                                                            "designMd":  "---\nname: Editorial Darkroom\ncolors:\n  surface: \u0027#fdf8f6\u0027\n  surface-dim: \u0027#ddd9d7\u0027\n  surface-bright: \u0027#fdf8f6\u0027\n  surface-container-lowest: \u0027#ffffff\u0027\n  surface-container-low: \u0027#f7f3f0\u0027\n  surface-container: \u0027#f2edeb\u0027\n  surface-container-high: \u0027#ece7e5\u0027\n  surface-container-highest: \u0027#e6e2df\u0027\n  on-surface: \u0027#1c1b1a\u0027\n  on-surface-variant: \u0027#564241\u0027\n  inverse-surface: \u0027#32302f\u0027\n  inverse-on-surface: \u0027#f5f0ee\u0027\n  outline: \u0027#8a7170\u0027\n  outline-variant: \u0027#ddc0be\u0027\n  surface-tint: \u0027#a43a3c\u0027\n  primary: \u0027#650a13\u0027\n  on-primary: \u0027#ffffff\u0027\n  primary-container: \u0027#842327\u0027\n  on-primary-container: \u0027#ff9996\u0027\n  inverse-primary: \u0027#ffb3b0\u0027\n  secondary: \u0027#785924\u0027\n  on-secondary: \u0027#ffffff\u0027\n  secondary-container: \u0027#ffd392\u0027\n  on-secondary-container: \u0027#795924\u0027\n  tertiary: \u0027#003736\u0027\n  on-tertiary: \u0027#ffffff\u0027\n  tertiary-container: \u0027#00504e\u0027\n  on-tertiary-container: \u0027#82c1be\u0027\n  error: \u0027#ba1a1a\u0027\n  on-error: \u0027#ffffff\u0027\n  error-container: \u0027#ffdad6\u0027\n  on-error-container: \u0027#93000a\u0027\n  primary-fixed: \u0027#ffdad8\u0027\n  primary-fixed-dim: \u0027#ffb3b0\u0027\n  on-primary-fixed: \u0027#410006\u0027\n  on-primary-fixed-variant: \u0027#842327\u0027\n  secondary-fixed: \u0027#ffddae\u0027\n  secondary-fixed-dim: \u0027#eac080\u0027\n  on-secondary-fixed: \u0027#281800\u0027\n  on-secondary-fixed-variant: \u0027#5e410d\u0027\n  tertiary-fixed: \u0027#aeeeeb\u0027\n  tertiary-fixed-dim: \u0027#93d2cf\u0027\n  on-tertiary-fixed: \u0027#00201f\u0027\n  on-tertiary-fixed-variant: \u0027#00504e\u0027\n  background: \u0027#fdf8f6\u0027\n  on-background: \u0027#1c1b1a\u0027\n  surface-variant: \u0027#e6e2df\u0027\ntypography:\n  display-lg:\n    fontFamily: Newsreader\n    fontSize: 48px\n    fontWeight: \u0027400\u0027\n    lineHeight: 56px\n    letterSpacing: -0.02em\n  display-lg-mobile:\n    fontFamily: Newsreader\n    fontSize: 32px\n    fontWeight: \u0027400\u0027\n    lineHeight: 40px\n    letterSpacing: -0.015em\n  display-sm:\n    fontFamily: Newsreader\n    fontSize: 32px\n    fontWeight: \u0027400\u0027\n    lineHeight: 40px\n    letterSpacing: -0.015em\n  display-sm-mobile:\n    fontFamily: Newsreader\n    fontSize: 26px\n    fontWeight: \u0027400\u0027\n    lineHeight: 34px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Newsreader\n    fontSize: 22px\n    fontWeight: \u0027500\u0027\n    lineHeight: 28px\n    letterSpacing: -0.01em\n  headline-sm:\n    fontFamily: Newsreader\n    fontSize: 18px\n    fontWeight: \u0027500\u0027\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Inter\n    fontSize: 16px\n    fontWeight: \u0027400\u0027\n    lineHeight: 26px\n  body-md:\n    fontFamily: Inter\n    fontSize: 14px\n    fontWeight: \u0027400\u0027\n    lineHeight: 22px\n  body-sm:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: \u0027400\u0027\n    lineHeight: 18px\n  label-md:\n    fontFamily: Inter\n    fontSize: 12px\n    fontWeight: \u0027600\u0027\n    lineHeight: 16px\n    letterSpacing: 0.04em\n  label-sm:\n    fontFamily: Inter\n    fontSize: 11px\n    fontWeight: \u0027600\u0027\n    lineHeight: 14px\n    letterSpacing: 0.06em\n  timecode-md:\n    fontFamily: Inter\n    fontSize: 13px\n    fontWeight: \u0027500\u0027\n    lineHeight: 16px\n    letterSpacing: 0.02em\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  space-2xs: 0.25rem\n  space-xs: 0.5rem\n  space-sm: 0.75rem\n  space-md: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n  space-2xl: 3rem\n  space-3xl: 4.5rem\n  gutter-desktop: 1.5rem\n  gutter-mobile: 1rem\n  margin-desktop: 3rem\n  margin-mobile: 1.25rem\n---\n\n## Brand \u0026 Style\n\nThe design system embodies the discipline of an archival darkroom combined with modern typographic craft. Targeted at documentary filmmakers, brand editors, and cinematic creators, it avoids fleeting SaaS trends, garish AI accents, and synthetic glow effects. Instead, it creates an environment of quiet, tactile confidence reminiscent of heavy-stock monographs, hot-metal typesetting, and post-production suites.\n\nThe visual language balances two complementary worlds:\n1. **The Warm Paper Archive (Light Mode):** An editorial layout plane built on warm bone surfaces, fine hairline rules, deep carbon ink, and restrained oxblood seals.\n2. **The Obsidian Cutting Room (Dark Canvas):** A focused matte slate surface designed specifically for video preview canvases, scrubbing timelines, and optical caption adjustments.\n\nKey brand characteristics:\n- **Quiet Authority:** Typography dominates through scale, proportions, and deliberate hierarchy rather than loud decorative treatments.\n- **Physical Print Tactility:** Subtle natural paper tones and razor-sharp typographic rules substitute for generic soft drop shadows.\n- **Surgical Utility:** Dense metadata, timecode ledgers, and transcription stems are treated with absolute precision.\n\n## Colors\n\nThe palette derives from physical lithography, warm archival rag paper, and darkroom equipment.\n\n### Light Editorial Tier (App Shell \u0026 Settings)\n- **Primary Accent (`#842327` - Oxblood / Crimson Seal):** Reserved exclusively for high-intent primary actions, active recording states, and typographic brand seals. Never used as large background fills.\n- **Secondary (`#A37F46` - Muted Brass):** Employed for timecode notation, active playhead scrub handles, audio track identifiers, and archival status badges.\n- **Neutral / Ink (`#181716` - Deep Carbon Ink):** High-contrast textual baseline mimicking oil-based print ink.\n- **Muted Lead (`#5F5B57` - Graphite):** Secondary subtitles, column labels, audio metadata, and inactive panel indicators.\n- **Warm Bone (`#FBF9F5`):** The master ambient backdrop, simulating tactile, uncoated stock.\n- **Tonal Plate (`#F2EFE9`):** Recessed tool wells, transcription blocks, and secondary sidebars.\n- **Surface Raised (`#FFFFFF`):** Pure stock reserved for editable cards, dialogue drawers, and modal sheets.\n- **Hairline Rule (`#E2DDD5`):** 1px structural separators and data column dividers.\n\n### Obsidian Cutting Room Tier (Video \u0026 Caption Canvas)\n- **Obsidian Matte (`#141312`):** Primary stage backing for 16:9 and 9:16 video viewports.\n- **Slate Well (`#211F1D`):** Waveform backings, caption strip containers, and transport strips.\n- **Slate Hairline (`#36322F`):** Subtle boundaries separating video viewport controls from the preview area.\n\n## Typography\n\nThe typographic tension relies on pairing the literary elegance of **Newsreader** with the utilitarian precision of **Inter**.\n\n- **Editorial Serifs (Newsreader):** Used for reel project titles, production headers, chapter markers, and quotation pulls. Newsreader brings an authoritative, humanistic warmth akin to classic cinema title cards and museum monographs. Optical sizing features (`opsz`) and italics should be leveraged for speaker attribution and directorial annotations.\n- **Instrumental Sans (Inter):** Serves all interface controls, parameter sliders, time indicators, and transcription tracks. \n- **Tabular Figures \u0026 Timecode:** All numeric readouts, frames, timecodes (`00:04:12:18`), and word counts must enforce `font-feature-settings: \"tnum\" 1, \"zero\" 1`. This prevents layout jitter during playback and scrubbing.\n- **Micro-Labels:** Metadata headers (e.g., `FRAME RATE`, `AUDIO STEM`, `TC IN`) use all-caps uppercase formatting at 11px with relaxed letter spacing (`+0.06em`).\n\n## Layout \u0026 Spacing\n\nThe layout is grounded in asymmetric balance, drawing cues from broadsheet newspaper pages and multi-pane non-linear editing (NLE) suites.\n\n### Grid \u0026 Architecture\n- **Desktop (1200px+):** A 3-pane asymmetrical studio workspace.\n  - **Left Rail (Fixed 320px):** Script transcript, speaker stems, and text-based editing.\n  - **Center Canvas (Flexible / Fluid):** Obsidian darkroom viewport for real-time video framing, typographic overlays, and safe-margin bounding guides.\n  - **Right Inspector (Fixed 280px):** Optical typography engine (tracking, leading, baseline shift, and font pairing rules).\n- **Tablet (768px – 1199px):** Canvas stacks above the transcript; Inspector transitions into a bottom-docked slide-over drawer.\n- **Mobile (\u003c 768px):** Viewport prioritizes playback frame and active subtitle phrase scrub. Secondary settings tuck into an uncurved, full-width sheet.\n\n### Spacing Rhythm\nSpacing is structured around a baseline grid of 4px and 8px units. Generous white space surrounds high-level titles, while dense, 4px micro-spacing packages related control groups (such as kerning pairs, aspect-ratio toggles, and timecode brackets).\n\n## Elevation \u0026 Depth\n\nThis design system deliberately eschews standard diffuse blur shadows in favor of **structural physical layering** and **hairline edge definition**.\n\n1. **Flat Structural Plane:** Depth is communicated through tonal shifts rather than simulated atmospheric elevation. A raised panel sits on `#FFFFFF`, recessed wells drop to `#F2EFE9`, and the main board rests on `#FBF9F5`.\n2. **Hairline Rules:** Layers are separated by crisp, 1px solid borders (`#E2DDD5` on light surfaces; `#36322F` on obsidian surfaces). \n3. **Ghost Boundaries:** Popovers, contextual menus, and font dropdowns utilize a single, solid 1px border paired with a minimal, darkroom-inspired physical shadow: `box-shadow: 0 4px 12px rgba(24, 23, 22, 0.06), 0 1px 2px rgba(24, 23, 22, 0.04)`.\n4. **The Obsidian Well:** The video canvas operates as an inverse light-trap: a dark `#141312` surface inset inside the warm editorial frame, focusing the editor\u0027s eye strictly on the footage and subtitle legibility.\n\n## Shapes\n\nIn keeping with traditional bookbinding, typography galleys, and high-end hardware consoles, shapes are kept disciplined and near-rectilinear.\n\n- **Base Radius (`roundedness: 1`):** Core UI components—such as buttons, text entry fields, and segmented toggles—use a crisp `0.25rem` (4px) corner radius.\n- **Cards \u0026 Plates (`rounded-lg`):** Large surface panels and transcript blocks scale up slightly to `0.5rem` (8px).\n- **No Pill Shapes:** Full pills are strictly forbidden for buttons and inputs. Modges and tags remain architectural rectangles with soft 4px corners to preserve the printed-paper aesthetic.\n- **Precision Indicators:** Timecode markers, playhead stems, and audio split needles utilize strict 0px razor edges.\n\n## Components\n\n### Buttons\n- **Primary Action (Oxblood Seal):** Background `#842327`, text `#FFFFFF`, border `1px solid transparent`, radius `4px`. On hover: subtle shift to `#6E1B1F`. On active press: `#571418`.\n- **Secondary Action (Inked Paper):** Background `#FFFFFF`, text `#181716`, border `1px solid #E2DDD5`, radius `4px`. On hover: background `#F2EFE9`.\n- **Ghost / Directorial:** Background transparent, text `#5F5B57`, radius `4px`. On hover: text `#181716`, background `rgba(24, 23, 22, 0.04)`.\n\n### Input Fields \u0026 Selectors\n- Background `#FFFFFF`, border `1px solid #E2DDD5`, text `#181716`, font `Inter`, radius `4px`, padding `8px 12px`.\n- Focus state: border `1px solid #181716` with zero fuzzy glow ring; instead, a crisp `1px solid #181716` outline offset by `1px`.\n- Timestamp inputs enforce monospaced tabular numerals (`Inter`, `tnum`).\n\n### Chips \u0026 Metadata Tags\n- Height `24px`, padding `2px 8px`, border `1px solid #E2DDD5`, background `#F2EFE9`, radius `4px`.\n- Typography: `label-sm` (uppercase, letter-spaced, graphite tone `#5F5B57`).\n- Active / Selected State: Background `#842327`, text `#FFFFFF`, border `1px solid #842327`.\n\n### Lists \u0026 Dialogue Ledger\n- Transcript blocks are presented as an alternating ledger.\n- Inactive phrases: Text `#5F5B57` on transparent background.\n- Active scrubbed phrase: Background `#FFFFFF`, border-left `2px solid #842327`, text `#181716`, padding `12px 16px`, subtle hairline bottom border `#E2DDD5`.\n- Speaker labels: Rendered in Newsreader italic with accompanying timestamp in `#A37F46`.\n\n### Video Canvas \u0026 Caption Bounding Box\n- Viewport background: `#141312`.\n- Safe margin guide overlay: Inset 10% dashed hairline `#36322F`.\n- Caption text bounding box: Solid hairline border `#A37F46` with 4px corner drag handles when selected for optical reflow.\n\n### Checkboxes \u0026 Segmented Controls\n- Segmented switches: Contained within a `#F2EFE9` channel, 1px border `#E2DDD5`. Active segment slides with pure `#FFFFFF` fill and a single hairline border.\n- Checkboxes: 16x16px square, radius `2px`, border `1.5px solid #5F5B57`. Checked state: `#842327` fill with clean white checkmark.",
+                                                            "colorVariant":  "FIDELITY",
+                                                            "overridePrimaryColor":  "#842327",
+                                                            "overrideSecondaryColor":  "#a37f46",
+                                                            "overrideNeutralColor":  "#181716",
+                                                            "spacingScale":  2,
+                                                            "typography":  {
+                                                                               "display-lg":  {
+                                                                                                  "fontFamily":  "Newsreader",
+                                                                                                  "fontSize":  "48px",
+                                                                                                  "fontWeight":  "400",
+                                                                                                  "lineHeight":  "56px",
+                                                                                                  "letterSpacing":  "-0.02em"
+                                                                                              },
+                                                                               "display-sm":  {
+                                                                                                  "fontFamily":  "Newsreader",
+                                                                                                  "fontSize":  "32px",
+                                                                                                  "fontWeight":  "400",
+                                                                                                  "lineHeight":  "40px",
+                                                                                                  "letterSpacing":  "-0.015em"
+                                                                                              },
+                                                                               "timecode-md":  {
+                                                                                                   "fontFamily":  "Inter",
+                                                                                                   "fontSize":  "13px",
+                                                                                                   "fontWeight":  "500",
+                                                                                                   "lineHeight":  "16px",
+                                                                                                   "letterSpacing":  "0.02em"
+                                                                                               },
+                                                                               "body-md":  {
+                                                                                               "fontFamily":  "Inter",
+                                                                                               "fontSize":  "14px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "22px"
+                                                                                           },
+                                                                               "headline-md":  {
+                                                                                                   "fontFamily":  "Newsreader",
+                                                                                                   "fontSize":  "22px",
+                                                                                                   "fontWeight":  "500",
+                                                                                                   "lineHeight":  "28px",
+                                                                                                   "letterSpacing":  "-0.01em"
+                                                                                               },
+                                                                               "body-lg":  {
+                                                                                               "fontFamily":  "Inter",
+                                                                                               "fontSize":  "16px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "26px"
+                                                                                           },
+                                                                               "body-sm":  {
+                                                                                               "fontFamily":  "Inter",
+                                                                                               "fontSize":  "12px",
+                                                                                               "fontWeight":  "400",
+                                                                                               "lineHeight":  "18px"
+                                                                                           },
+                                                                               "display-lg-mobile":  {
+                                                                                                         "fontFamily":  "Newsreader",
+                                                                                                         "fontSize":  "32px",
+                                                                                                         "fontWeight":  "400",
+                                                                                                         "lineHeight":  "40px",
+                                                                                                         "letterSpacing":  "-0.015em"
+                                                                                                     },
+                                                                               "label-md":  {
+                                                                                                "fontFamily":  "Inter",
+                                                                                                "fontSize":  "12px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "16px",
+                                                                                                "letterSpacing":  "0.04em"
+                                                                                            },
+                                                                               "label-sm":  {
+                                                                                                "fontFamily":  "Inter",
+                                                                                                "fontSize":  "11px",
+                                                                                                "fontWeight":  "600",
+                                                                                                "lineHeight":  "14px",
+                                                                                                "letterSpacing":  "0.06em"
+                                                                                            },
+                                                                               "display-sm-mobile":  {
+                                                                                                         "fontFamily":  "Newsreader",
+                                                                                                         "fontSize":  "26px",
+                                                                                                         "fontWeight":  "400",
+                                                                                                         "lineHeight":  "34px",
+                                                                                                         "letterSpacing":  "-0.01em"
+                                                                                                     },
+                                                                               "headline-sm":  {
+                                                                                                   "fontFamily":  "Newsreader",
+                                                                                                   "fontSize":  "18px",
+                                                                                                   "fontWeight":  "500",
+                                                                                                   "lineHeight":  "24px"
+                                                                                               }
+                                                                           },
+                                                            "spacing":  {
+                                                                            "space-md":  "1rem",
+                                                                            "gutter-mobile":  "1rem",
+                                                                            "space-3xl":  "4.5rem",
+                                                                            "gutter-desktop":  "1.5rem",
+                                                                            "space-xl":  "2rem",
+                                                                            "margin-desktop":  "3rem",
+                                                                            "space-xs":  "0.5rem",
+                                                                            "space-lg":  "1.5rem",
+                                                                            "margin-mobile":  "1.25rem",
+                                                                            "space-2xl":  "3rem",
+                                                                            "space-2xs":  "0.25rem",
+                                                                            "space-sm":  "0.75rem"
+                                                                        },
+                                                            "headlineFontFamily":  "Newsreader",
+                                                            "bodyFontFamily":  "Inter",
+                                                            "labelFontFamily":  "Inter"
+                                                        }
+                                          },
+                         "version":  "1"
+                     }
+}

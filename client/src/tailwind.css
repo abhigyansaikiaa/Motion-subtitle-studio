@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Syne:wght@400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@source "./src/**/*.{js,jsx,ts,tsx}";
+@source "./index.html";
+
+@theme {
+  /* ─── Core Palette — editorial, no neon ─── */
+  --color-background: #0A0A0A;
+  --color-foreground: #EFEFEF;
+
+  /* Primary: clean white — visible on dark without any neon */
+  --color-primary: #FFFFFF;
+  --color-on-primary: #0A0A0A;
+
+  /* Secondary surfaces */
+  --color-secondary: #1C1C1C;
+  --color-on-secondary: #EFEFEF;
+
+  /* Accent: warm off-white / amber for highlights */
+  --color-accent: #E8D5B0;
+  --color-on-accent: #1A1000;
+
+  /* Card / Panel surfaces */
+  --color-card: #111111;
+  --color-card-foreground: #EFEFEF;
+
+  /* Muted backgrounds */
+  --color-muted: #1A1A1A;
+  --color-muted-foreground: #7A7A7A;
+
+  /* Borders */
+  --color-border: #2A2A2A;
+
+  --color-destructive: #DC2626;
+  --color-on-destructive: #FFFFFF;
+  --color-ring: #FFFFFF;
+
+  /* ─── Spacing ─── */
+  --spacing-1: 0.25rem;
+  --spacing-2: 0.5rem;
+  --spacing-3: 0.75rem;
+  --spacing-4: 1rem;
+  --spacing-6: 1.5rem;
+  --spacing-8: 2rem;
+  --spacing-12: 3rem;
+  --spacing-16: 4rem;
+
+  /* ─── Radii ─── */
+  --radius: 0.375rem;
+  --radius-lg: 0.625rem;
+  --radius-xl: 1rem;
+  --radius-2xl: 1.5rem;
+  --radius-full: 9999px;
+
+  /* ─── Fonts ─── */
+  --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Syne', ui-sans-serif, Georgia, serif;
+}
+
+@layer base {
+  html, body {
+    width: 100vw;
+    margin: 0;
+    padding: 0;
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  body {
+    overscroll-behavior: none;
+    min-height: max(884px, 100dvh);
+  }
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+}
+
+::-webkit-scrollbar { display: none; }

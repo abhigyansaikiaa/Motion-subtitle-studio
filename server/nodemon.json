@@ -1,0 +1,8 @@
+{
+  "ignore": [
+    "uploads/*",
+    "outputs/*",
+    "app.db.json",
+    "temp/*"
+  ]
+}

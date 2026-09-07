@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MediaPipe Selfie Segmentation Test</title>
+  <script src="https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/selfie_segmentation.js" crossorigin="anonymous"></script>
+  <style>
+    body { font-family: sans-serif; background: #111; color: #fff; padding: 20px; }
+    .container { display: flex; flex-wrap: wrap; gap: 20px; }
+    .box { display: flex; flex-direction: column; align-items: center; }
+    video, canvas { max-width: 400px; border: 1px solid #333; background: #000; }
+    .controls { margin-bottom: 20px; padding: 15px; background: #222; border-radius: 8px; }
+    button { padding: 8px 16px; margin: 0 5px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h2>MediaPipe Selfie Segmentation Evaluation</h2>
+  
+  <div class="controls">
+    <input type="file" id="videoInput" accept="video/*">
+    <button id="playBtn">Play/Pause</button>
+    <div style="margin-top: 10px;">
+      FPS: <span id="fpsDisplay">0</span> | 
+      Process Time: <span id="timeDisplay">0</span>ms
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="box">
+      <h3>Original Video</h3>
+      <video id="videoElement" loop playsinline muted crossorigin="anonymous"></video>
+    </div>
+    
+    <div class="box">
+      <h3>Alpha Matte</h3>
+      <canvas id="matteCanvas"></canvas>
+    </div>
+    
+    <div class="box">
+      <h3>Composited (Behind Subject)</h3>
+      <canvas id="compositeCanvas"></canvas>
+    </div>
+  </div>
+
+  <script>
+    const videoElement = document.getElementById('videoElement');
+    const matteCanvas = document.getElementById('matteCanvas');
+    const matteCtx = matteCanvas.getContext('2d', { willReadFrequently: true });
+    
+    const compositeCanvas = document.getElementById('compositeCanvas');
+    const compositeCtx = compositeCanvas.getContext('2d', { willReadFrequently: true });
+    
+    const fpsDisplay = document.getElementById('fpsDisplay');
+    const timeDisplay = document.getElementById('timeDisplay');
+    
+    let isPlaying = false;
+    let framesProcessed = 0;
+    let lastFpsTime = performance.now();
+    let requestAnimationId = null;
+
+    // Initialize MediaPipe
+    const selfieSegmentation = new SelfieSegmentation({locateFile: (file) => {
+      return `https://cdn.jsdelivr.net/npm/@mediapipe/selfie_segmentation/${file}`;
+    }});
+    
+    selfieSegmentation.setOptions({
+      modelSelection: 1, // 1 for landscape/general, 0 for general but fast
+    });
+
+    selfieSegmentation.onResults(onResults);
+
+    function onResults(results) {
+      const t0 = performance.now();
+      
+      // Update canvas dimensions
+      if (matteCanvas.width !== results.image.width) {
+        matteCanvas.width = results.image.width;
+        matteCanvas.height = results.image.height;
+        compositeCanvas.width = results.image.width;
+        compositeCanvas.height = results.image.height;
+      }
+      
+      // 1. Draw Matte
+      matteCtx.save();
+      matteCtx.clearRect(0, 0, matteCanvas.width, matteCanvas.height);
+      matteCtx.drawImage(results.segmentationMask, 0, 0, matteCanvas.width, matteCanvas.height);
+      
+      // We can also colorize the mask to make it clearer
+      matteCtx.globalCompositeOperation = 'source-in';
+      matteCtx.fillStyle = '#ffffff';
+      matteCtx.fillRect(0, 0, matteCanvas.width, matteCanvas.height);
+      matteCtx.restore();
+      
+      // 2. Draw Composite (Text behind subject)
+      compositeCtx.save();
+      compositeCtx.clearRect(0, 0, compositeCanvas.width, compositeCanvas.height);
+      
+      // Draw background (video)
+      compositeCtx.drawImage(results.image, 0, 0, compositeCanvas.width, compositeCanvas.height);
+      
+      // Draw text behind subject
+      compositeCtx.fillStyle = 'rgba(255, 0, 0, 0.8)';
+      compositeCtx.font = 'bold 80px sans-serif';
+      compositeCtx.textAlign = 'center';
+      compositeCtx.textBaseline = 'middle';
+      compositeCtx.shadowColor = 'rgba(0,0,0,0.8)';
+      compositeCtx.shadowBlur = 10;
+      compositeCtx.fillText('BEHIND SUBJECT', compositeCanvas.width / 2, compositeCanvas.height / 2);
+      
+      // Draw foreground subject on top
+      compositeCtx.globalCompositeOperation = 'source-over';
+      // Create a temporary canvas for the masked subject
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = compositeCanvas.width;
+      tempCanvas.height = compositeCanvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      
+      tempCtx.drawImage(results.segmentationMask, 0, 0, tempCanvas.width, tempCanvas.height);
+      tempCtx.globalCompositeOperation = 'source-in';
+      tempCtx.drawImage(results.image, 0, 0, tempCanvas.width, tempCanvas.height);
+      
+      compositeCtx.drawImage(tempCanvas, 0, 0, compositeCanvas.width, compositeCanvas.height);
+      compositeCtx.restore();
+      
+      // Stats
+      const t1 = performance.now();
+      timeDisplay.textContent = Math.round(t1 - t0);
+      framesProcessed++;
+      
+      if (t1 - lastFpsTime >= 1000) {
+        fpsDisplay.textContent = framesProcessed;
+        framesProcessed = 0;
+        lastFpsTime = t1;
+      }
+    }
+
+    async function processVideoFrame() {
+      if (!videoElement.paused && !videoElement.ended) {
+        await selfieSegmentation.send({image: videoElement});
+      }
+      if (isPlaying) {
+        requestAnimationId = requestAnimationFrame(processVideoFrame);
+      }
+    }
+
+    document.getElementById('videoInput').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const url = URL.createObjectURL(file);
+        videoElement.src = url;
+        videoElement.onloadeddata = () => {
+          videoElement.play();
+          isPlaying = true;
+          processVideoFrame();
+        };
+      }
+    });
+    
+    document.getElementById('playBtn').addEventListener('click', () => {
+      if (videoElement.paused) {
+        videoElement.play();
+        isPlaying = true;
+        processVideoFrame();
+      } else {
+        videoElement.pause();
+        isPlaying = false;
+        if (requestAnimationId) cancelAnimationFrame(requestAnimationId);
+      }
+    });
+  </script>
+</body>
+</html>

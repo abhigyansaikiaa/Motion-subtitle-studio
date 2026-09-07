@@ -1,0 +1,27 @@
+﻿{
+    "screenshot":  {
+                       "name":  "projects/16876445237355691958/screens/dcd6b503aa510215c457bfc890b1d6c66060dd5553e3884075551ea5b68d123e/fileEntries/screenshot",
+                       "downloadUrl":  "https://lh3.googleusercontent.com/aida/AEtjO1VGqPiH_kLNuLqxXzhPbwHv_uzg77GwepXTMMsQYsxjSmFi77gzwJnBkg1_U5ImZSs1d0QGn-rgYsCWjgkZFmPP6zsE1pZngqR-jxV5T6lByr_XWxsUKBNBY6KZxVbT_Nm_RKtH-zVc7j0NWq9EjaQv6PfDEK4oqZxb3r2ZZntw-auz8hXpQGWI_2-gUVLCt_-5asq5vMftrcY2yqdMZsQBvt6qsGN8tpVEHXDAKE1sbPTVyZIcxarJx2WU"
+                   },
+    "htmlCode":  {
+                     "name":  "projects/16876445237355691958/screens/3ad6e2b906084225843730ea81a5d292/fileEntries/html",
+                     "downloadUrl":  "https://contribution.usercontent.google.com/download?c=CgthaWRhX2NvZGVmeBJ8Eh1hcHBfY29tcGFuaW9uX2dlbmVyYXRlZF9maWxlcxpbCiVodG1sXzAwMDY1YWFkMThiZTliZDYwMmE5YjRmOWYyMzc3Nzc4EgsSBxDR_ZLBhBYYAZIBJAoKcHJvamVjdF9pZBIWQhQxNjg3NjQ0NTIzNzM1NTY5MTk1OA\u0026filename=\u0026opi=89354086",
+                     "mimeType":  "image/svg+xml"
+                 },
+    "id":  "3ad6e2b906084225843730ea81a5d292",
+    "generatedBy":  "interactive_ui_controller",
+    "width":  "512",
+    "height":  "512",
+    "title":  "Reel Type Wordmark",
+    "prompt":  "Brand logo. - Primary color: #842327\n- Font: newsreader\n- Mode: light\n- Roundness: rounded-sm\n",
+    "name":  "projects/16876445237355691958/screens/3ad6e2b906084225843730ea81a5d292",
+    "theme":  {
+
+              },
+    "screenType":  "IMAGE",
+    "screenMetadata":  {
+                           "agentType":  "PRO_AGENT",
+                           "status":  "COMPLETE",
+                           "displayMode":  "SVG"
+                       }
+}

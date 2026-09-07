@@ -1,0 +1,339 @@
+{
+  "theme": {
+    "colorMode": "DARK",
+    "font": "NEWSREADER",
+    "roundness": "ROUND_FOUR",
+    "customColor": "#d97706",
+    "headlineFont": "NEWSREADER",
+    "bodyFont": "PLUS_JAKARTA_SANS",
+    "labelFont": "PLUS_JAKARTA_SANS",
+    "namedColors": {
+      "tertiary_fixed": "#e7e2d8",
+      "surface_tint": "#ffb77d",
+      "on_tertiary_fixed_variant": "#49473f",
+      "tertiary": "#cbc6bc",
+      "surface_variant": "#343439",
+      "inverse_primary": "#904d00",
+      "secondary": "#cac6be",
+      "on_error_container": "#ffdad6",
+      "on_secondary_fixed_variant": "#484740",
+      "on_secondary": "#31302b",
+      "surface_container_highest": "#343439",
+      "outline_variant": "#554336",
+      "on_primary": "#4d2600",
+      "primary_fixed_dim": "#ffb77d",
+      "on_primary_container": "#432100",
+      "surface_container_high": "#292a2e",
+      "on_tertiary_fixed": "#1d1c15",
+      "primary": "#ffb77d",
+      "inverse_surface": "#e3e2e7",
+      "on_secondary_fixed": "#1c1c16",
+      "tertiary_fixed_dim": "#cbc6bc",
+      "secondary_fixed_dim": "#cac6be",
+      "surface": "#121317",
+      "outline": "#a38c7c",
+      "on_tertiary_container": "#2b2a23",
+      "surface_container_low": "#1a1b20",
+      "on_surface_variant": "#dbc2b0",
+      "surface_container_lowest": "#0d0e12",
+      "inverse_on_surface": "#2f3035",
+      "secondary_fixed": "#e6e2d9",
+      "primary_fixed": "#ffdcc3",
+      "on_primary_fixed": "#2f1500",
+      "primary_container": "#d97707",
+      "on_error": "#690005",
+      "on_secondary_container": "#b8b5ad",
+      "on_primary_fixed_variant": "#6e3900",
+      "secondary_container": "#484740",
+      "error_container": "#93000a",
+      "surface_container": "#1f1f24",
+      "on_surface": "#e3e2e7",
+      "surface_dim": "#121317",
+      "error": "#ffb4ab",
+      "tertiary_container": "#949088",
+      "on_tertiary": "#32302a",
+      "surface_bright": "#38393d",
+      "on_background": "#e3e2e7",
+      "background": "#121317"
+    },
+    "colorVariant": "FIDELITY",
+    "overridePrimaryColor": "#d97706",
+    "overrideSecondaryColor": "#f3efe6",
+    "overrideTertiaryColor": "#9e9a91",
+    "overrideNeutralColor": "#0d0e12",
+    "spacingScale": 2,
+    "typography": {
+      "headline-md": {
+        "fontFamily": "Newsreader",
+        "fontSize": "22px",
+        "fontWeight": "500",
+        "lineHeight": "28px",
+        "letterSpacing": "-0.005em"
+      },
+      "body-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "14px",
+        "fontWeight": "400",
+        "lineHeight": "22px"
+      },
+      "body-lg": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "16px",
+        "fontWeight": "400",
+        "lineHeight": "26px",
+        "letterSpacing": "-0.005em"
+      },
+      "body-sm": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "12px",
+        "fontWeight": "400",
+        "lineHeight": "18px"
+      },
+      "label-sm": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "10px",
+        "fontWeight": "600",
+        "lineHeight": "14px",
+        "letterSpacing": "0.06em"
+      },
+      "timecode-mono": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "11px",
+        "fontWeight": "500",
+        "lineHeight": "14px",
+        "letterSpacing": "0.08em"
+      },
+      "headline-lg": {
+        "fontFamily": "Newsreader",
+        "fontSize": "32px",
+        "fontWeight": "400",
+        "lineHeight": "40px",
+        "letterSpacing": "-0.01em"
+      },
+      "display-hero-mobile": {
+        "fontFamily": "Newsreader",
+        "fontSize": "38px",
+        "fontWeight": "400",
+        "lineHeight": "44px",
+        "letterSpacing": "-0.015em"
+      },
+      "display-hero": {
+        "fontFamily": "Newsreader",
+        "fontSize": "56px",
+        "fontWeight": "400",
+        "lineHeight": "64px",
+        "letterSpacing": "-0.02em"
+      },
+      "headline-sm": {
+        "fontFamily": "Newsreader",
+        "fontSize": "18px",
+        "fontWeight": "500",
+        "lineHeight": "24px"
+      },
+      "headline-lg-mobile": {
+        "fontFamily": "Newsreader",
+        "fontSize": "26px",
+        "fontWeight": "400",
+        "lineHeight": "32px",
+        "letterSpacing": "-0.01em"
+      },
+      "label-md": {
+        "fontFamily": "Plus Jakarta Sans",
+        "fontSize": "12px",
+        "fontWeight": "600",
+        "lineHeight": "16px",
+        "letterSpacing": "0.04em"
+      }
+    },
+    "spacing": {
+      "space-2xs": "0.125rem",
+      "space-xl": "2rem",
+      "timeline-track-height": "1.75rem",
+      "space-xs": "0.25rem",
+      "space-md": "0.75rem",
+      "space-lg": "1.5rem",
+      "space-sm": "0.5rem",
+      "dock-padding": "0.75rem",
+      "gutter-workspace": "1px",
+      "panel-header-height": "2.5rem",
+      "space-2xl": "3rem",
+      "space-base": "1rem"
+    },
+    "headlineFontFamily": "Newsreader",
+    "bodyFontFamily": "Plus Jakarta Sans",
+    "labelFontFamily": "Plus Jakarta Sans"
+  },
+  "designSystem": {
+    "name": "assets/77e63c8a3d894cb1bb3dd1f4ab34695e",
+    "designSystem": {
+      "displayName": "Kinetic Editorial Foundry",
+      "styleGuidelines": "### 🎨 Visual Identity: Safe\n- **Palette & Typography:** A disciplined dark editorial workspace pairing a literary serif headline with clear grotesk body typography, anchored by subtle saffron accents.\n\n## Brand & Style\n\nThis design system embodies the tension between an artisanal type foundry’s archival reverence and an avant-garde motion studio’s surgical precision. Designed for film directors, editorial typographers, motion designers, and high-craft content creators, it repudiates standard tech-industry tropes—discarding rounded SaaS pills, generic gradient glows, and hollow badges in favor of architectural density, typographic gravitas, and disciplined restraint.\n\nThe aesthetic philosophy draws on traditional broadsheet publishing, Swiss typographic grids, and professional post-production master suites:\n- **Disciplined Dark Editorial:** Dark canvases built from dense carbon and obsidian rather than cold blue-gray tech slates, illuminated by warm cream print papers and surgical saffron points.\n- **Craft & Tactility:** Hairline titanium dividers, deliberate micro-radii, and mechanical metric readouts evoke calibrated studio gear and bespoke letterpress blocks.\n- **Quiet Authority:** Interfaces favor information density, precise line weights, and high-fidelity typographic hierarchy over loud accent colors or ornamental motion.\n\n## Layout & Spacing\n\nThe layout treats the screen as an architectural master desk composed of three non-overlapping panes:\n\n- **Global Layout Engine:** \n  - Uses an exact-fit flex/grid workbench with zero body margins.\n  - Subdivided by `1px` structural hairline seams (`#262933`) instead of floating gutters.\n  - Left dock (Asset Library/Script Analysis): 280px–360px fixed width.\n  - Central Stage (Cinema Canvas & Timeline Master): fluid flex-1 with viewport preview centered.\n  - Right dock (Type Foundry Inspector & Kinetic Engine): 320px fixed width.\n\n- **Micro Spacing Units:**\n  - Built on a strict 4px horizontal and vertical rhythm.\n  - Form fields, sliders, and coordinate controls use dense `0.5rem` and `0.75rem` inner padding to maximize visual density.\n\n- **Responsive Adaptations:**\n  - **Desktop (1280px+):** Full tripartite workbench open simultaneously.\n  - **Tablet (768px - 1279px):** Timeline docks beneath canvas; inspector collapses into an off-canvas drawer with tabbed navigation.\n  - **Mobile (< 768px):** Dedicated preview mode. Canvas occupies top 45vh; timeline transforms into a sequential caption step-card list; properties open in bottom sheets.\n\n## Elevation & Depth\n\nThis system intentionally rejects bulbous blur shadows and diffuse colorful halos. Elevation is communicated through architectural surface steps and razor-sharp borders.\n\n- **Tonal Stepping:**\n  - **Ground Floor (`#0D0E12`):** Primary canvas, background gutter boundaries, and workspace perimeter.\n  - **Panels & Docks (`#14161C`):** Stable sidebars, caption list items, and inspector groupings.\n  - **Sub-Panels & Inputs (`#1A1D24`):** Text fields, segmented controls, timeline track rails, and modal containers.\n  - **Overlays & Tooltips (`#22252E`):** Ephemeral contextual menus, dropdown items, and floating tool handles.\n\n- **Hairline Framing:** Depth is defined by `1px` inner and outer borders colored `#262933`. Interactive hover states shift this border to `#3D4251`, while active and focused states utilize saffron `#D97706`.\n\n- **Shadow Profile:** Shadows are reserved exclusively for floating dialogs and contextual popovers:\n  - `box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px #262933;`\n\n## Components\n\n### Buttons\n- **Primary Action (Render/Export):** Solid `#F3EFE6` background with `#0D0E12` text in `Plus Jakarta Sans` 600 weight. Micro-radius (4px). On hover: brightness shifts to 92% cream (`#E5E0D5`).\n- **Secondary Tool Button:** Transparent background, `1px solid #262933`, `#F3EFE6` text. Hover: `#1A1D24` surface, `#3D4251` border.\n- **Active / Accent Button:** Transparent background, `1px solid #D97706`, text `#D97706`. Hover: subtle background tint `rgba(217, 119, 6, 0.08)`.\n\n### Inputs & Scrubbable Fields\n- **Numerical Scrubbers (Tracking, Leading, Kerning, Time):** `#14161C` surface, `1px solid #262933`, monospaced text. Label placed above in `label-sm` with `#9E9A91` tone.\n- **Focus State:** 1px perimeter glow in `#D97706` without outer offset rings.\n- **Interactive Drag:** Left/right dragging reveals a micro horizontal saffron indicator beneath the numerical read-out.\n\n### Timeline Track Items & Caption Blocks\n- **Caption Block (Inactive):** `#1A1D24` container, `1px solid #262933`, Newsreader excerpt rendered in `#F3EFE6`.\n- **Caption Block (Selected):** Border illuminates to `#D97706` with an inner 2px saffron accent line along the top edge.\n- **Waveform & Keyframe Diamonds:** Keyframe points are 6x6px rotated squares in `#D97706`. Audio waveforms are rendered in `#262933` with playback highlight in `#F3EFE6`.\n\n### Chips & Metadata Badges\n- **Editorial Chips:** 4px radius, `border: 1px solid #262933`, `#14161C` fill. Text in `label-sm` uppercase, `#9E9A91`.\n- **Active State:** `#F3EFE6` text, `#3D4251` border. No rounded pill styles.\n\n### Dropdowns & Menus\n- **Menu Panels:** Background `#14161C`, border `1px solid #262933`, corner radius 4px.\n- **Menu Items:** 28px height, `Plus Jakarta Sans` 12px. Hover state background `#1A1D24` with warm cream typography. Dividers are `#262933` single-pixel rules.\n\n### Checkboxes & Toggle Switches\n- **Checkboxes:** 14px square, `1px solid #3D4251`, background `#14161C`. Checked state features `#D97706` fill with an obsidian geometric mark.\n- **Toggle Switches:** Replaced with two-state segmented block buttons (e.g., `[ AUTO | MANUAL ]`) wrapped in a single hairline frame rather than sliding phone-style pill toggles.",
+      "theme": {
+        "colorMode": "DARK",
+        "font": "NEWSREADER",
+        "roundness": "ROUND_FOUR",
+        "customColor": "#d97706",
+        "headlineFont": "NEWSREADER",
+        "bodyFont": "PLUS_JAKARTA_SANS",
+        "labelFont": "PLUS_JAKARTA_SANS",
+        "namedColors": {
+          "on_tertiary_fixed_variant": "#49473f",
+          "inverse_surface": "#e3e2e7",
+          "outline_variant": "#554336",
+          "secondary_fixed_dim": "#cac6be",
+          "secondary_fixed": "#e6e2d9",
+          "surface_container_high": "#292a2e",
+          "surface_container_highest": "#343439",
+          "surface_variant": "#343439",
+          "surface_dim": "#121317",
+          "surface_bright": "#38393d",
+          "on_primary_fixed": "#2f1500",
+          "on_primary_fixed_variant": "#6e3900",
+          "on_primary": "#4d2600",
+          "on_error": "#690005",
+          "on_tertiary_fixed": "#1d1c15",
+          "secondary": "#cac6be",
+          "error": "#ffb4ab",
+          "inverse_primary": "#904d00",
+          "on_tertiary": "#32302a",
+          "tertiary_container": "#949088",
+          "primary_fixed_dim": "#ffb77d",
+          "surface_container": "#1f1f24",
+          "on_primary_container": "#432100",
+          "surface": "#121317",
+          "outline": "#a38c7c",
+          "on_tertiary_container": "#2b2a23",
+          "surface_container_low": "#1a1b20",
+          "primary_container": "#d97707",
+          "primary_fixed": "#ffdcc3",
+          "tertiary_fixed": "#e7e2d8",
+          "primary": "#ffb77d",
+          "on_error_container": "#ffdad6",
+          "surface_container_lowest": "#0d0e12",
+          "on_secondary_fixed_variant": "#484740",
+          "on_background": "#e3e2e7",
+          "background": "#121317",
+          "on_secondary": "#31302b",
+          "inverse_on_surface": "#2f3035",
+          "error_container": "#93000a",
+          "tertiary": "#cbc6bc",
+          "on_surface_variant": "#dbc2b0",
+          "on_surface": "#e3e2e7",
+          "on_secondary_fixed": "#1c1c16",
+          "surface_tint": "#ffb77d",
+          "on_secondary_container": "#b8b5ad",
+          "tertiary_fixed_dim": "#cbc6bc",
+          "secondary_container": "#484740"
+        },
+        "designMd": "---\nname: Kinetic Editorial Foundry\ncolors:\n  surface: '#121317'\n  surface-dim: '#121317'\n  surface-bright: '#38393d'\n  surface-container-lowest: '#0d0e12'\n  surface-container-low: '#1a1b20'\n  surface-container: '#1f1f24'\n  surface-container-high: '#292a2e'\n  surface-container-highest: '#343439'\n  on-surface: '#e3e2e7'\n  on-surface-variant: '#dbc2b0'\n  inverse-surface: '#e3e2e7'\n  inverse-on-surface: '#2f3035'\n  outline: '#a38c7c'\n  outline-variant: '#554336'\n  surface-tint: '#ffb77d'\n  primary: '#ffb77d'\n  on-primary: '#4d2600'\n  primary-container: '#d97707'\n  on-primary-container: '#432100'\n  inverse-primary: '#904d00'\n  secondary: '#cac6be'\n  on-secondary: '#31302b'\n  secondary-container: '#484740'\n  on-secondary-container: '#b8b5ad'\n  tertiary: '#cbc6bc'\n  on-tertiary: '#32302a'\n  tertiary-container: '#949088'\n  on-tertiary-container: '#2b2a23'\n  error: '#ffb4ab'\n  on-error: '#690005'\n  error-container: '#93000a'\n  on-error-container: '#ffdad6'\n  primary-fixed: '#ffdcc3'\n  primary-fixed-dim: '#ffb77d'\n  on-primary-fixed: '#2f1500'\n  on-primary-fixed-variant: '#6e3900'\n  secondary-fixed: '#e6e2d9'\n  secondary-fixed-dim: '#cac6be'\n  on-secondary-fixed: '#1c1c16'\n  on-secondary-fixed-variant: '#484740'\n  tertiary-fixed: '#e7e2d8'\n  tertiary-fixed-dim: '#cbc6bc'\n  on-tertiary-fixed: '#1d1c15'\n  on-tertiary-fixed-variant: '#49473f'\n  background: '#121317'\n  on-background: '#e3e2e7'\n  surface-variant: '#343439'\ntypography:\n  display-hero:\n    fontFamily: Newsreader\n    fontSize: 56px\n    fontWeight: '400'\n    lineHeight: 64px\n    letterSpacing: -0.02em\n  display-hero-mobile:\n    fontFamily: Newsreader\n    fontSize: 38px\n    fontWeight: '400'\n    lineHeight: 44px\n    letterSpacing: -0.015em\n  headline-lg:\n    fontFamily: Newsreader\n    fontSize: 32px\n    fontWeight: '400'\n    lineHeight: 40px\n    letterSpacing: -0.01em\n  headline-lg-mobile:\n    fontFamily: Newsreader\n    fontSize: 26px\n    fontWeight: '400'\n    lineHeight: 32px\n    letterSpacing: -0.01em\n  headline-md:\n    fontFamily: Newsreader\n    fontSize: 22px\n    fontWeight: '500'\n    lineHeight: 28px\n    letterSpacing: -0.005em\n  headline-sm:\n    fontFamily: Newsreader\n    fontSize: 18px\n    fontWeight: '500'\n    lineHeight: 24px\n  body-lg:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 16px\n    fontWeight: '400'\n    lineHeight: 26px\n    letterSpacing: -0.005em\n  body-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 14px\n    fontWeight: '400'\n    lineHeight: 22px\n  body-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: '400'\n    lineHeight: 18px\n  label-md:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 12px\n    fontWeight: '600'\n    lineHeight: 16px\n    letterSpacing: 0.04em\n  label-sm:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 10px\n    fontWeight: '600'\n    lineHeight: 14px\n    letterSpacing: 0.06em\n  timecode-mono:\n    fontFamily: Plus Jakarta Sans\n    fontSize: 11px\n    fontWeight: '500'\n    lineHeight: 14px\n    letterSpacing: 0.08em\nrounded:\n  sm: 0.125rem\n  DEFAULT: 0.25rem\n  md: 0.375rem\n  lg: 0.5rem\n  xl: 0.75rem\n  full: 9999px\nspacing:\n  space-2xs: 0.125rem\n  space-xs: 0.25rem\n  space-sm: 0.5rem\n  space-md: 0.75rem\n  space-base: 1rem\n  space-lg: 1.5rem\n  space-xl: 2rem\n  space-2xl: 3rem\n  gutter-workspace: 1px\n  dock-padding: 0.75rem\n  panel-header-height: 2.5rem\n  timeline-track-height: 1.75rem\n---\n\n## Brand & Style\n\nThis design system embodies the tension between an artisanal type foundry’s archival reverence and an avant-garde motion studio’s surgical precision. Designed for film directors, editorial typographers, motion designers, and high-craft content creators, it repudiates standard tech-industry tropes—discarding rounded SaaS pills, generic gradient glows, and hollow badges in favor of architectural density, typographic gravitas, and disciplined restraint.\n\nThe aesthetic philosophy draws on traditional broadsheet publishing, Swiss typographic grids, and professional post-production master suites:\n- **Disciplined Dark Editorial:** Dark canvases built from dense carbon and obsidian rather than cold blue-gray tech slates, illuminated by warm cream print papers and surgical saffron points.\n- **Craft & Tactility:** Hairline titanium dividers, deliberate micro-radii, and mechanical metric readouts evoke calibrated studio gear and bespoke letterpress blocks.\n- **Quiet Authority:** Interfaces favor information density, precise line weights, and high-fidelity typographic hierarchy over loud accent colors or ornamental motion.\n\n## Colors\n\nThe palette simulates physical media under controlled studio lighting: warm off-white newsprint against deep obsidian voids, anchored by a deliberate saffron spark.\n\n### Color Roles & Application\n- **Obsidian Dark Void (`#0D0E12`):** Primary canvas surface. Establishes deep cinema blackness without true-black OLED clipping, allowing subtle surface stacking.\n- **Surface Elevation Levels:**\n  - Base Floor: `#0D0E12`\n  - Container / Layer 1: `#14161C`\n  - Floating / Layer 2: `#1A1D24`\n  - Active / Layer 3: `#22252E`\n- **Warm Editorial Cream (`#F3EFE6`):** The primary typographic ink and structural accent. Replaces sterile digital white with archival paper warmth.\n- **Saffron Spark (`#D97706`):** Reserved solely for active playheads, keyframe cursors, selected track states, and critical typographic emphasis points. Never used for large background floods.\n- **Titanium Boundary Lines (`#262933`):** 1px structural boundaries defining the layout grid, tool docks, and viewport frames.\n- **Subdued Editorial Paper (`#9E9A91`):** Secondary meta-labels, timecode readouts, non-selected track titles, and parameter sliders.\n\n## Typography\n\nTypographic character is derived from the collision between literary bookmaking and technical timeline readouts:\n\n- **Editorial Serifs (`Newsreader`):** Display sizes incorporate italicized cut-ins, ligatures, and optical sizing. Use Newsreader for major panel titles, quote overlays, active kinetic text samples, and empty-state broadsheets.\n- **Rationalist Grotesk (`Plus Jakarta Sans`):** Serves operational UI needs—inspector controls, layer trees, numerical scrubbing fields, button text, and property hierarchies.\n- **Punctuation & Case Standards:** Inspector titles, tracking controls, and timeline headers use strict uppercase with expanded tracking (`0.04em` to `0.08em`). Body copy maintains standard sentence casing. Avoid bolding serif headlines beyond 500 weight to preserve delicate thin strokes.\n\n## Layout & Spacing\n\nThe layout treats the screen as an architectural master desk composed of three non-overlapping panes:\n\n- **Global Layout Engine:** \n  - Uses an exact-fit flex/grid workbench with zero body margins.\n  - Subdivided by `1px` structural hairline seams (`#262933`) instead of floating gutters.\n  - Left dock (Asset Library/Script Analysis): 280px–360px fixed width.\n  - Central Stage (Cinema Canvas & Timeline Master): fluid flex-1 with viewport preview centered.\n  - Right dock (Type Foundry Inspector & Kinetic Engine): 320px fixed width.\n\n- **Micro Spacing Units:**\n  - Built on a strict 4px horizontal and vertical rhythm.\n  - Form fields, sliders, and coordinate controls use dense `0.5rem` and `0.75rem` inner padding to maximize visual density.\n\n- **Responsive Adaptations:**\n  - **Desktop (1280px+):** Full tripartite workbench open simultaneously.\n  - **Tablet (768px - 1279px):** Timeline docks beneath canvas; inspector collapses into an off-canvas drawer with tabbed navigation.\n  - **Mobile (< 768px):** Dedicated preview mode. Canvas occupies top 45vh; timeline transforms into a sequential caption step-card list; properties open in bottom sheets.\n\n## Elevation & Depth\n\nThis system intentionally rejects bulbous blur shadows and diffuse colorful halos. Elevation is communicated through architectural surface steps and razor-sharp borders.\n\n- **Tonal Stepping:**\n  - **Ground Floor (`#0D0E12`):** Primary canvas, background gutter boundaries, and workspace perimeter.\n  - **Panels & Docks (`#14161C`):** Stable sidebars, caption list items, and inspector groupings.\n  - **Sub-Panels & Inputs (`#1A1D24`):** Text fields, segmented controls, timeline track rails, and modal containers.\n  - **Overlays & Tooltips (`#22252E`):** Ephemeral contextual menus, dropdown items, and floating tool handles.\n\n- **Hairline Framing:** Depth is defined by `1px` inner and outer borders colored `#262933`. Interactive hover states shift this border to `#3D4251`, while active and focused states utilize saffron `#D97706`.\n\n- **Shadow Profile:** Shadows are reserved exclusively for floating dialogs and contextual popovers:\n  - `box-shadow: 0 4px 16px -2px rgba(0, 0, 0, 0.6), 0 0 0 1px #262933;`\n\n## Shapes\n\nThe shape system utilizes a restrained micro-radius (`0.25rem` / `4px`), delivering crisp precision reminiscent of machined hardware and film negative borders:\n\n- **Standard Inputs, Badges, and Buttons:** `border-radius: 0.25rem (4px)`.\n- **Containers, Modals, and Flyouts:** `border-radius: 0.5rem (8px)`.\n- **Keyframe Nodes, Diamond Anchors, and Timeline Scrubbers:** `border-radius: 0px` (sharp, geometric precision).\n- **Prohibited:** Never use full-radius pill shapes (`9999px`) or hyper-rounded cartoonish contours. Elements must feel crafted, measured, and machined.\n\n## Components\n\n### Buttons\n- **Primary Action (Render/Export):** Solid `#F3EFE6` background with `#0D0E12` text in `Plus Jakarta Sans` 600 weight. Micro-radius (4px). On hover: brightness shifts to 92% cream (`#E5E0D5`).\n- **Secondary Tool Button:** Transparent background, `1px solid #262933`, `#F3EFE6` text. Hover: `#1A1D24` surface, `#3D4251` border.\n- **Active / Accent Button:** Transparent background, `1px solid #D97706`, text `#D97706`. Hover: subtle background tint `rgba(217, 119, 6, 0.08)`.\n\n### Inputs & Scrubbable Fields\n- **Numerical Scrubbers (Tracking, Leading, Kerning, Time):** `#14161C` surface, `1px solid #262933`, monospaced text. Label placed above in `label-sm` with `#9E9A91` tone.\n- **Focus State:** 1px perimeter glow in `#D97706` without outer offset rings.\n- **Interactive Drag:** Left/right dragging reveals a micro horizontal saffron indicator beneath the numerical read-out.\n\n### Timeline Track Items & Caption Blocks\n- **Caption Block (Inactive):** `#1A1D24` container, `1px solid #262933`, Newsreader excerpt rendered in `#F3EFE6`.\n- **Caption Block (Selected):** Border illuminates to `#D97706` with an inner 2px saffron accent line along the top edge.\n- **Waveform & Keyframe Diamonds:** Keyframe points are 6x6px rotated squares in `#D97706`. Audio waveforms are rendered in `#262933` with playback highlight in `#F3EFE6`.\n\n### Chips & Metadata Badges\n- **Editorial Chips:** 4px radius, `border: 1px solid #262933`, `#14161C` fill. Text in `label-sm` uppercase, `#9E9A91`.\n- **Active State:** `#F3EFE6` text, `#3D4251` border. No rounded pill styles.\n\n### Dropdowns & Menus\n- **Menu Panels:** Background `#14161C`, border `1px solid #262933`, corner radius 4px.\n- **Menu Items:** 28px height, `Plus Jakarta Sans` 12px. Hover state background `#1A1D24` with warm cream typography. Dividers are `#262933` single-pixel rules.\n\n### Checkboxes & Toggle Switches\n- **Checkboxes:** 14px square, `1px solid #3D4251`, background `#14161C`. Checked state features `#D97706` fill with an obsidian geometric mark.\n- **Toggle Switches:** Replaced with two-state segmented block buttons (e.g., `[ AUTO | MANUAL ]`) wrapped in a single hairline frame rather than sliding phone-style pill toggles.",
+        "colorVariant": "FIDELITY",
+        "overridePrimaryColor": "#d97706",
+        "overrideSecondaryColor": "#f3efe6",
+        "overrideTertiaryColor": "#9e9a91",
+        "overrideNeutralColor": "#0d0e12",
+        "spacingScale": 2,
+        "typography": {
+          "display-hero-mobile": {
+            "fontFamily": "Newsreader",
+            "fontSize": "38px",
+            "fontWeight": "400",
+            "lineHeight": "44px",
+            "letterSpacing": "-0.015em"
+          },
+          "display-hero": {
+            "fontFamily": "Newsreader",
+            "fontSize": "56px",
+            "fontWeight": "400",
+            "lineHeight": "64px",
+            "letterSpacing": "-0.02em"
+          },
+          "headline-sm": {
+            "fontFamily": "Newsreader",
+            "fontSize": "18px",
+            "fontWeight": "500",
+            "lineHeight": "24px"
+          },
+          "label-md": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "12px",
+            "fontWeight": "600",
+            "lineHeight": "16px",
+            "letterSpacing": "0.04em"
+          },
+          "label-sm": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "10px",
+            "fontWeight": "600",
+            "lineHeight": "14px",
+            "letterSpacing": "0.06em"
+          },
+          "headline-lg-mobile": {
+            "fontFamily": "Newsreader",
+            "fontSize": "26px",
+            "fontWeight": "400",
+            "lineHeight": "32px",
+            "letterSpacing": "-0.01em"
+          },
+          "headline-lg": {
+            "fontFamily": "Newsreader",
+            "fontSize": "32px",
+            "fontWeight": "400",
+            "lineHeight": "40px",
+            "letterSpacing": "-0.01em"
+          },
+          "timecode-mono": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "11px",
+            "fontWeight": "500",
+            "lineHeight": "14px",
+            "letterSpacing": "0.08em"
+          },
+          "body-md": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "14px",
+            "fontWeight": "400",
+            "lineHeight": "22px"
+          },
+          "headline-md": {
+            "fontFamily": "Newsreader",
+            "fontSize": "22px",
+            "fontWeight": "500",
+            "lineHeight": "28px",
+            "letterSpacing": "-0.005em"
+          },
+          "body-lg": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "16px",
+            "fontWeight": "400",
+            "lineHeight": "26px",
+            "letterSpacing": "-0.005em"
+          },
+          "body-sm": {
+            "fontFamily": "Plus Jakarta Sans",
+            "fontSize": "12px",
+            "fontWeight": "400",
+            "lineHeight": "18px"
+          }
+        },
+        "spacing": {
+          "space-sm": "0.5rem",
+          "timeline-track-height": "1.75rem",
+          "panel-header-height": "2.5rem",
+          "gutter-workspace": "1px",
+          "space-2xs": "0.125rem",
+          "space-xl": "2rem",
+          "space-xs": "0.25rem",
+          "dock-padding": "0.75rem",
+          "space-2xl": "3rem",
+          "space-base": "1rem",
+          "space-md": "0.75rem",
+          "space-lg": "1.5rem"
+        },
+        "headlineFontFamily": "Newsreader",
+        "bodyFontFamily": "Plus Jakarta Sans",
+        "labelFontFamily": "Plus Jakarta Sans"
+      }
+    },
+    "version": "1"
+  }
+}
