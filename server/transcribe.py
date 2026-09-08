@@ -33,7 +33,7 @@ def main():
         t1 = time.time()
         
         transcribe_args = {"word_timestamps": True}
-        if language:
+        if language and language.lower() != "auto":
             transcribe_args["language"] = language
             
         segments, info = model.transcribe(input_path, **transcribe_args)

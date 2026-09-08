@@ -65,7 +65,7 @@ function runPythonWorker(scriptPath, inputPath, language = null) {
   return new Promise((resolve, reject) => {
     // Spawn python directly.
     const args = [scriptPath, inputPath];
-    if (language) {
+    if (language && language !== 'auto') {
       args.push('--language', language);
     }
     const py = spawn('python', args);
