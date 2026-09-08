@@ -5,6 +5,7 @@ import { AuthPage } from './pages/AuthPage';
 import { RenderView } from './components/studio/render-view';
 import { useAppStore } from './lib/store';
 import { api } from './lib/api';
+import { supabase } from './lib/supabase';
 
 function App() {
   const [route, setRoute] = useState(window.location.hash || '#/');
@@ -20,18 +21,37 @@ function App() {
     return () => window.removeEventListener('hashchange', handleHashChange);
   }, []);
 
-  // Hydrate user from persisted token on startup
+  // Hydrate user from Supabase session
   useEffect(() => {
-    if (token) {
-      api.getMe()
-        .then(res => setUser(res.user))
-        .catch(() => {
-          // Token is invalid/expired — clear it so user is prompted to log in again
-          setToken(null);
-          setUser(null);
-        });
-    }
-  }, []); // Run once on mount only
+    // Initial fetch
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setToken(session?.access_token || null);
+      if (session) {
+        api.getMe()
+          .then(res => setUser(res.user))
+          .catch(() => {
+            setToken(null);
+            setUser(null);
+          });
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setToken(session?.access_token || null);
+      if (session) {
+        api.getMe()
+          .then(res => setUser(res.user))
+          .catch(() => {
+            setToken(null);
+            setUser(null);
+          });
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Studio route — requires authentication
   if (route.startsWith('#/studio')) {

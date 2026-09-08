@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { api } from '../lib/api';
+import { supabase } from '../lib/supabase';
 import { useAppStore } from '../lib/store';
 
 type Mode = 'login' | 'signup';
@@ -35,22 +36,47 @@ export function AuthPage() {
     setIsLoading(true);
 
     try {
-      let result: { token: string; user: any };
-
       if (mode === 'login') {
-        result = await api.login(email, password);
+        const { data, error: loginError } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        if (loginError) throw loginError;
+        setToken(data.session?.access_token || null);
+        const u = data.user;
+        setUser(u ? {
+          id: u.id,
+          email: u.email || '',
+          name: u.user_metadata?.name || '',
+          credits: u.user_metadata?.credits || 0,
+          videos_used: u.user_metadata?.videos_used || 0
+        } : null);
       } else {
         if (!name.trim()) {
           setError('Please enter your name.');
           setIsLoading(false);
           return;
         }
-        result = await api.signup(email, password, name);
+        const { data, error: signupError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name
+            }
+          }
+        });
+        if (signupError) throw signupError;
+        setToken(data.session?.access_token || null);
+        const u = data.user;
+        setUser(u ? {
+          id: u.id,
+          email: u.email || '',
+          name: u.user_metadata?.name || '',
+          credits: u.user_metadata?.credits || 0,
+          videos_used: u.user_metadata?.videos_used || 0
+        } : null);
       }
-
-      // Store token in localStorage and Zustand
-      setToken(result.token);
-      setUser(result.user);
 
       // Redirect to Studio
       window.location.hash = '#/studio';

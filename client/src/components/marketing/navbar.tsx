@@ -2,13 +2,15 @@ import React from 'react';
 import { useAppStore } from '../../lib/store';
 import { Sparkles, ArrowRight } from 'lucide-react';
 import { motion } from 'motion/react';
+import { supabase } from '../../lib/supabase';
 
 export function Navbar() {
   const user = useAppStore(state => state.user);
   const setToken = useAppStore(state => state.setToken);
   const setUser = useAppStore(state => state.setUser);
 
-  function handleLogout() {
+  async function handleLogout() {
+    await supabase.auth.signOut();
     setToken(null);
     setUser(null);
     window.location.hash = '#/';

@@ -3,6 +3,17 @@ import type { Segment, Word, TemplateDefinition } from '../../lib/types';
 import { cn } from '../../lib/utils';
 import { AnimatedWord } from './caption-engine';
 
+export interface LayoutProps {
+  segment: Segment;
+  templateConfig: TemplateDefinition;
+  time: any;
+  dynamicBaseSize: number;
+  dynamicHeroSize: number;
+  videoScale: number;
+  alignment: string;
+  targetDepth?: 'all' | 'front' | 'behind';
+}
+
 export const CountUpWord = ({
   word,
   index,
@@ -101,7 +112,7 @@ const getGroupedWords = (words: Word[]) => {
 };
 
 // ─── HERO INTERRUPTION LAYOUT ───────────────────────────────────────────────
-export const HeroInterruptionLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const HeroInterruptionLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const groups = getGroupedWords(segment.words);
   const heroFontFamily = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
   const heroFontWeight = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
@@ -132,7 +143,7 @@ export const HeroInterruptionLayout = ({ segment, templateConfig, time, dynamicB
 };
 
 // ─── CORNER HERO LAYOUT ───────────────────────────────────────────────────
-export const CornerHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const CornerHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const words = segment.words;
   const heroWords = words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
   const baseWords = words.filter(w => w.emphasis !== 'hero' && !w.isNumberGroup);
@@ -172,7 +183,7 @@ export const CornerHeroLayout = ({ segment, templateConfig, time, dynamicBaseSiz
 };
 
 // ─── SPLIT HERO LAYOUT ────────────────────────────────────────────────────
-export const SplitHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const SplitHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const groups = getGroupedWords(segment.words);
   const heroFontFamily = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
 
@@ -198,7 +209,7 @@ export const SplitHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize
 };
 
 // ─── GIANT BG WORD LAYOUT ─────────────────────────────────────────────────
-export const GiantBgWordLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const GiantBgWordLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const heroWords = segment.words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
   const heroFontFamily = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
   const bgSize = templateConfig.bgWordSize ? templateConfig.bgWordSize * dynamicBaseSize : dynamicHeroSize * 3;
@@ -229,7 +240,7 @@ export const GiantBgWordLayout = ({ segment, templateConfig, time, dynamicBaseSi
 };
 
 // ─── SENTENCE HERO LAYOUT ─────────────────────────────────────────────────
-export const SentenceHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const SentenceHeroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const groups = getGroupedWords(segment.words);
   const heroFontFamily = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
 
@@ -260,7 +271,7 @@ export const SentenceHeroLayout = ({ segment, templateConfig, time, dynamicBaseS
 };
 
 // ─── HERO MICRO LAYOUT ────────────────────────────────────────────────────
-export const HeroMicroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: any) => {
+export const HeroMicroLayout = ({ segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, alignment, targetDepth = 'all' }: LayoutProps) => {
   const groups = getGroupedWords(segment.words);
   const heroFontFamily = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
 

@@ -155,6 +155,7 @@ const EditorialLayout = ({
   dynamicHeroSize,
   videoScale,
   alignment,
+  targetDepth = 'all',
 }: {
   segment: Segment;
   templateConfig: TemplateDefinition;
@@ -163,6 +164,7 @@ const EditorialLayout = ({
   dynamicHeroSize: number;
   videoScale: number;
   alignment: string;
+  targetDepth?: 'all' | 'front' | 'behind';
 }) => {
   const words = segment.words;
 
@@ -221,6 +223,7 @@ const EditorialLayout = ({
               time={time}
               videoScale={videoScale}
               forceColor={templateConfig.baseColor}
+              targetDepth={targetDepth}
             />
           ))}
         </div>
@@ -249,6 +252,7 @@ const EditorialLayout = ({
               forceFontFamily={heroFontFamily}
               forceFontWeight={heroFontWeight}
               forceFontStyle={heroFontStyle}
+              targetDepth={targetDepth}
             />
           ))}
         </div>
@@ -280,6 +284,7 @@ const EditorialLayout = ({
               time={time}
               videoScale={videoScale}
               forceColor={templateConfig.baseColor}
+              targetDepth={targetDepth}
             />
           ))}
         </div>
@@ -292,7 +297,7 @@ import { LayoutRegistry } from './caption-layouts';
 
 function injectNumberGroups(segments: Segment[]): Segment[] {
   return segments.map(seg => {
-    let currentGroupId: string | null = null;
+    let currentGroupId: string | undefined = undefined;
     let inGroup = false;
     
     const newWords = seg.words.map((w, index) => {
@@ -318,7 +323,7 @@ function injectNumberGroups(segments: Segment[]): Segment[] {
           inGroup = false;
         } else {
           inGroup = false;
-          currentGroupId = null;
+          currentGroupId = undefined;
         }
       }
       return newWord;

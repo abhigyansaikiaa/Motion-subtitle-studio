@@ -83,7 +83,7 @@ export interface TemplateDefinition {
   
   // Layout & Composition
   alignment: 'left' | 'center' | 'right';
-  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic';
+  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro';
   letterSpacing: string;
   lineHeight: number;
   
