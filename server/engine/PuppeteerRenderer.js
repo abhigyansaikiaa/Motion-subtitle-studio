@@ -16,8 +16,8 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
   // Expose a function to catch when rendering is done (if we want to signal from UI)
   // For now we'll just wait for `renderReady`
   
-  const port = process.env.PORT || 3000;
-  const clientUrl = `http://localhost:${port}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
+  const clientOrigin = process.env.CLIENT_ORIGIN || `http://localhost:${process.env.PORT || 3000}`;
+  const clientUrl = `${clientOrigin}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
   await page.goto(clientUrl, { waitUntil: 'networkidle0' });
 
   // Wait for React to mount and say it's ready
