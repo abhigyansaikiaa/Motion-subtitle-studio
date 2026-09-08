@@ -1,4 +1,4 @@
-const { db } = require('../auth');
+const { supabase } = require('../supabase');
 const { deductCredits, incrementVideosUsed } = require('../credits');
 const { renderVideo } = require('../render');
 const path = require('path');
@@ -6,71 +6,96 @@ const fs = require('fs');
 
 const COST = 100;
 
-/**
- * 1. createJob(userId, projectId, videoId, segments, style)
- * 2. beginProcessing(jobId, inputPath, outputPath)
- */
+async function getJob(jobId) {
+  const { data: job, error } = await supabase
+    .from('jobs')
+    .select('*')
+    .eq('id', jobId)
+    .single();
 
-function getJob(jobId) {
-  const data = db.get();
-  return data.jobs.find(j => j.id === jobId) || null;
+  if (error || !job) return null;
+  return formatJobInfo(job);
 }
 
-function getActiveJobForUser(userId) {
-  const data = db.get();
-  return data.jobs.find(j => j.userId === userId && !['COMPLETED', 'FAILED'].includes(j.status)) || null;
+async function getActiveJobForUser(userId) {
+  // Query jobs where status is not COMPLETED or FAILED
+  const { data: jobs, error } = await supabase
+    .from('jobs')
+    .select('*')
+    .eq('user_id', userId)
+    .not('status', 'in', '("COMPLETED","FAILED")')
+    .order('created_at', { ascending: false })
+    .limit(1);
+
+  if (error || !jobs || jobs.length === 0) return null;
+  return formatJobInfo(jobs[0]);
 }
 
-function createJob(userId, projectId, videoId, segments, style) {
-  const data = db.get();
-  
-  // Prevent duplicate active jobs for the same user
-  const existing = data.jobs.find(j => j.userId === userId && !['COMPLETED', 'FAILED'].includes(j.status));
-  if (existing) {
-    return existing; // Return existing instead of throwing, or let the caller decide
-  }
-
-  const job = {
-    id: 'job_' + Date.now() + Math.random().toString(36).substr(2, 5),
-    userId,
-    projectId,
-    videoId,
-    segments,
-    style,
-    status: 'QUEUED',
-    progress: 0,
-    message: 'Job queued...',
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+function formatJobInfo(j) {
+  return {
+    id: j.id,
+    userId: j.user_id,
+    projectId: j.project_id,
+    videoId: j.video_id,
+    segments: j.segments,
+    style: j.style,
+    status: j.status,
+    progress: j.progress,
+    message: j.message,
+    outputFilename: j.output_filename,
+    downloadUrl: j.download_url,
+    createdAt: j.created_at,
+    updatedAt: j.updated_at
   };
-
-  data.jobs.push(job);
-  db.save(data);
-  return job;
 }
 
-function updateJobState(jobId, status, progress, message) {
-  const data = db.get();
-  const job = data.jobs.find(j => j.id === jobId);
-  if (job) {
-    job.status = status;
-    job.progress = progress;
-    job.message = message;
-    job.updatedAt = new Date().toISOString();
-    db.save(data);
+async function createJob(userId, projectId, videoUuid, segments, style) {
+  // Check if existing active job
+  const existing = await getActiveJobForUser(userId);
+  if (existing) {
+    return existing;
   }
+
+  const { data: job, error } = await supabase
+    .from('jobs')
+    .insert({
+      user_id: userId,
+      project_id: projectId,
+      video_id: videoUuid,
+      segments: segments,
+      style: style,
+      status: 'QUEUED',
+      progress: 0,
+      message: 'Job queued...'
+    })
+    .select()
+    .single();
+
+  if (error || !job) throw new Error('Failed to create job');
+  return formatJobInfo(job);
+}
+
+async function updateJobState(jobId, status, progress, message) {
+  await supabase
+    .from('jobs')
+    .update({
+      status,
+      progress,
+      message,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', jobId);
 }
 
 // Background processing worker
-async function processJob(jobId, inputPath, outputPath) {
-  const data = db.get();
-  const job = data.jobs.find(j => j.id === jobId);
+async function processJob(jobId, inputPath, outputPath, outputB2Key) {
+  const job = await getJob(jobId);
   if (!job) return;
 
   try {
-    updateJobState(jobId, 'PROCESSING', 10, 'Preparing video matrix');
+    await updateJobState(jobId, 'PROCESSING', 10, 'Preparing video matrix');
     
-    // Simulate some stages since renderVideo handles everything internally right now
+    // Simulate stages (in background, non-blocking)
     setTimeout(() => updateJobState(jobId, 'RENDERING', 40, 'Speech cadence composition'), 1000);
     setTimeout(() => updateJobState(jobId, 'ENCODING', 70, `Rendering ${job.style} animation`), 3000);
 
@@ -80,39 +105,50 @@ async function processJob(jobId, inputPath, outputPath) {
 
     await renderVideo(inputPath, outputPath, job.segments, job.style, job.projectId, token);
 
+    // Upload output to B2
+    const storageProvider = require('../storage');
+    await storageProvider.uploadFile(outputPath, outputB2Key);
+
     // After success, atomically deduct credits
-    const latestData = db.get();
-    const user = latestData.users.find(u => u.id === job.userId);
+    const { checkCredits, deductCredits, incrementVideosUsed } = require('../credits');
+    const user = await checkCredits(job.userId);
+    
     if (!user || user.credits < COST) {
       throw new Error('Insufficient credits at completion');
     }
     
-    user.credits -= COST;
-    user.videos_used += 1;
+    await deductCredits(job.userId, COST);
+    await incrementVideosUsed(job.userId);
     
-    const finalJob = latestData.jobs.find(j => j.id === jobId);
-    if (finalJob) {
-      const downloadUrl = `/api/download/${path.basename(outputPath)}`;
-      finalJob.status = 'COMPLETED';
-      finalJob.progress = 100;
-      finalJob.message = 'Final 1080p MP4 encoding complete';
-      finalJob.outputFilename = path.basename(outputPath);
-      finalJob.downloadUrl = downloadUrl;
-      finalJob.updatedAt = new Date().toISOString();
-      db.save(latestData);
+    const downloadUrl = `/api/projects/${job.projectId}/download`;
+    
+    // Update job to COMPLETED
+    await supabase
+      .from('jobs')
+      .update({
+        status: 'COMPLETED',
+        progress: 100,
+        message: 'Final 1080p MP4 encoding complete',
+        output_filename: path.basename(outputPath),
+        download_url: downloadUrl,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', jobId);
       
-      const { updateProjectStatus } = require('./ProjectEngine');
-      updateProjectStatus(job.projectId, 'COMPLETED', {
-        filename: path.basename(outputPath),
-        downloadUrl
-      });
-    }
+    const { attachRenderJob, updateProjectStatus } = require('./ProjectEngine');
+    await attachRenderJob(job.projectId, jobId, path.basename(outputPath), outputB2Key);
+    await updateProjectStatus(job.projectId, 'COMPLETED');
+
+    // Clean up local temp files after successful upload
+    const fs = require('fs');
+    if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+    if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
 
   } catch (err) {
     console.error('Job failed:', err);
-    updateJobState(jobId, 'FAILED', 0, err.message || 'Render failed');
+    await updateJobState(jobId, 'FAILED', 0, err.message || 'Render failed');
     const { updateProjectStatus } = require('./ProjectEngine');
-    updateProjectStatus(job.projectId, 'FAILED', { error: err.message || 'Render failed' });
+    await updateProjectStatus(job.projectId, 'FAILED', { error: err.message || 'Render failed' });
   }
 }
 

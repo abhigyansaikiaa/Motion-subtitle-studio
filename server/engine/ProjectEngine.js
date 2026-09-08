@@ -1,93 +1,227 @@
-const { db } = require('../auth');
+const { supabase } = require('../supabase');
 
-function getUserProjects(userId) {
-  const data = db.get();
-  return data.projects.filter(p => p.userId === userId).map(p => {
-    if (!p.videoUrl) p.videoUrl = '/uploads/' + p.videoId;
-    return p;
-  });
+async function getUserProjects(userId) {
+  const { data: projects, error } = await supabase
+    .from('projects')
+    .select(`
+      *,
+      videos!projects_video_id_fkey ( storage_path )
+    `)
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
+
+  if (error || !projects) return [];
+
+  return projects.map(p => formatProjectInfo(p));
 }
 
-function getProject(projectId) {
-  const data = db.get();
-  const p = data.projects.find(p => p.id === projectId) || null;
-  if (p && !p.videoUrl) p.videoUrl = '/uploads/' + p.videoId;
-  return p;
+async function getProject(projectId) {
+  const { data: project, error } = await supabase
+    .from('projects')
+    .select(`
+      *,
+      videos!projects_video_id_fkey ( storage_path )
+    `)
+    .eq('id', projectId)
+    .single();
+
+  if (error || !project) {
+    console.error('getProject error:', error);
+    return null;
+  }
+  return formatProjectInfo(project);
 }
 
-function createProject(userId, videoId, aspectRatio = '9:16') {
-  const data = db.get();
-  const project = {
-    id: 'proj_' + Date.now() + Math.random().toString(36).substr(2, 5),
-    userId,
-    videoId,
-    aspectRatio,
-    status: 'UPLOADING',
-    styleId: null,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
+function formatProjectInfo(p) {
+  // If segments is our wrapper object, unwrap it
+  const hasMeta = p.segments && p.segments.hasOwnProperty('_meta');
+  const segmentsArray = hasMeta ? p.segments.data : p.segments;
+  const meta = hasMeta ? p.segments._meta : {};
+
+  const result = {
+    id: p.id,
+    userId: p.user_id,
+    videoId: p.videos?.storage_path, // Maintain backward compatibility for frontend
+    videoUuid: p.video_id, // The actual UUID for relationships
+    videoUrl: p.videos?.storage_path ? `/api/projects/${p.id}/video` : null,
+    aspectRatio: p.aspect_ratio,
+    status: p.status,
+    segments: segmentsArray,
+    createdAt: p.created_at,
+    updatedAt: p.updated_at,
+    styleId: meta.styleId || p.styleId,
+    style: meta.styleId || p.styleId, // frontend uses project.style
+    filename: meta.filename,
+    downloadUrl: meta.b2Key ? `/api/projects/${p.id}/download` : meta.downloadUrl,
+    latestJobId: meta.latestJobId
   };
-  data.projects.push(project);
-  db.save(data);
-  return project;
+
+  return result;
 }
 
-function updateProjectStatus(projectId, status, extra = {}) {
-  const data = db.get();
-  const project = data.projects.find(p => p.id === projectId);
-  if (project) {
-    project.status = status;
-    Object.assign(project, extra);
-    project.updatedAt = new Date().toISOString();
-    db.save(data);
+async function createProject(userId, filename, aspectRatio = '9:16') {
+  // 1. Create video record first
+  const { data: video, error: vidError } = await supabase
+    .from('videos')
+    .insert({
+      user_id: userId,
+      storage_path: filename,
+      filename: filename
+    })
+    .select()
+    .single();
+
+  if (vidError || !video) throw new Error('Failed to create video record');
+
+  // 2. Create project record
+  const { data: project, error: projError } = await supabase
+    .from('projects')
+    .insert({
+      user_id: userId,
+      video_id: video.id,
+      aspect_ratio: aspectRatio,
+      status: 'UPLOADING',
+      segments: { _meta: {} }
+    })
+    .select(`
+      *,
+      videos!projects_video_id_fkey ( storage_path )
+    `)
+    .single();
+
+  if (projError || !project) {
+    console.error('Project creation error:', projError);
+    throw new Error('Failed to create project record');
+  }
+
+  await supabase.from('videos').update({ project_id: project.id }).eq('id', video.id);
+
+  return formatProjectInfo(project);
+}
+
+async function updateVideoStoragePath(videoId, newPath) {
+  const { error } = await supabase
+    .from('videos')
+    .update({ storage_path: newPath })
+    .eq('id', videoId);
+  if (error) {
+    console.error('updateVideoStoragePath error:', error);
+    throw new Error('Failed to update video storage path');
   }
 }
 
-function saveTranscript(projectId, rawWords) {
-  const data = db.get();
+async function updateProjectStatus(projectId, status, extra = {}) {
+  const { data: project } = await supabase.from('projects').select('segments').eq('id', projectId).single();
+  let segmentsObj = project?.segments || { _meta: {} };
+  if (Array.isArray(segmentsObj)) {
+    segmentsObj = { _meta: {}, data: segmentsObj };
+  }
+  if (!segmentsObj._meta) segmentsObj._meta = {};
   
-  // Replace if exists, or push
-  const idx = data.transcripts.findIndex(t => t.projectId === projectId);
-  if (idx !== -1) {
-    data.transcripts[idx].words = rawWords;
+  if (extra.filename) segmentsObj._meta.filename = extra.filename;
+  if (extra.downloadUrl) segmentsObj._meta.downloadUrl = extra.downloadUrl;
+  if (extra.styleId) segmentsObj._meta.styleId = extra.styleId;
+  if (extra.language) segmentsObj._meta.language = extra.language;
+  
+  await supabase
+    .from('projects')
+    .update({ 
+      status, 
+      segments: segmentsObj,
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', projectId);
+}
+
+async function saveTranscript(projectId, rawWords) {
+  const { data } = await supabase
+    .from('transcripts')
+    .select('id')
+    .eq('project_id', projectId)
+    .single();
+
+  if (data) {
+    const { error } = await supabase
+      .from('transcripts')
+      .update({ words: rawWords })
+      .eq('id', data.id);
+    if (error) throw new Error('Failed to update transcript: ' + error.message);
   } else {
-    data.transcripts.push({
-      id: 'tx_' + Date.now(),
-      projectId,
-      words: rawWords,
-      createdAt: new Date().toISOString()
-    });
-  }
-  db.save(data);
-}
-
-function getTranscript(projectId) {
-  const data = db.get();
-  return data.transcripts.find(t => t.projectId === projectId) || null;
-}
-
-function saveComposition(projectId, segments, styleId) {
-  const data = db.get();
-  const project = data.projects.find(p => p.id === projectId);
-  if (project) {
-    project.segments = segments;
-    project.styleId = styleId;
-    project.updatedAt = new Date().toISOString();
-    db.save(data);
+    const { error } = await supabase
+      .from('transcripts')
+      .insert({
+        project_id: projectId,
+        words: rawWords
+      });
+    if (error) throw new Error('Failed to insert transcript: ' + error.message);
   }
 }
 
-function attachRenderJob(projectId, jobId, outputFilename) {
-  const data = db.get();
-  const project = data.projects.find(p => p.id === projectId);
-  if (project) {
-    project.latestJobId = jobId;
-    if (outputFilename) {
-      project.filename = outputFilename;
-      project.downloadUrl = `/api/download/${outputFilename}`;
+async function getTranscript(projectId) {
+  const { data, error } = await supabase
+    .from('transcripts')
+    .select('words')
+    .eq('project_id', projectId)
+    .single();
+
+  if (error || !data) return null;
+  return { projectId, words: data.words };
+}
+
+async function saveComposition(projectId, segments, styleId) {
+  const { data: project } = await supabase.from('projects').select('segments').eq('id', projectId).single();
+  let segmentsObj = project?.segments || { _meta: {} };
+  if (Array.isArray(segmentsObj)) {
+    segmentsObj = { _meta: {}, data: segmentsObj };
+  }
+  if (!segmentsObj._meta) segmentsObj._meta = {};
+  
+  segmentsObj.data = segments;
+  segmentsObj._meta.styleId = styleId;
+
+  const { error } = await supabase
+    .from('projects')
+    .update({
+      segments: segmentsObj,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', projectId);
+    
+  if (error) {
+    console.error('saveComposition error:', error);
+    throw new Error('Failed to save composition: ' + error.message);
+  }
+}
+
+async function attachRenderJob(projectId, jobId, outputFilename, b2Key = null) {
+  const { data: project } = await supabase.from('projects').select('segments').eq('id', projectId).single();
+  let segmentsObj = project?.segments || { _meta: {} };
+  if (Array.isArray(segmentsObj)) {
+    segmentsObj = { _meta: {}, data: segmentsObj };
+  }
+  if (!segmentsObj._meta) segmentsObj._meta = {};
+  
+  segmentsObj._meta.latestJobId = jobId;
+  if (outputFilename) {
+    segmentsObj._meta.filename = outputFilename;
+    if (b2Key) {
+      segmentsObj._meta.b2Key = b2Key;
     }
-    project.updatedAt = new Date().toISOString();
-    db.save(data);
+    // Fallback for local
+    segmentsObj._meta.downloadUrl = `/api/download/${outputFilename}`;
+  }
+
+  const { error } = await supabase
+    .from('projects')
+    .update({ 
+      segments: segmentsObj,
+      updated_at: new Date().toISOString() 
+    })
+    .eq('id', projectId);
+
+  if (error) {
+    console.error('attachRenderJob error:', error);
+    throw new Error('Failed to attach render job: ' + error.message);
   }
 }
 
@@ -96,6 +230,7 @@ module.exports = {
   getProject,
   createProject,
   updateProjectStatus,
+  updateVideoStoragePath,
   saveTranscript,
   getTranscript,
   saveComposition,

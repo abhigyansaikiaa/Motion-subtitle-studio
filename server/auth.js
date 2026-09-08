@@ -76,7 +76,9 @@ async function login(email, password) {
   };
 }
 
-function authMiddleware(req, res, next) {
+const { supabase } = require('./supabase');
+
+async function authMiddleware(req, res, next) {
   let token = null;
   const auth = req.headers.authorization;
   if (auth && auth.startsWith('Bearer ')) {
@@ -90,11 +92,13 @@ function authMiddleware(req, res, next) {
   }
   
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const data = readDB();
-    const user = data.users.find(u => u.id === decoded.id);
-    if (!user) return res.status(401).json({ error: 'User not found' });
-    req.user = user;
+    const { data: { user }, error } = await supabase.auth.getUser(token);
+    if (error || !user) {
+      return res.status(401).json({ error: 'Invalid token' });
+    }
+    
+    // For this migration step, we only attach the verified Supabase UUID
+    req.user = { id: user.id, email: user.email };
     next();
   } catch (err) {
     res.status(401).json({ error: 'Invalid token' });
