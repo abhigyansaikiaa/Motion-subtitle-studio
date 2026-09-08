@@ -1,7 +1,7 @@
 import type { Project, Job, User, TemplateDefinition } from './types';
 import { useAppStore } from './store';
 
-const API = 'http://127.0.0.1:3000'; // Bypass Vite proxy to avoid large file upload network errors
+const API = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000'; // Bypass Vite proxy to avoid large file upload network errors
 function authHeaders(): Record<string, string> {
   const storeToken = useAppStore.getState().token;
   const token = storeToken || localStorage.getItem('rt_token');
