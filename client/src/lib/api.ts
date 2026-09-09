@@ -51,6 +51,8 @@ export const api = {
     return new Promise<{ projectId: string, videoId: string }>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', `${API}/api/upload`, true);
+      // 120 s — enough for Render free tier cold start (up to 50 s) + upload
+      xhr.timeout = 120_000;
       const headers = authHeaders();
       if (headers.Authorization) {
         xhr.setRequestHeader('Authorization', headers.Authorization);
@@ -76,7 +78,8 @@ export const api = {
         }
       };
       
-      xhr.onerror = () => reject(new Error('Network error during upload'));
+      xhr.onerror = () => reject(new Error('Network error — server may be starting up. Please retry in 30 seconds.'));
+      xhr.ontimeout = () => reject(new Error('Upload timed out — server may be starting up. Please retry.'));
       
       const formData = new FormData();
       formData.append('video', file);
