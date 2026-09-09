@@ -18,7 +18,7 @@ on:
 jobs:
   process-media:
     runs-on: ubuntu-latest
-    timeout-minutes: 60 # Fail fast if something hangs
+    timeout-minutes: 60
 
     steps:
       - name: Checkout repository
@@ -36,22 +36,34 @@ jobs:
         with:
           python-version: '3.10'
           cache: 'pip'
-          cache-dependency-path: 'server/requirements.txt'
+          # Use the lean requirements file for transcription, full file for render.
+          # This avoids downloading mediapipe+opencv (~400MB) on transcription runs.
+          cache-dependency-path: |
+            server/requirements-transcribe.txt
+            server/requirements.txt
 
       # Cache the faster-whisper 'base' model (~150MB from HuggingFace).
-      # Key is stable: model name never changes between runs unless requirements.txt changes.
-      # On Linux runners, HuggingFace downloads to ~/.cache/huggingface/hub/
+      # Stable key — only busts when model name changes.
       - name: Cache faster-whisper model
         uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface/hub/models--Systran--faster-whisper-base
           key: whisper-model-base-v1
 
-      - name: Install system dependencies (FFmpeg, Chrome deps)
+      # ── TRANSCRIBE: only FFmpeg + Python, no Chrome deps ──────────────────
+      # Chrome/Puppeteer system deps (libnss3, libasound2t64, etc.) are only
+      # needed for render jobs. Skipping them saves ~12s on transcription runs.
+      - name: Install system dependencies (transcribe — FFmpeg only)
+        if: github.event.inputs.type == 'transcribe'
         run: |
           sudo apt-get update -qq
-          # libxss1 was removed in Ubuntu 24.04 (Noble); excluded.
-          # All others are genuine Chromium/Puppeteer runtime requirements.
+          sudo apt-get install -y --no-install-recommends ffmpeg
+
+      # ── RENDER: FFmpeg + full Chrome deps ─────────────────────────────────
+      - name: Install system dependencies (render — FFmpeg + Chrome)
+        if: github.event.inputs.type == 'render'
+        run: |
+          sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             ffmpeg \
             libnss3 \
@@ -59,7 +71,17 @@ jobs:
             libatk-bridge2.0-0t64 \
             libgtk-3-0t64
 
-      - name: Install Python dependencies
+      # ── TRANSCRIBE: pip install only faster-whisper (~50MB, already cached) ─
+      # Skips mediapipe + opencv (~400MB) which are only needed for render.
+      - name: Install Python dependencies (transcribe — faster-whisper only)
+        if: github.event.inputs.type == 'transcribe'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r server/requirements-transcribe.txt
+
+      # ── RENDER: pip install full stack ────────────────────────────────────
+      - name: Install Python dependencies (render — full stack)
+        if: github.event.inputs.type == 'render'
         run: |
           python -m pip install --upgrade pip
           pip install -r server/requirements.txt
@@ -81,7 +103,6 @@ jobs:
           B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CLIENT_ORIGIN: ${{ secrets.CLIENT_ORIGIN }}
-          # Tell HuggingFace to use the cached model; never hit the network
           HF_HUB_CACHE: /home/runner/.cache/huggingface/hub
         run: |
           node github-worker.js --job-id "${{ github.event.inputs.jobId }}" --type "${{ github.event.inputs.type }}"
