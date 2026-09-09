@@ -72,12 +72,23 @@ async function getPresignedUrl(remoteKey, expiresInSeconds = 3600) {
   return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
 }
 
-async function getStream(remoteKey) {
-  const { Body } = await s3Client.send(new GetObjectCommand({
+async function getStream(remoteKey, range = undefined) {
+  const params = {
     Bucket: bucketName,
     Key: remoteKey
-  }));
-  return Body;
+  };
+  if (range) {
+    params.Range = range;
+  }
+  
+  const response = await s3Client.send(new GetObjectCommand(params));
+  return {
+    stream: response.Body,
+    contentLength: response.ContentLength,
+    contentType: response.ContentType,
+    contentRange: response.ContentRange,
+    acceptRanges: response.AcceptRanges
+  };
 }
 
 async function deleteFile(remoteKey) {

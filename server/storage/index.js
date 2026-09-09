@@ -25,7 +25,7 @@ module.exports = {
   uploadFile: async (localPath, remoteKey) => await getProvider().uploadFile(localPath, remoteKey),
   downloadFile: async (remoteKey, localPath) => await getProvider().downloadFile(remoteKey, localPath),
   getPresignedUrl: async (remoteKey, expiresInSeconds) => await getProvider().getPresignedUrl(remoteKey, expiresInSeconds),
-  getStream: async (remoteKey) => await getProvider().getStream(remoteKey),
+  getStream: async (remoteKey, range) => await getProvider().getStream(remoteKey, range),
   deleteFile: async (remoteKey) => await getProvider().deleteFile(remoteKey),
   get type() { return process.env.STORAGE_PROVIDER; }
 };

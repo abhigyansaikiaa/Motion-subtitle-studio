@@ -55,10 +55,39 @@ async function deleteFile(remoteKey) {
   }
 }
 
-async function getStream(remoteKey) {
+async function getStream(remoteKey, range = undefined) {
   const sourcePath = path.join(rootDir, remoteKey);
   if (!fs.existsSync(sourcePath)) throw new Error(`Local file not found: ${remoteKey}`);
-  return fs.createReadStream(sourcePath);
+  
+  const stat = fs.statSync(sourcePath);
+  const fileSize = stat.size;
+  let contentType = 'application/octet-stream';
+  if (sourcePath.endsWith('.mp4')) contentType = 'video/mp4';
+  else if (sourcePath.endsWith('.webm')) contentType = 'video/webm';
+  else if (sourcePath.endsWith('.mov')) contentType = 'video/quicktime';
+
+  if (range) {
+    const parts = range.replace(/bytes=/, "").split("-");
+    const start = parseInt(parts[0], 10);
+    const end = parts[1] ? parseInt(parts[1], 10) : fileSize - 1;
+    const chunksize = (end - start) + 1;
+    const stream = fs.createReadStream(sourcePath, { start, end });
+    return {
+      stream,
+      contentLength: chunksize,
+      contentType,
+      contentRange: `bytes ${start}-${end}/${fileSize}`,
+      acceptRanges: 'bytes'
+    };
+  }
+
+  return {
+    stream: fs.createReadStream(sourcePath),
+    contentLength: fileSize,
+    contentType,
+    contentRange: undefined,
+    acceptRanges: 'bytes'
+  };
 }
 
 module.exports = {

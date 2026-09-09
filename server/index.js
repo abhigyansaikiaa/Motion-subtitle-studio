@@ -378,14 +378,29 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
     //   1. The <video crossOrigin="anonymous"> needs the response to come from
     //      the same origin (Render) so the browser can draw it to a canvas
     //      for the behind-subject segmentation feature.
-    //   2. B2 presigned URLs with ResponseContentDisposition=attachment would
-    //      block inline video playback.
-    const stream = await storageProvider.getStream(b2Key);
+    //   2. HTML5 video requires Range request support for seeking and metadata.
+    const range = req.headers.range;
+    const { stream, contentLength, contentType, contentRange, acceptRanges } = await storageProvider.getStream(b2Key, range);
+
+    // Provide default mime type if provider doesn't have it
     const ext = b2Key.split('.').pop().toLowerCase();
     const mime = ext === 'webm' ? 'video/webm' : ext === 'mov' ? 'video/quicktime' : 'video/mp4';
-    res.setHeader('Content-Type', mime);
-    res.setHeader('Accept-Ranges', 'bytes');
+
+    res.setHeader('Accept-Ranges', acceptRanges || 'bytes');
+    res.setHeader('Content-Type', contentType || mime);
     res.setHeader('Access-Control-Allow-Origin', '*');
+
+    if (contentLength) {
+      res.setHeader('Content-Length', contentLength);
+    }
+    
+    if (range && contentRange) {
+      res.setHeader('Content-Range', contentRange);
+      res.status(206);
+    } else {
+      res.status(200);
+    }
+
     stream.pipe(res);
     stream.on('error', (err) => {
       console.error('[video proxy] stream error:', err);
