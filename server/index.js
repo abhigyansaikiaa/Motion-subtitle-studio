@@ -370,15 +370,33 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
     return res.status(404).json({ error: 'Project not found' });
   }
   try {
-    const b2Key = project.videoId; // This stores the actual storage_path/b2Key
+    const b2Key = project.videoId;
     if (!b2Key) return res.status(404).json({ error: 'Video not found' });
-    const url = await storageProvider.getPresignedUrl(b2Key, 3600);
-    res.redirect(url);
+
+    // Proxy the stream through the server instead of redirecting to B2.
+    // This is required because:
+    //   1. The <video crossOrigin="anonymous"> needs the response to come from
+    //      the same origin (Render) so the browser can draw it to a canvas
+    //      for the behind-subject segmentation feature.
+    //   2. B2 presigned URLs with ResponseContentDisposition=attachment would
+    //      block inline video playback.
+    const stream = await storageProvider.getStream(b2Key);
+    const ext = b2Key.split('.').pop().toLowerCase();
+    const mime = ext === 'webm' ? 'video/webm' : ext === 'mov' ? 'video/quicktime' : 'video/mp4';
+    res.setHeader('Content-Type', mime);
+    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    stream.pipe(res);
+    stream.on('error', (err) => {
+      console.error('[video proxy] stream error:', err);
+      if (!res.headersSent) res.status(500).json({ error: 'Stream failed' });
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to generate signed URL' });
+    res.status(500).json({ error: 'Failed to stream video' });
   }
 });
+
 
 app.get('/api/projects/:id/download', authMiddleware, async (req, res) => {
   const { getProject } = require('./engine/ProjectEngine');

@@ -65,13 +65,19 @@ async function downloadFile(remoteKey, localPath) {
 }
 
 async function getPresignedUrl(remoteKey, expiresInSeconds = 3600) {
-  const filename = remoteKey.split('/').pop();
   const command = new GetObjectCommand({
     Bucket: bucketName,
-    Key: remoteKey,
-    ResponseContentDisposition: `attachment; filename="${filename}"`
+    Key: remoteKey
   });
   return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
+}
+
+async function getStream(remoteKey) {
+  const { Body } = await s3Client.send(new GetObjectCommand({
+    Bucket: bucketName,
+    Key: remoteKey
+  }));
+  return Body;
 }
 
 async function deleteFile(remoteKey) {
@@ -86,5 +92,6 @@ module.exports = {
   uploadFile,
   downloadFile,
   getPresignedUrl,
+  getStream,
   deleteFile
 };

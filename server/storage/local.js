@@ -55,11 +55,18 @@ async function deleteFile(remoteKey) {
   }
 }
 
+async function getStream(remoteKey) {
+  const sourcePath = path.join(rootDir, remoteKey);
+  if (!fs.existsSync(sourcePath)) throw new Error(`Local file not found: ${remoteKey}`);
+  return fs.createReadStream(sourcePath);
+}
+
 module.exports = {
   init,
   uploadFile,
   downloadFile,
   getPresignedUrl,
+  getStream,
   deleteFile,
   verifySignature
 };

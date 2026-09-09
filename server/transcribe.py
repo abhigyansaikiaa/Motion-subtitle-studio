@@ -25,14 +25,32 @@ def main():
         import faster_whisper
         
         t0 = time.time()
-        model = faster_whisper.WhisperModel(model_size, device="cpu", compute_type="int8")
+        # cpu_threads=4 saturates both vCPUs on the GitHub runner.
+        # num_workers=2 allows overlapping audio chunks with inference.
+        model = faster_whisper.WhisperModel(
+            model_size,
+            device="cpu",
+            compute_type="int8",
+            cpu_threads=4,
+            num_workers=2
+        )
         load_time = time.time() - t0
         print(f"[TRANSCRIBE-WORKER] Model loaded in {load_time:.2f}s", file=sys.stderr)
 
         print(f"[TRANSCRIBE-WORKER] Transcribing '{input_path}'...", file=sys.stderr)
         t1 = time.time()
-        
-        transcribe_args = {"word_timestamps": True}
+
+        transcribe_args = {
+            "word_timestamps": True,
+            # beam_size=1 (greedy) is ~2x faster than the default beam_size=5
+            # with negligible quality loss for caption-quality output.
+            "beam_size": 1,
+            # Skip silent sections — major win for videos with pauses/music.
+            "vad_filter": True,
+            "vad_parameters": {"min_silence_duration_ms": 500},
+            # Disable context conditioning — avoids slow re-feeding of history.
+            "condition_on_previous_text": False,
+        }
         if language and language.lower() != "auto":
             transcribe_args["language"] = language
             
