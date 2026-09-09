@@ -36,7 +36,11 @@ async function dispatchGitHubAction(jobId, type) {
   }
   
   try {
-    const fetch = require('node-fetch');
+    // node-fetch v3 is ESM-only; require() returns the module object, not a callable.
+    // Use the native global fetch (available since Node 18, which Render uses).
+    if (typeof fetch !== 'function') {
+      throw new Error('Native fetch is unavailable. Render runtime must be Node 18+.');
+    }
     const response = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPO}/actions/workflows/media-worker.yml/dispatches`, {
       method: 'POST',
       headers: {
