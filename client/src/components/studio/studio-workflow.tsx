@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
-const BACKEND = 'http://127.0.0.1:3000';
+const BACKEND = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
 
 // ─── STEP INDICATOR ───────────────────────────────────────────────────────────
 const STEP_SEQUENCE = [1, 2, 3] as const;
