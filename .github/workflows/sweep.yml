@@ -1,0 +1,39 @@
+name: Worker Sweep
+
+on:
+  schedule:
+    - cron: '0 * * * *' # Run hourly
+  workflow_dispatch: # Allow manual runs
+
+jobs:
+  sweep-jobs:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: 'server/package-lock.json'
+          
+      - name: Install Node dependencies
+        working-directory: ./server
+        run: npm ci || npm install
+        
+      - name: Run Sweep
+        working-directory: ./server
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          STORAGE_PROVIDER: b2
+          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
+          B2_REGION: ${{ secrets.B2_REGION }}
+          B2_BUCKET: ${{ secrets.B2_BUCKET }}
+          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
+          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+        run: |
+          node github-worker.js --job-id sweep --type sweep

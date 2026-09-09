@@ -29,6 +29,38 @@ const { checkCredits, deductCredits, incrementVideosUsed } = require('./credits'
 const { transcribeVideo } = require('./transcription');
 const { renderVideo } = require('./render');
 
+async function dispatchGitHubAction(jobId, type) {
+  if (!process.env.GITHUB_PAT || !process.env.GITHUB_REPO) {
+    console.warn('[API] GITHUB_PAT or GITHUB_REPO not set. Skipping GitHub Action trigger.');
+    return;
+  }
+  
+  try {
+    const fetch = require('node-fetch');
+    const response = await fetch(`https://api.github.com/repos/${process.env.GITHUB_REPO}/actions/workflows/media-worker.yml/dispatches`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/vnd.github.v3+json',
+        'Authorization': `token ${process.env.GITHUB_PAT}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        ref: process.env.GITHUB_BRANCH || 'main',
+        inputs: { jobId, type }
+      })
+    });
+    
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error(`[API] GitHub Action dispatch failed: ${response.status} ${errText}`);
+    } else {
+      console.log(`[API] Successfully dispatched GitHub Action for ${type} ${jobId}`);
+    }
+  } catch (err) {
+    console.error(`[API] GitHub Action dispatch error:`, err);
+  }
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -179,7 +211,7 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     if (project.userId !== req.user.id) return res.status(403).json({ error: 'Unauthorized project access' });
 
     // Duplicate transcription protection
-    if (project.status === 'TRANSCRIBING') {
+    if (project.status === 'QUEUED_TRANSCRIPTION' || project.status === 'TRANSCRIBING') {
       return res.json({ success: true, projectId: project.id, status: project.status });
     }
     if (project.status === 'TRANSCRIBED' || project.status === 'READY_TO_EDIT' || project.status === 'COMPLETED') {
@@ -192,6 +224,9 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
 
     // The Media Worker handles downloading the file. We just queue it.
     await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language: req.body.language });
+    
+    // Trigger GitHub Action
+    await dispatchGitHubAction(project.id, 'transcribe');
     
     // The background transcription is now handled by the Media Worker.
     return res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
@@ -276,6 +311,9 @@ app.post('/api/render', authMiddleware, async (req, res) => {
     job = await createJob(req.user.id, projectId, project.videoUuid, project.segments, template);
     
     await attachRenderJob(projectId, job.id, null, null);
+    
+    // Trigger GitHub Action
+    await dispatchGitHubAction(job.id, 'render');
     
     // The background rendering is now handled by the Media Worker.
     // The worker will claim this QUEUED job, process it, and update to COMPLETED.
