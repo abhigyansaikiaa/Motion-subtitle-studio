@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useAppStore } from '../../lib/store';
 import { getTemplate } from '../../lib/templates';
 import { useSegmentation } from './segmentation-engine';
@@ -60,10 +60,11 @@ const NULL_RECT: VideoRect = { left: 0, top: 0, width: 0, height: 0, scale: 1, n
 
 export function CompositedPreview() {
   const currentProject = useAppStore(state => state.currentProject);
-  const backendUrl = 'http://127.0.0.1:3000';
+  const token = useAppStore(state => state.token) || localStorage.getItem('rt_token');
+  const backendUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
   const rawVideoUrl = currentProject?.videoUrl;
   const videoUrl = rawVideoUrl
-    ? (rawVideoUrl.startsWith('http') ? rawVideoUrl : backendUrl + rawVideoUrl)
+    ? (rawVideoUrl.startsWith('http') ? rawVideoUrl : `${backendUrl}${rawVideoUrl}?token=${token}`)
     : undefined;
 
   const isPlaying = useAppStore(state => state.isPlaying);

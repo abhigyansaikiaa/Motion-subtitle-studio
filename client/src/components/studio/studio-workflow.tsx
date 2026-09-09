@@ -70,6 +70,7 @@ export function StudioWorkflow() {
   const isPlaying          = useAppStore(s => s.isPlaying);
   const setIsPlaying       = useAppStore(s => s.setIsPlaying);
   const getActiveTemplate  = useAppStore(s => s.getActiveTemplate);
+  const token              = useAppStore(s => s.token) || localStorage.getItem('rt_token');
 
   const [uploadProgress,   setUploadProgress]  = useState(0);
   const [transcribeLang,   setTranscribeLang]  = useState('auto');
@@ -232,8 +233,8 @@ export function StudioWorkflow() {
 
   const videoSrc = currentProject
     ? (currentStep === 7 && currentProject.downloadUrl
-        ? BACKEND + currentProject.downloadUrl
-        : BACKEND + currentProject.videoUrl)
+        ? `${BACKEND}${currentProject.downloadUrl}?token=${token}`
+        : `${BACKEND}${currentProject.videoUrl}?token=${token}`)
     : undefined;
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
@@ -398,10 +399,10 @@ export function StudioWorkflow() {
               <div className="flex flex-col items-center w-full max-w-sm">
 
                 {/* Video thumbnail */}
-                {currentProject?.videoId && (
+                {currentProject?.videoUrl && (
                   <div className="w-full mb-6 rounded-2xl overflow-hidden bg-black border border-border shadow-2xl" style={{ maxHeight: '220px' }}>
                     <video
-                      src={`${BACKEND}/uploads/${currentProject.videoId}`}
+                      src={`${BACKEND}${currentProject.videoUrl}?token=${token}`}
                       className="w-full h-full object-contain"
                       style={{ maxHeight: '220px' }}
                       muted playsInline
