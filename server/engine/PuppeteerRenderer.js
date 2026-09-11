@@ -35,19 +35,37 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
   // Hide scrollbars just in case
   await page.addStyleTag({ content: '::-webkit-scrollbar { display: none; } body { margin: 0; background: transparent; }' });
 
-  for (let i = 0; i < totalFrames; i++) {
-    const timeSec = i / fps;
-    // Set the render time on the page
-    await page.evaluate((t) => {
-      window.setRenderTime(t);
-    }, timeSec);
-
-    // Give React a tiny bit of time to update DOM (usually requestAnimationFrame sync is instant in headless evaluate, but just to be safe)
-    await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
-
-    const framePath = path.join(tempDir, `frame_${String(i).padStart(5, '0')}.png`);
-    await page.screenshot({ path: framePath, type: 'png', omitBackground: true });
+  const CONCURRENCY = 8;
+  const chunk_size = Math.ceil(totalFrames / CONCURRENCY);
+  const pages = [page];
+  
+  for (let c = 1; c < CONCURRENCY; c++) {
+    const p = await browser.newPage();
+    await p.setViewport({ width, height, deviceScaleFactor: 1 });
+    await p.goto(clientUrl, { waitUntil: 'networkidle0' });
+    await p.waitForFunction('window.renderReady === true', { timeout: 10000 });
+    await p.addStyleTag({ content: '::-webkit-scrollbar { display: none; } body { margin: 0; background: transparent; }' });
+    pages.push(p);
   }
+
+  const chunks = [];
+  for (let i = 0; i < CONCURRENCY; i++) {
+    const start = i * chunk_size;
+    const end = Math.min(start + chunk_size, totalFrames);
+    if (start < end) {
+      chunks.push({ page: pages[i], start, end });
+    }
+  }
+
+  await Promise.all(chunks.map(async ({ page: p, start, end }) => {
+    for (let i = start; i < end; i++) {
+      const timeSec = i / fps;
+      await p.evaluate((t) => { window.setRenderTime(t); }, timeSec);
+      await p.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
+      const framePath = path.join(tempDir, `frame_${String(i).padStart(5, '0')}.png`);
+      await p.screenshot({ path: framePath, type: 'png', omitBackground: true });
+    }
+  }));
 
   await browser.close();
 

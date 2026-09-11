@@ -74,7 +74,7 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
 
   const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
               `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
-              `-c:v libx264 -preset medium -crf 20 -c:a aac -b:a 192k ` +
+              `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
               `-movflags +faststart -y "${outputPath}"`;
 
   await runCommand(cmd);
@@ -131,7 +131,7 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
 
   const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${bgTextPath}" -i "${maskPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
               `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
-              `-c:v libx264 -preset medium -crf 20 -c:a aac -b:a 192k ` +
+              `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
               `-movflags +faststart -y "${outputPath}"`;
 
   await runCommand(cmd);
