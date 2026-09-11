@@ -87,7 +87,7 @@ export const AnimatedWord = ({
       isVisibleOnLayer = false;
     }
 
-    if (!isVisibleOnLayer || t < word.start || t > word.end + 2.0) {
+    if (!isVisibleOnLayer || t < segmentStart - 0.5 || t > segmentEnd + 2.0) {
       return { opacity: 0, color: forceColor || '#ffffff', transform: 'scale(1)', filter: 'none' };
     }
 

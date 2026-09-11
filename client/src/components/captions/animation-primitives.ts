@@ -139,6 +139,12 @@ export function generateAnimationState(
       // Move in from the right, scaled by composition width
       translateX = invEased * 0.4 * compositionWidth;
       break;
+    case 'slide-from-top':
+      translateY = invEased * -0.4 * compositionHeight;
+      break;
+    case 'slide-from-left':
+      translateX = invEased * -0.4 * compositionWidth;
+      break;
 
     // ── MOGRT-DERIVED ANIMATIONS ──────────────────────────────────────────────
     // Spinning Butter: per-word rotateZ 180°→0° + scale 0.4→1 with overshoot
