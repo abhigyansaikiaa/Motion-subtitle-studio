@@ -35,7 +35,7 @@ function compose(wordsRaw) {
       
       // Break if we hit a sentence end, BUT only if the current segment isn't too short 
       // (prevents breaking "I am." / "Happy.")
-      if (END_PUNCTUATION.test(word.text) && currentWords.length >= 3) {
+      if (END_PUNCTUATION.test(word.word) && currentWords.length >= 3) {
         shouldBreak = true;
       }
       
@@ -66,7 +66,7 @@ function breakIntoLines(words) {
 
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
-    const wordLen = word.text.length;
+    const wordLen = word.word.length;
 
     // Check if adding this word would overflow the line constraints
     const wouldOverflowChars = currentLineChars + wordLen + (currentLine.length > 0 ? 1 : 0) > MAX_CHARS_PER_LINE;
@@ -74,7 +74,7 @@ function breakIntoLines(words) {
     
     // Check if previous word had a pause punctuation (like a comma)
     const prevWord = i > 0 ? words[i - 1] : null;
-    const isAfterComma = prevWord && PAUSE_PUNCTUATION.test(prevWord.text);
+    const isAfterComma = prevWord && PAUSE_PUNCTUATION.test(prevWord.word);
     
     // Smart line breaks: try to keep sentences together, break on commas/pauses
     if (currentLine.length > 0 && (wouldOverflowChars || wouldOverflowWords || (isAfterComma && currentLine.length >= 2))) {

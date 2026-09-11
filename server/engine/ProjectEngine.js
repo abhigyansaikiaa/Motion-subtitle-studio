@@ -165,7 +165,18 @@ async function getTranscript(projectId) {
     .single();
 
   if (error || !data) return null;
-  return { projectId, words: data.words };
+
+  // Normalize transcript data. Early iterations used .word instead of .text
+  const normalizedWords = (data.words || []).map(w => {
+    const text = w.text !== undefined ? w.text : w.word;
+    return {
+      ...w,
+      text: text,
+      cleanText: w.cleanText || (text ? text.trim().replace(/[^\\w]/g, '').toLowerCase() : '')
+    };
+  });
+
+  return { projectId, words: normalizedWords };
 }
 
 async function saveComposition(projectId, segments, styleId) {

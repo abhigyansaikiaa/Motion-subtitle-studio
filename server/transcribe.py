@@ -17,7 +17,7 @@ def main():
 
         input_path = args.input_path
         language = args.language
-        model_size = "base"
+        model_size = "tiny"
 
         print(f"[TRANSCRIBE-WORKER] Loading faster-whisper model '{model_size}'...", file=sys.stderr)
         
