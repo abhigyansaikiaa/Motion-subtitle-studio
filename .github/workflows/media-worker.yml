@@ -42,13 +42,23 @@ jobs:
             server/requirements-transcribe.txt
             server/requirements.txt
 
-      # Cache the faster-whisper 'base' model (~150MB from HuggingFace).
+      # Cache the faster-whisper 'tiny' model.
       # Stable key — only busts when model name changes.
       - name: Cache faster-whisper model
+        id: cache-whisper
         uses: actions/cache@v4
         with:
-          path: ~/.cache/huggingface/hub/models--Systran--faster-whisper-base
-          key: whisper-model-base-v1
+          path: ~/.cache/huggingface/hub/models--Systran--faster-whisper-tiny
+          key: whisper-model-tiny-v1
+
+      - name: Verify Model Cache Hit
+        if: github.event.inputs.type == 'transcribe'
+        run: |
+          if [ "${{ steps.cache-whisper.outputs.cache-hit }}" == "true" ]; then
+            echo "✅ Tiny model cache restored successfully."
+          else
+            echo "⚠️ Tiny model cache missed. Model will be downloaded."
+          fi
 
       # ── TRANSCRIBE: only FFmpeg + Python, no Chrome deps ──────────────────
       # Chrome/Puppeteer system deps (libnss3, libasound2t64, etc.) are only
