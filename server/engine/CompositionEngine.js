@@ -58,14 +58,14 @@ function compose(wordsRaw) {
       let inGroup = false;
       
       const normalizedWords = currentWords.map((w, index) => {
-        const text = (w.cleanText || w.word || '').toString();
+        const text = (w.cleanText || w.text || w.word || '').toString();
         const isNumeric = text.match(/^[\d.,$€£₹%+-]+[a-z]*$/i);
         
         // Ensure consistent schema: { id, text, start, end, index, groupId?, isNumberGroup? }
         // The original whisper word uses w.word, we normalize to w.text
         const newWord = {
           id: w.id || `w_${segIndex}_${index}`,
-          text: w.word || text,
+          text: w.text || w.word || text,
           start: w.start,
           end: w.end,
           index: index,
