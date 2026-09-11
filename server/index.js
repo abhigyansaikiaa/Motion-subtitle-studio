@@ -226,33 +226,12 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     const inputFilename = path.basename(b2Key);
     const videoPath = path.join(uploadDir, inputFilename);
 
-    await updateProjectStatus(project.id, 'TRANSCRIBING', { language: req.body.language });
-    
-    // Return early to keep the API fast and responsive
-    res.json({ status: 'TRANSCRIBING', projectId: project.id });
+    await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language: req.body.language });
 
-    // Background process for actual transcription
-    (async () => {
-      try {
-        if (!fs.existsSync(videoPath)) {
-          console.log(`[TRANSCRIBE] Downloading ${b2Key} to ${videoPath}`);
-          await storageProvider.downloadFile(b2Key, videoPath);
-        }
+    // Dispatch to GitHub Actions — Python/faster-whisper runs there, not on Render
+    await dispatchGitHubAction(project.id, 'transcribe');
 
-        const transcriptData = await transcribeVideo(videoPath, req.body.language);
-        
-        await saveTranscript(project.id, transcriptData.words);
-        
-        await updateProjectStatus(project.id, 'TRANSCRIBED', { 
-          language: transcriptData.language || req.body.language
-        });
-        console.log(`[TRANSCRIBE] Completed successfully for ${project.id}`);
-      } catch (workerErr) {
-        console.error(`[TRANSCRIBE] Background worker failed for ${project.id}:`, workerErr);
-        await updateProjectStatus(project.id, 'FAILED', { error: workerErr.message || 'Transcription failed' });
-      }
-    })();
-    
+    return res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
   } catch (err) {
     console.error('[API] /api/transcribe error:', err);
     res.status(500).json({ error: 'Failed to queue transcription' });

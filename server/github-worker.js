@@ -59,18 +59,16 @@ async function processTranscription(projectId) {
       await storageProvider.downloadFile(b2Key, inputPath);
     }
 
-    const rawSegments = await transcribeVideo(inputPath, language);
-    let wordsRaw = [];
-    let wordId = 0;
-    rawSegments.forEach(seg => {
-      seg.words.forEach(w => {
-        wordsRaw.push(createWordLocal(`w${wordId++}`, w.word, w.start, w.end));
-      });
-    });
+    const transcriptData = await transcribeVideo(inputPath, language);
+    // transcribeVideo now returns { language, languageProbability, words: [{id, text, start, end, index}] }
+    const wordsRaw = transcriptData.words;
 
     await saveTranscript(projectId, wordsRaw);
-    await updateProjectStatus(projectId, 'TRANSCRIBED', { duration: rawSegments.length ? rawSegments[rawSegments.length - 1].end : 0 });
-    console.log(`[Worker] Transcription successful for project ${projectId}`);
+    await updateProjectStatus(projectId, 'TRANSCRIBED', {
+      language: transcriptData.language || language,
+      duration: wordsRaw.length > 0 ? wordsRaw[wordsRaw.length - 1].end : 0
+    });
+    console.log(`[Worker] Transcription successful for project ${projectId} (words: ${wordsRaw.length})`);
   } catch (err) {
     console.error(`[Worker] Transcription failed for project ${projectId}:`, err);
     await updateProjectStatus(projectId, 'FAILED', { error: err.message || 'Transcription failed' });
