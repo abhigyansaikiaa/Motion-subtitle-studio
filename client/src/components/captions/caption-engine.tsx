@@ -100,7 +100,7 @@ export const AnimatedWord = ({
     const amplitude = videoScale;
     const animName = forceEntranceAnimation || (isHero && templateConfig.heroEntranceAnimation ? templateConfig.heroEntranceAnimation : templateConfig.entranceAnimation);
 
-    const { scaleX: baseScaleX, scaleY: baseScaleY, translateY, translateX, blur } = generateAnimationState(
+    const { scaleX: baseScaleX, scaleY: baseScaleY, translateY, translateX, blur, rotation } = generateAnimationState(
       animName, raw, eased, invEased, amplitude, index
     );
 
@@ -115,7 +115,7 @@ export const AnimatedWord = ({
     return {
       opacity,
       color,
-      transform: `translate(${translateX}px, ${translateY}px) scale(${finalScaleX}, ${finalScaleY})`,
+      transform: `translate(${translateX}px, ${translateY}px) scale(${finalScaleX}, ${finalScaleY}) rotateZ(${rotation}deg)`,
       filter: blur > 0 ? `blur(${blur * amplitude}px)` : 'none',
     };
   });

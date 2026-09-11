@@ -598,6 +598,243 @@ export const TEMPLATES: TemplateDefinition[] = [
   },
 ];
 
+// ─────────────────────────────────────────────────────────────────────────────
+// MOGRT-DERIVED TEMPLATES (source-verified from definition.json)
+// These are appended after the base templates array for incremental rollout.
+// ─────────────────────────────────────────────────────────────────────────────
+TEMPLATES.push(
+
+  // 1. SLIDE COLLIDE
+  // Source: Premium Text Animations/Slide Collide.mogrt
+  // Effects: ADBE Geometry2, ADBE Glo2, ADBE Ramp, CC Light Sweep
+  // Fonts: Coolvetica-Regular (word1), Vivaldii (word2)
+  // Colors: GradientStart #FF9600 (1,0.588,0,1) → GradientEnd #2B1800 (0.168,0.094,0,1)
+  // Animation: two text layers enter from opposite sides and collide at center
+  // Text level: per-word — odd words from left, even words from right
+  // Duration: ~3.8s (23 frames @ 6fps), easeOutCubic
+  {
+    id: 'slide-collide',
+    name: 'SLIDE COLLIDE',
+    description: 'Words collide from opposite sides. Odd words slide from left, even from right. Orange gradient with glow.',
+    category: 'MOGRT',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 800,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#FF9600',
+    baseSize: 52,
+    baseOpacity: 1,
+    heroColor: '#FFCC44',
+    heroScale: 1.3,
+    heroFontWeight: 900,
+    heroFontStyle: 'normal',
+    accentColor: '#FF9600',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '-0.01em',
+    lineHeight: 1.1,
+    shadow: '0px 0px 20px rgba(255,150,0,0.6)',
+    entranceAnimation: 'collision-left',
+    heroEntranceAnimation: 'collision-right',
+    wordActivation: 'scale-up',
+    animationSpeed: 0.85,
+    captionDepth: 'front',
+    position: 'center',
+  },
+
+  // 2. SPINNING BUTTER
+  // Source: Premium Text Animations/Spinning Butter.mogrt
+  // Effects: ADBE Geometry2, ADBE Glo2, ADBE Ramp, CC Light Sweep
+  // Fonts: Coolvetica-Regular
+  // Colors: Word1 white→black gradient; Word2 purple(0.612,0,0.612,1)→black gradient
+  // Animation: per-word spin-in (rotateZ 180°→0°) + scale 0.4→1 easeOutBack + blur fade
+  // Text level: per-word
+  // Duration: ~3.8s (23/6fps), stagger 0.08s per word
+  {
+    id: 'spinning-butter',
+    name: 'SPINNING BUTTER',
+    description: 'Each word spins in from 180° with overshoot scale. White/purple gradient with glow.',
+    category: 'MOGRT',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 800,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#ffffff',
+    baseSize: 52,
+    baseOpacity: 1,
+    heroColor: '#CC44FF',
+    heroScale: 1.4,
+    heroFontWeight: 900,
+    heroFontStyle: 'normal',
+    accentColor: '#ffffff',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.02em',
+    lineHeight: 1.15,
+    shadow: '0px 0px 24px rgba(200,100,255,0.5)',
+    entranceAnimation: 'spin-in',
+    heroEntranceAnimation: 'spin-in',
+    wordActivation: 'scale-up',
+    animationSpeed: 0.9,
+    captionDepth: 'front',
+    position: 'center',
+  },
+
+  // 3. ZOOM IN
+  // Source: Premium Text Animations/Zoom In.mogrt
+  // Effects: ADBE Glo2, ADBE Ramp, CC Light Sweep
+  // Fonts: Poppins-ExtraBold, 211pt
+  // Colors: Cyan (0,0.824,1,1) → Deep Blue (0,0.295,0.784,1) gradient
+  // Animation: scale from 0→1 with easeOutBack overshoot, glow on entry
+  // Text level: per-word, stagger 0.07s
+  // Duration: ~3.6s (9009/2500fps)
+  {
+    id: 'zoom-in-mogrt',
+    name: 'ZOOM IN',
+    description: 'Words zoom in from zero scale with overshoot. Cyan to blue gradient with glow.',
+    category: 'MOGRT',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 900,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#00D2FF',
+    baseSize: 54,
+    baseOpacity: 1,
+    heroColor: '#4B9FFF',
+    heroScale: 1.35,
+    heroFontWeight: 900,
+    heroFontStyle: 'normal',
+    accentColor: '#00D2FF',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '-0.02em',
+    lineHeight: 1.1,
+    shadow: '0px 0px 28px rgba(0,210,255,0.55)',
+    entranceAnimation: 'zoom-in',
+    heroEntranceAnimation: 'zoom-in',
+    wordActivation: 'scale-up',
+    animationSpeed: 0.8,
+    captionDepth: 'front',
+    position: 'center',
+  },
+
+  // 4. SMOOTH SLIDE LEFT
+  // Source: Expensive_Looking_Text_Presets/Smooth_Slide_Left.mogrt
+  // Effects: ADBE Drop Shadow, ADBE Glo2, ADBE Ramp, ADBE Slider Control
+  // Fonts: Roboto-Bold, 234.5pt
+  // Colors: GradientStart #C600FF (0.776,0,1,1) → GradientEnd #6B0089 (0.42,0,0.541,1)
+  // Animation: whole segment slides in from right (X=+fullWidth → 0), opacity 0→100
+  // Text level: per-segment (whole segment moves together)
+  // Duration: 1.3s (from Animation Duration control), easeOutCubic
+  // Position: 1080×1920 (9:16 canvas), center
+  {
+    id: 'smooth-slide-left',
+    name: 'SMOOTH SLIDE LEFT',
+    description: 'Segment slides in from right with glow. Purple gradient. 1.3s ease. Whole segment enters together.',
+    category: 'MOGRT',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 700,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#C600FF',
+    baseSize: 48,
+    baseOpacity: 1,
+    heroColor: '#E055FF',
+    heroScale: 1.2,
+    heroFontWeight: 800,
+    heroFontStyle: 'normal',
+    accentColor: '#C600FF',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0',
+    lineHeight: 1.2,
+    shadow: '0px 4px 16px rgba(0,0,0,0.5)',
+    entranceAnimation: 'slide-from-right',
+    heroEntranceAnimation: 'slide-from-right',
+    wordActivation: 'color-fill',
+    animationSpeed: 1.3,
+    captionDepth: 'front',
+    position: 'center',
+  },
+
+  // 5. SLIDING BOTTOM TO UP
+  // Source: Expensive_Looking_Text_Presets/Sliding_Bottom_To_Up.mogrt
+  // Effects: ADBE Drop Shadow, ADBE Glo2, ADBE Ramp, ADBE Slider Control
+  // Fonts: AppleGaramond-BoldItalic, 404pt
+  // Colors: Same purple gradient as Smooth Slide Left
+  // Animation: whole segment slides from Y=below-frame → final Y, opacity 0→100
+  // Text level: per-segment (whole segment moves together as a block)
+  // Duration: 1.0s, easeOutCubic
+  {
+    id: 'sliding-bottom-to-up',
+    name: 'SLIDING BOTTOM TO UP',
+    description: 'Segment slides up from below frame. Purple gradient with glow and drop shadow. 1.0s ease.',
+    category: 'MOGRT',
+    fontFamily: '"Playfair Display", serif',
+    fontWeight: 700,
+    fontStyle: 'italic',
+    textTransform: 'none',
+    baseColor: '#C600FF',
+    baseSize: 50,
+    baseOpacity: 1,
+    heroColor: '#E055FF',
+    heroScale: 1.2,
+    heroFontWeight: 800,
+    heroFontStyle: 'italic',
+    accentColor: '#C600FF',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.01em',
+    lineHeight: 1.2,
+    shadow: '0px 6px 20px rgba(0,0,0,0.6)',
+    entranceAnimation: 'slide-from-bottom',
+    heroEntranceAnimation: 'slide-from-bottom',
+    wordActivation: 'color-fill',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'bottom',
+  },
+
+  // 6. SLIDING RIGHT TO LEFT
+  // Source: Expensive_Looking_Text_Presets/Sliding_Right_To_Left.mogrt
+  // Effects: ADBE Drop Shadow, ADBE Glo2, ADBE Ramp, ADBE Slider Control, ADBE Tint
+  // Fonts: AppleGaramond-BoldItalic, 404pt
+  // Colors: Same purple gradient — ADBE Tint adds a colorize pass over the text
+  // Animation: whole segment enters from far right (X=+wide → final X)
+  // The additional ADBE Tint creates a two-tone effect on the text
+  // Text level: per-segment
+  // Duration: 1.0s, easeOutCubic
+  {
+    id: 'sliding-right-to-left',
+    name: 'SLIDING RIGHT TO LEFT',
+    description: 'Segment sweeps in from far right. Tinted purple gradient with heavy glow. 1.0s ease.',
+    category: 'MOGRT',
+    fontFamily: '"Playfair Display", serif',
+    fontWeight: 700,
+    fontStyle: 'italic',
+    textTransform: 'none',
+    baseColor: '#9B00FF',
+    baseSize: 50,
+    baseOpacity: 1,
+    heroColor: '#C844FF',
+    heroScale: 1.2,
+    heroFontWeight: 800,
+    heroFontStyle: 'italic',
+    accentColor: '#9B00FF',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.01em',
+    lineHeight: 1.2,
+    shadow: '0px 6px 24px rgba(155,0,255,0.45)',
+    entranceAnimation: 'slide-right-to-left',
+    heroEntranceAnimation: 'slide-right-to-left',
+    wordActivation: 'color-fill',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'center',
+  },
+);
+
 export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
 }

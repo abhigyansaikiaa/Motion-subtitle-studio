@@ -92,7 +92,7 @@ export interface TemplateDefinition {
   outline?: string;
   
   // Motion / Animation
-  entranceAnimation: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right';
+  entranceAnimation: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left';
   heroEntranceAnimation?: string;
   wordActivation: 'color-fill' | 'scale-up' | 'none';
   animationSpeed: number; // 0.5 = fast, 1.0 = normal, 2.0 = slow

@@ -23,6 +23,7 @@ export function generateAnimationState(
   let scaleX = 1, scaleY = 1;
   let translateY = 0, translateX = 0;
   let blur = 0;
+  let rotation = 0;
 
   switch (animationName) {
     case 'fade-up':
@@ -135,11 +136,38 @@ export function generateAnimationState(
       translateX = invEased * 80 * amplitude;
       break;
 
+    // ── MOGRT-DERIVED ANIMATIONS ──────────────────────────────────────────────
+    // Spinning Butter: per-word rotateZ 180°→0° + scale 0.4→1 with overshoot
+    case 'spin-in':
+      scaleX = 0.4 + 0.6 * easeOutBack(raw);
+      scaleY = scaleX;
+      rotation = (1 - eased) * 180;
+      blur = invEased * 4;
+      break;
+
+    // Smooth Slide Left: whole segment slides in from right (positive X → 0)
+    // Extracted from Smooth_Slide_Left.mogrt — 1.3s easeOutCubic, right-to-center
+    case 'slide-from-right':
+      translateX = invEased * 120 * amplitude;
+      break;
+
+    // Sliding Bottom To Up: segment slides up from below (positive Y → 0)
+    // Extracted from Sliding_Bottom_To_Up.mogrt — 1.0s easeOutCubic, bottom-to-center
+    case 'slide-from-bottom':
+      translateY = invEased * 120 * amplitude;
+      break;
+
+    // Sliding Right To Left: segment enters from far right, stops at center
+    // Extracted from Sliding_Right_To_Left.mogrt — 1.0s easeOutCubic, right-to-left
+    case 'slide-right-to-left':
+      translateX = invEased * 160 * amplitude;
+      break;
+
     case 'fade':
     case 'none':
     default:
       break;
   }
 
-  return { scaleX, scaleY, translateY, translateX, blur };
+  return { scaleX, scaleY, translateY, translateX, blur, rotation };
 }
