@@ -88,7 +88,7 @@ export interface TemplateDefinition {
   
   // Layout & Composition
   alignment: 'left' | 'center' | 'right';
-  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro';
+  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro' | 'subtitle-highlight' | 'multi-position' | 'difference-text' | 'bold-behind';
   letterSpacing: string;
   lineHeight: number;
   
@@ -97,9 +97,9 @@ export interface TemplateDefinition {
   outline?: string;
   
   // Motion / Animation
-  entranceAnimation: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left';
-  heroEntranceAnimation?: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left';
-  wordActivation: 'color-fill' | 'scale-up' | 'none';
+  entranceAnimation: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left' | 'word-rise' | 'scale-fade';
+  heroEntranceAnimation?: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left' | 'word-rise' | 'scale-fade';
+  wordActivation: 'color-fill' | 'scale-up' | 'highlight' | 'none';
   animationSpeed: number; // 0.5 = fast, 1.0 = normal, 2.0 = slow
   
   // Compositing / Depth / Position
@@ -119,5 +119,16 @@ export interface TemplateDefinition {
   bgWordBlur?: number;
   bgWordSize?: number;
   staggerDirection?: 'left' | 'right' | 'center';
+
+  // New fields for premium dynamic templates
+  highlightColor?: string;      // background highlight color for 'highlight' wordActivation
+  highlightRadius?: number;     // px border-radius for highlight pill
+  highlightPadX?: number;       // px horizontal padding for highlight
+  highlightPadY?: number;       // px vertical padding for highlight
+  multiPositionCycle?: Array<'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center-left' | 'center-right'>;
+  previewVideo?: string;        // path to optimized animated preview asset
+  secondFontFamily?: string;    // second font family used in multi-font templates
+  secondFontStyle?: string;     // italic override for second font
+  heroTextTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
 }
 

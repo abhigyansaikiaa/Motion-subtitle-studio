@@ -170,6 +170,17 @@ export function generateAnimationState(
       translateX = invEased * 0.6 * compositionWidth;
       break;
 
+    case 'word-rise':
+      // Gentle rise from below — used by serif+sans-serif hero words
+      translateY = invEased * 22 * amplitude;
+      scaleX = 0.92 + 0.08 * eased;
+      scaleY = scaleX;
+      break;
+    case 'scale-fade':
+      // Scale in from 85% with opacity — used by multi-position templates
+      scaleX = 0.85 + 0.15 * eased;
+      scaleY = scaleX;
+      break;
     case 'fade':
     case 'none':
     default:

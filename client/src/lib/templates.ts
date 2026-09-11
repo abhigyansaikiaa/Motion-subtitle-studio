@@ -1170,6 +1170,267 @@ TEMPLATES.push(
   }
 );
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DYNAMIC PREMIUM TEMPLATES (sourced from reference video analysis)
+// Reference videos: C:\Captions AI\caption-app\caption-app\new anim\*.mp4
+// ─────────────────────────────────────────────────────────────────────────────
+TEMPLATES.push(
+
+  // 1. SERIF + SANS SERIF
+  // Reference: serif-sans-serif-text_350p.mp4
+  // Visual: Clean white sans-serif supporting words + large italic green script hero word.
+  // Position: Bottom-left. Word grouping: 3-4 base + 1 hero. Depth: front.
+  {
+    id: 'serif-sans-serif',
+    name: 'SERIF + SANS SERIF',
+    description: 'Editorial contrast: small white sans-serif supporting words + large italic script hero word in vivid green.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 26,
+    baseOpacity: 0.9,
+    heroColor: '#7AC943',
+    heroScale: 2.3,
+    heroFontFamily: '"Playfair Display", serif',
+    heroFontWeight: 700,
+    heroFontStyle: 'italic',
+    accentColor: '#a8d87a',
+    alignment: 'left',
+    layoutType: 'editorial',
+    letterSpacing: '0.01em',
+    lineHeight: 1.2,
+    shadow: '0px 2px 10px rgba(0,0,0,0.5)',
+    entranceAnimation: 'fade-up',
+    heroEntranceAnimation: 'word-rise',
+    animationLevel: 'word',
+    wordActivation: 'none',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'bottom-left',
+  },
+
+  // 2. SUBTITLE HIGHLIGHT
+  // Reference: subtitle-highlight_350p.mp4
+  // Visual: Clean bottom-center subtitles. Active spoken word highlighted with
+  // a golden-yellow background pill. No size change. Smooth color transition.
+  {
+    id: 'subtitle-highlight',
+    name: 'SUBTITLE HIGHLIGHT',
+    description: 'Clean subtitle-style captions. Active word highlighted with a golden-yellow pill background.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 500,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 36,
+    baseOpacity: 1.0,
+    heroColor: '#1a1a1a',
+    heroScale: 1.0,
+    heroFontWeight: 600,
+    heroFontStyle: 'normal',
+    accentColor: '#F5D020',
+    alignment: 'center',
+    layoutType: 'subtitle-highlight',
+    letterSpacing: '0.005em',
+    lineHeight: 1.3,
+    shadow: '0px 2px 8px rgba(0,0,0,0.6)',
+    entranceAnimation: 'fade',
+    animationLevel: 'segment',
+    wordActivation: 'highlight',
+    highlightColor: '#F5D020',
+    highlightPadX: 12,
+    highlightPadY: 4,
+    highlightRadius: 6,
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'bottom',
+  },
+
+  // 3. SERIF ITALIC TEXT BEHIND
+  // Reference: serif-italic-text-behind_350p.mp4
+  // Visual: Very large bold red serif uppercase hero word rendered BEHIND the subject.
+  // Occupies upper frame. Word per segment. Real depth compositing via segmentation.
+  {
+    id: 'serif-italic-behind',
+    name: 'SERIF ITALIC BEHIND',
+    description: 'Enormous bold red serif word sits behind the subject person. Real depth compositing.',
+    category: 'Dynamic',
+    fontFamily: '"Playfair Display", serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 24,
+    baseOpacity: 0.8,
+    heroColor: '#CC1111',
+    heroScale: 5.5,
+    heroFontFamily: '"Playfair Display", serif',
+    heroFontWeight: 800,
+    heroFontStyle: 'italic',
+    accentColor: '#dd4444',
+    alignment: 'center',
+    layoutType: 'bold-behind',
+    letterSpacing: '-0.02em',
+    lineHeight: 0.9,
+    shadow: '2px 4px 16px rgba(0,0,0,0.8)',
+    entranceAnimation: 'fade',
+    heroEntranceAnimation: 'scale-fade',
+    animationLevel: 'segment',
+    wordActivation: 'none',
+    animationSpeed: 1.2,
+    captionDepth: 'behind-subject',
+    position: 'top',
+  },
+
+  // 4. MULTI POSITION TEXT — PLAIN
+  // Reference: multi-position-text-plain_350p.mp4
+  // Visual: Caption groups move to different safe-zone positions each segment.
+  // White only. Supporting words + larger hero. Deterministic position cycling.
+  {
+    id: 'multi-position-plain',
+    name: 'MULTI POSITION — PLAIN',
+    description: 'Caption groups cycle through screen positions. White typography only. Stacked word layout.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 28,
+    baseOpacity: 0.9,
+    heroColor: '#ffffff',
+    heroScale: 1.9,
+    heroFontFamily: '"Playfair Display", serif',
+    heroFontWeight: 700,
+    heroFontStyle: 'italic',
+    accentColor: '#dddddd',
+    alignment: 'left',
+    layoutType: 'multi-position',
+    letterSpacing: '0',
+    lineHeight: 1.2,
+    shadow: '0px 2px 12px rgba(0,0,0,0.7)',
+    entranceAnimation: 'scale-fade',
+    heroEntranceAnimation: 'scale-fade',
+    animationLevel: 'segment',
+    wordActivation: 'none',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'top-left',
+  },
+
+  // 5. MULTI POSITION TEXT — COLOR
+  // Reference: multi-position-text-color_350p.mp4
+  // Visual: Same positional cycling as PLAIN, but hero/emphasis word is golden-amber.
+  {
+    id: 'multi-position-color',
+    name: 'MULTI POSITION — COLOR',
+    description: 'Cycling screen positions with golden-amber emphasis word. Supporting text white.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 28,
+    baseOpacity: 0.9,
+    heroColor: '#F5A623',
+    heroScale: 1.9,
+    heroFontFamily: '"Playfair Display", serif',
+    heroFontWeight: 700,
+    heroFontStyle: 'italic',
+    accentColor: '#F5C76A',
+    alignment: 'left',
+    layoutType: 'multi-position',
+    letterSpacing: '0',
+    lineHeight: 1.2,
+    shadow: '0px 2px 12px rgba(0,0,0,0.7)',
+    entranceAnimation: 'scale-fade',
+    heroEntranceAnimation: 'scale-fade',
+    animationLevel: 'segment',
+    wordActivation: 'none',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'top-left',
+  },
+
+  // 6. DIFFERENCE TEXT
+  // Reference: difference-text_350p.mp4
+  // Visual: Small supporting words above + very large hero word below. ~3x size ratio.
+  // Strong editorial hierarchy. Top-center area. Clean white-on-dark composition.
+  {
+    id: 'difference-text',
+    name: 'DIFFERENCE TEXT',
+    description: 'Strong typographic contrast: small supporting text above and massive hero word below.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 24,
+    baseOpacity: 0.85,
+    heroColor: '#ffffff',
+    heroScale: 3.2,
+    heroFontFamily: '"Geist", sans-serif',
+    heroFontWeight: 800,
+    heroFontStyle: 'normal',
+    accentColor: '#d0d0d0',
+    alignment: 'center',
+    layoutType: 'difference-text',
+    letterSpacing: '0',
+    lineHeight: 1.1,
+    shadow: '0px 2px 12px rgba(0,0,0,0.6)',
+    entranceAnimation: 'fade-up',
+    heroEntranceAnimation: 'slide-up',
+    animationLevel: 'word',
+    wordActivation: 'none',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'top',
+  },
+
+  // 7. BOLD TEXT BEHIND
+  // Reference: bold-text-behind_350p.mp4
+  // Visual: Ultra-bold yellow uppercase word behind the subject. Enormous scale.
+  // Real depth compositing. Safe fallback to foreground if segmentation unavailable.
+  {
+    id: 'bold-text-behind',
+    name: 'BOLD TEXT BEHIND',
+    description: 'Oversized bold yellow uppercase word placed behind the subject via depth compositing.',
+    category: 'Dynamic',
+    fontFamily: '"Geist", sans-serif',
+    fontWeight: 900,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#ffffff',
+    baseSize: 24,
+    baseOpacity: 0.85,
+    heroColor: '#FFE600',
+    heroScale: 5.5,
+    heroFontFamily: '"Geist", sans-serif',
+    heroFontWeight: 900,
+    heroFontStyle: 'normal',
+    accentColor: '#FFE600',
+    alignment: 'center',
+    layoutType: 'bold-behind',
+    letterSpacing: '-0.04em',
+    lineHeight: 0.85,
+    shadow: '2px 4px 16px rgba(0,0,0,0.85)',
+    entranceAnimation: 'fade',
+    heroEntranceAnimation: 'scale-fade',
+    animationLevel: 'segment',
+    wordActivation: 'none',
+    animationSpeed: 1.2,
+    captionDepth: 'behind-subject',
+    position: 'top',
+  },
+
+);
+
 export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
 }

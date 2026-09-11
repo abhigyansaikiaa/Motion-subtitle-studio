@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import type { Segment, Word, TemplateDefinition } from '../../lib/types';
 import { cn } from '../../lib/utils';
 import { AnimatedWord } from './caption-engine';
@@ -297,6 +297,248 @@ export const HeroMicroLayout = ({ segment, templateConfig, time, dynamicBaseSize
   );
 };
 
+
+// --- SUBTITLE HIGHLIGHT LAYOUT ------------------------------------------------
+// Reference: subtitle-highlight_350p.mp4
+// Active spoken word gets a colored background highlight pill. No scale change.
+export const SubtitleHighlightLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const [activeWordId, setActiveWordId] = React.useState<string | null>(null);
+  const [segOpacity, setSegOpacity] = React.useState(0);
+
+  React.useEffect(() => {
+    const unsub1 = time.on('change', (t: number) => {
+      const active = segment.words.find(w => t >= w.start && t < w.end);
+      setActiveWordId(active?.id ?? null);
+    });
+    return unsub1;
+  }, [time, segment.words]);
+
+  React.useEffect(() => {
+    const unsub2 = time.on('change', (t: number) => {
+      const raw = Math.min(1, Math.max(0, (t - segment.start) / 0.2));
+      const exit = Math.min(1, Math.max(0, (t - segment.end) / 0.15));
+      setSegOpacity(raw - exit);
+    });
+    return unsub2;
+  }, [time, segment.start, segment.end]);
+
+  const hlColor = templateConfig.highlightColor ?? '#F5D020';
+  const padX = (templateConfig.highlightPadX ?? 10) * videoScale;
+  const padY = (templateConfig.highlightPadY ?? 3) * videoScale;
+  const radius = (templateConfig.highlightRadius ?? 5) * videoScale;
+
+  return (
+    <div className="flex flex-wrap justify-center gap-[0.25em] max-w-[88%] pointer-events-none"
+      style={{
+        fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
+        fontStyle: templateConfig.fontStyle, fontSize: `${dynamicBaseSize}px`,
+        letterSpacing: templateConfig.letterSpacing, lineHeight: templateConfig.lineHeight,
+        textShadow: templateConfig.shadow && templateConfig.shadow !== 'none' ? templateConfig.shadow : undefined,
+        opacity: segOpacity,
+      }}
+    >
+      {segment.words.map((word) => {
+        const isActive = word.id === activeWordId;
+        return (
+          <span key={word.id} style={{
+            display: 'inline-block',
+            color: isActive ? (templateConfig.heroColor ?? '#111111') : templateConfig.baseColor,
+            backgroundColor: isActive ? hlColor : 'transparent',
+            padding: `${padY}px ${isActive ? padX : 0}px`,
+            borderRadius: `${radius}px`,
+            transition: 'background-color 0.1s ease, color 0.1s ease, padding 0.1s ease',
+            fontWeight: isActive ? (templateConfig.heroFontWeight ?? templateConfig.fontWeight) : templateConfig.fontWeight,
+          }}>
+            {word.text}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
+
+// --- MULTI POSITION LAYOUT ----------------------------------------------------
+// Reference: multi-position-text-plain_350p.mp4, multi-position-text-color_350p.mp4
+// Caption groups cycle deterministically through screen positions.
+const MULTI_POSITIONS = [
+  { top: '8%',  left: '6%',  right: 'auto', bottom: 'auto', align: 'flex-start' as const },
+  { top: '8%',  right: '6%', left: 'auto',  bottom: 'auto', align: 'flex-end' as const },
+  { top: '8%',  left: '0',   right: '0',    bottom: 'auto', align: 'center' as const },
+  { bottom: '16%', left: '6%', right: 'auto', top: 'auto', align: 'flex-start' as const },
+  { bottom: '16%', right: '6%',left: 'auto',  top: 'auto', align: 'flex-end' as const },
+  { top: '0', bottom: '0', left: '0', right: '0', align: 'center' as const },
+];
+
+export const MultiPositionLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const posIdx = Math.floor(segment.start * 10) % MULTI_POSITIONS.length;
+  const pos = MULTI_POSITIONS[posIdx];
+  const heroFF = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
+  const heroFS = templateConfig.heroFontStyle  ?? templateConfig.fontStyle;
+  const heroFW = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
+  const firstHeroIdx = segment.words.findIndex(w => w.emphasis === 'hero' || w.isNumberGroup);
+  const preW  = firstHeroIdx === -1 ? segment.words : segment.words.slice(0, firstHeroIdx);
+  const heroW = firstHeroIdx === -1 ? [] : segment.words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
+  const postW = firstHeroIdx === -1 ? [] : segment.words.slice(firstHeroIdx + heroW.length);
+
+  return (
+    <div className="absolute pointer-events-none" style={{
+      top: pos.top, left: pos.left, right: pos.right, bottom: pos.bottom,
+      display: 'flex', flexDirection: 'column', alignItems: pos.align,
+      gap: `${dynamicBaseSize * 0.12}px`, maxWidth: '80%',
+    }}>
+      {preW.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: pos.align, gap: '0.25em',
+          fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
+          fontStyle: templateConfig.fontStyle, fontSize: `${dynamicBaseSize}px`,
+          letterSpacing: templateConfig.letterSpacing }}>
+          {preW.map((word, i) => <AnimatedWord key={word.id} word={word} index={i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.baseColor} targetDepth={targetDepth} />)}
+        </div>
+      )}
+      {heroW.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: pos.align, gap: '0.1em',
+          fontFamily: heroFF, fontWeight: heroFW, fontStyle: heroFS,
+          fontSize: `${dynamicHeroSize}px`, lineHeight: 1.0 }}>
+          {heroW.map((word, i) => <AnimatedWord key={word.id} word={word} index={preW.length + i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.heroColor}
+            forceFontFamily={heroFF} forceFontWeight={heroFW} forceFontStyle={heroFS}
+            forceFontSize={dynamicHeroSize} targetDepth={targetDepth} />)}
+        </div>
+      )}
+      {postW.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: pos.align, gap: '0.25em',
+          fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
+          fontStyle: templateConfig.fontStyle, fontSize: `${dynamicBaseSize}px` }}>
+          {postW.map((word, i) => <AnimatedWord key={word.id} word={word} index={preW.length + heroW.length + i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.baseColor} targetDepth={targetDepth} />)}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- DIFFERENCE TEXT LAYOUT ---------------------------------------------------
+// Reference: difference-text_350p.mp4
+// Small supporting words above + very large hero word below. ~3x size contrast.
+export const DifferenceTextLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const heroFF = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
+  const heroFW = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
+  const heroFS = templateConfig.heroFontStyle  ?? templateConfig.fontStyle;
+  const firstHeroIdx = segment.words.findIndex(w => w.emphasis === 'hero' || w.isNumberGroup);
+  const preW  = firstHeroIdx === -1 ? segment.words : segment.words.slice(0, firstHeroIdx);
+  const heroW = firstHeroIdx === -1 ? [] : segment.words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
+  const postW = firstHeroIdx === -1 ? [] : segment.words.slice(firstHeroIdx + heroW.length);
+  const supporting = [...preW, ...postW];
+  const shadowVal = templateConfig.shadow && templateConfig.shadow !== 'none' ? templateConfig.shadow : undefined;
+
+  return (
+    <div className="flex flex-col items-center pointer-events-none" style={{ gap: `${dynamicBaseSize * 0.2}px` }}>
+      {supporting.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-[0.3em]" style={{
+          fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
+          fontStyle: templateConfig.fontStyle, fontSize: `${dynamicBaseSize}px`,
+          letterSpacing: templateConfig.letterSpacing, lineHeight: templateConfig.lineHeight,
+          textShadow: shadowVal,
+        }}>
+          {supporting.map((word, i) => <AnimatedWord key={word.id} word={word} index={i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.baseColor} forceFontSize={dynamicBaseSize}
+            targetDepth={targetDepth} />)}
+        </div>
+      )}
+      {heroW.length > 0 && (
+        <div className="flex flex-wrap justify-center gap-[0.05em]" style={{
+          fontFamily: heroFF, fontWeight: heroFW, fontStyle: heroFS,
+          fontSize: `${dynamicHeroSize}px`, lineHeight: 0.9,
+          letterSpacing: '-0.02em', textShadow: shadowVal,
+        }}>
+          {heroW.map((word, i) => <AnimatedWord key={word.id} word={word} index={i + 10}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.heroColor}
+            forceFontFamily={heroFF} forceFontWeight={heroFW} forceFontStyle={heroFS}
+            forceFontSize={dynamicHeroSize} targetDepth={targetDepth} />)}
+        </div>
+      )}
+      {firstHeroIdx === -1 && (
+        <div className="flex flex-wrap justify-center gap-[0.3em]" style={{
+          fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
+          fontSize: `${dynamicBaseSize}px`,
+        }}>
+          {segment.words.map((word, i) => <AnimatedWord key={word.id} word={word} index={i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.baseColor} targetDepth={targetDepth} />)}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// --- BOLD BEHIND LAYOUT -------------------------------------------------------
+// Reference: bold-text-behind_350p.mp4, serif-italic-text-behind_350p.mp4
+// Hero word placed behind subject (captionDepth: 'behind-subject').
+// targetDepth='behind' ? hero only (behind subject layer)
+// targetDepth='front'  ? supporting words or fallback hero in front
+export const BoldBehindLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const heroFF = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
+  const heroFW = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
+  const heroWords = segment.words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
+  const baseWords = segment.words.filter(w => w.emphasis !== 'hero' && !w.isNumberGroup);
+  const displayWord = heroWords[0] ?? segment.words[0];
+  if (!displayWord) return null;
+  const heroSize = dynamicHeroSize * 2.4;
+  const shadowVal = '2px 4px 16px rgba(0,0,0,0.85)';
+
+  const HeroWordEl = () => (
+    <AnimatedWord key={"hw-" + displayWord.id} word={displayWord} index={0}
+      segmentStart={segment.start} segmentEnd={segment.end}
+      templateConfig={{ ...templateConfig, shadow: shadowVal }}
+      time={time} videoScale={videoScale}
+      forceColor={templateConfig.heroColor}
+      forceFontFamily={heroFF} forceFontWeight={heroFW}
+      forceFontSize={heroSize} targetDepth={targetDepth} />
+  );
+
+  if (targetDepth === 'behind') {
+    return <div className="absolute inset-0 flex justify-center pointer-events-none" style={{ paddingTop: '4%' }}><HeroWordEl /></div>;
+  }
+
+  if (targetDepth === 'front') {
+    if (baseWords.length > 0) {
+      return (
+        <div className="flex flex-wrap justify-center gap-[0.3em] pointer-events-none"
+          style={{ fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight, fontSize: `${dynamicBaseSize}px` }}>
+          {baseWords.map((word, i) => <AnimatedWord key={word.id} word={word} index={i}
+            segmentStart={segment.start} segmentEnd={segment.end}
+            templateConfig={templateConfig} time={time} videoScale={videoScale}
+            forceColor={templateConfig.baseColor} forceFontSize={dynamicBaseSize}
+            targetDepth={targetDepth} />)}
+        </div>
+      );
+    }
+    // Fallback: segmentation unavailable ? show hero in front
+    return <div className="flex justify-center pointer-events-none" style={{ paddingTop: '4%' }}><HeroWordEl /></div>;
+  }
+
+  // 'all' mode preview � show hero
+  return <div className="flex justify-center pointer-events-none" style={{ paddingTop: '4%' }}><HeroWordEl /></div>;
+};
 // Export a registry map to be used by CaptionEngine
 export const LayoutRegistry: Record<string, React.FC<any>> = {
   'hero-interruption': HeroInterruptionLayout,
@@ -311,4 +553,8 @@ export const LayoutRegistry: Record<string, React.FC<any>> = {
   'word-collision': HeroInterruptionLayout, // Fallback
   'cinematic': SentenceHeroLayout, // Fallback
   'kinetic': SplitHeroLayout, // Fallback
+  'subtitle-highlight': SubtitleHighlightLayout,
+  'multi-position': MultiPositionLayout,
+  'difference-text': DifferenceTextLayout,
+  'bold-behind': BoldBehindLayout,
 };

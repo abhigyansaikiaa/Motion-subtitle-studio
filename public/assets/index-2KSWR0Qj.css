@@ -1050,6 +1050,10 @@
     max-width: 85%;
   }
 
+  .max-w-\[88\%\] {
+    max-width: 88%;
+  }
+
   .max-w-\[240px\] {
     max-width: 240px;
   }
@@ -1243,6 +1247,14 @@
 
   .gap-\[0\.3em\] {
     gap: .3em;
+  }
+
+  .gap-\[0\.05em\] {
+    gap: .05em;
+  }
+
+  .gap-\[0\.25em\] {
+    gap: .25em;
   }
 
   .gap-\[0\.35em\] {
