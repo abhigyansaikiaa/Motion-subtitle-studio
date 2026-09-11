@@ -69,6 +69,7 @@ function compose(wordsRaw) {
           start: w.start,
           end: w.end,
           index: index,
+          cleanText: w.cleanText || text.replace(/[^\w]/g, '').toLowerCase(),
         };
 
         if (isNumeric) {

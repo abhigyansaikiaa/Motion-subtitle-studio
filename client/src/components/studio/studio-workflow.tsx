@@ -189,8 +189,11 @@ export function StudioWorkflow() {
                 setCurrentTime(t);
                 if (videoRef.current) videoRef.current.currentTime = t;
               }
-            } catch { setCurrentProject(res.project); setEditorSegments([]); }
-            setStep(3);
+              setStep(3);
+            } catch (err: any) { 
+              console.error('Compose failed:', err);
+              setError('Failed to build captions: ' + (err.message || 'Unknown error'));
+            }
             setIsProcessing(false); setProcessingMsg('');
           } else if (status === 'FAILED') {
             clearInterval(poll);
