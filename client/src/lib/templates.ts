@@ -89,7 +89,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'fade',
     wordActivation: 'color-fill',
     animationSpeed: 1.0,
-    captionDepth: 'mixed',
+    captionDepth: 'front',
     position: 'center',
   },
 
@@ -206,7 +206,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'reveal',
     wordActivation: 'none',
     animationSpeed: 1.2,
-    captionDepth: 'behind-subject',
+    captionDepth: 'front',
     position: 'center',
   },
 
@@ -235,7 +235,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'slide-up',
     wordActivation: 'color-fill',
     animationSpeed: 1.0,
-    captionDepth: 'behind-subject',
+    captionDepth: 'front',
     position: 'bottom',
   },
 
@@ -265,7 +265,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'fade',
     wordActivation: 'none',
     animationSpeed: 1.3,
-    captionDepth: 'mixed',
+    captionDepth: 'front',
     position: 'bottom-left',
   },
 
@@ -295,7 +295,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'fade-up',
     wordActivation: 'none',
     animationSpeed: 1.2,
-    captionDepth: 'behind-subject',
+    captionDepth: 'front',
     position: 'center',
   },
 
@@ -384,7 +384,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     entranceAnimation: 'stagger',
     wordActivation: 'none',
     animationSpeed: 1.2,
-    captionDepth: 'mixed',
+    captionDepth: 'front',
     position: 'center',
     numberEmphasis: 'auto',
   },
@@ -475,7 +475,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     heroEntranceAnimation: 'zoom-in',
     wordActivation: 'none',
     animationSpeed: 1.2,
-    captionDepth: 'behind-subject',
+    captionDepth: 'front',
     position: 'center',
     numberEmphasis: 'always',
     countUpEnabled: true,
@@ -592,7 +592,7 @@ export const TEMPLATES: TemplateDefinition[] = [
     heroEntranceAnimation: 'pop-in',
     wordActivation: 'none',
     animationSpeed: 1.0,
-    captionDepth: 'behind-subject',
+    captionDepth: 'front',
     position: 'center',
     numberEmphasis: 'auto',
   },
@@ -1173,3 +1173,4 @@ TEMPLATES.push(
 export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
 }
+

@@ -105,6 +105,7 @@ export interface TemplateDefinition {
   // Compositing / Depth / Position
   captionDepth: 'front' | 'behind-subject' | 'mixed';
   position: 'center' | 'top' | 'bottom' | 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
+  offsetY?: number;
 
   // Number Emphasis
   numberEmphasis?: 'auto' | 'always' | 'never';

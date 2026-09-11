@@ -391,15 +391,19 @@ export function CaptionEngine({
     const pt = 48 * (refH / 1920) * scale;
     const pb = 96 * (refH / 1920) * scale;
     const px = 48 * (refH / 1920) * scale;
+    const yOffset = (templateConfig.offsetY || 0) * (refH / 1920) * scale;
+    
+    const baseStyle: React.CSSProperties = { transform: `translateY(${yOffset}px)` };
+
     switch (templateConfig.position) {
-      case 'top':          return { paddingTop: `${pt}px` };
-      case 'top-left':     return { paddingTop: `${pt}px`, paddingLeft: `${px}px` };
-      case 'top-right':    return { paddingTop: `${pt}px`, paddingRight: `${px}px` };
-      case 'bottom-left':  return { paddingBottom: `${pb}px`, paddingLeft: `${px}px` };
-      case 'bottom-right': return { paddingBottom: `${pb}px`, paddingRight: `${px}px` };
-      case 'center':       return {};
+      case 'top':          return { ...baseStyle, paddingTop: `${pt}px` };
+      case 'top-left':     return { ...baseStyle, paddingTop: `${pt}px`, paddingLeft: `${px}px` };
+      case 'top-right':    return { ...baseStyle, paddingTop: `${pt}px`, paddingRight: `${px}px` };
+      case 'bottom-left':  return { ...baseStyle, paddingBottom: `${pb}px`, paddingLeft: `${px}px` };
+      case 'bottom-right': return { ...baseStyle, paddingBottom: `${pb}px`, paddingRight: `${px}px` };
+      case 'center':       return { ...baseStyle };
       case 'bottom':
-      default:             return { paddingBottom: `${pb}px` };
+      default:             return { ...baseStyle, paddingBottom: `${pb}px` };
     }
   };
 

@@ -326,6 +326,13 @@ export function LayoutPanel() {
               <option value="top-right">Top Right</option>
             </Select>
           </div>
+          <Slider
+            label="Vertical Offset (Y)"
+            min={-500} max={500} step={10}
+            value={activeTemplate.offsetY ?? 0}
+            onChange={(v: number) => set('offsetY', v)}
+            display={`${activeTemplate.offsetY ?? 0}px`}
+          />
         </div>
       </section>
     </div>
