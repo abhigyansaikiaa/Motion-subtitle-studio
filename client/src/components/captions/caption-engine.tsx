@@ -136,7 +136,7 @@ export const AnimatedWord = ({
   const filter    = useTransform(derived, s => s.filter);
 
   const style: React.CSSProperties = {
-    fontSize: forceFontSize !== undefined ? `${forceFontSize}px` : undefined,
+    fontSize: forceFontSize !== undefined ? `${forceFontSize * (word.scale || 1.0)}px` : undefined,
     fontFamily: forceFontFamily ?? undefined,
     fontWeight: forceFontWeight !== undefined ? forceFontWeight : undefined,
     fontStyle: forceFontStyle ?? undefined,
@@ -473,7 +473,7 @@ export function CaptionEngine({
       style={{ opacity: isVisibleLayer ? 1 : 0, ...getPaddingStyle() }}
     >
       <div 
-        className="pointer-events-auto cursor-move flex flex-col items-center justify-center w-full h-full"
+        className="pointer-events-auto cursor-move inline-flex flex-col items-center justify-center"
         onPointerDown={handlePointerDown}
         style={{ touchAction: 'none' }}
       >

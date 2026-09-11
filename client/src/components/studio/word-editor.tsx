@@ -10,7 +10,7 @@ function WordChip({
   segmentId,
   isActive,
 }: {
-  word: { id: string; text: string; emphasis?: string; start: number; end: number };
+  word: { id: string; text: string; emphasis?: string; start: number; end: number; scale?: number };
   segmentId: string;
   isActive: boolean;
 }) {
@@ -147,6 +147,12 @@ function WordChip({
         >
           <Zap className="w-3 h-3" />
         </button>
+        <div className="w-px h-3 bg-border mx-0.5" />
+        <div className="flex items-center gap-0.5 bg-foreground/5 rounded px-1">
+          <button title="Decrease Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.max(0.5, current - 0.1) } : w) })); }} className="p-1 text-xs text-muted-foreground hover:text-foreground">A-</button>
+          <span className="text-[9px] font-mono text-muted-foreground min-w-[2ch] text-center">{word.scale ? word.scale.toFixed(1) : "1.0"}</span>
+          <button title="Increase Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.min(3.0, current + 0.1) } : w) })); }} className="p-1 text-xs text-muted-foreground hover:text-foreground">A+</button>
+        </div>
         <div className="w-px h-3 bg-border mx-0.5" />
         <button
           title="Split segment before word"

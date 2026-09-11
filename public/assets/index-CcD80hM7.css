@@ -1078,6 +1078,10 @@
     min-width: 0;
   }
 
+  .min-w-\[2ch\] {
+    min-width: 2ch;
+  }
+
   .min-w-\[20px\] {
     min-width: 20px;
   }
@@ -1777,6 +1781,10 @@
 
   .p-0\.5 {
     padding: calc(var(--spacing) * .5);
+  }
+
+  .p-1 {
+    padding: var(--spacing-1);
   }
 
   .p-1\.5 {

@@ -15,6 +15,7 @@ export interface Word {
   emphasis?: 'none' | 'hero' | 'accent';
   isNumberGroup?: boolean;
   groupId?: string | null;
+  scale?: number;
 }
 
 export interface Segment {
