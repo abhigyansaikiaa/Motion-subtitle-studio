@@ -309,12 +309,14 @@ const { getJob, getActiveJobForUser, createJob, processJob, COST } = require('./
 
 app.post('/api/render', authMiddleware, async (req, res) => {
   try {
-    const { projectId, template } = req.body;
+    const { projectId, template, resolution = 'original' } = req.body;
     
     const project = await getProject(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     if (project.userId !== req.user.id) return res.status(403).json({ error: 'Unauthorized project access' });
     if (!project.segments || !template) return res.status(400).json({ error: 'Project is missing composition state or template' });
+
+    template.resolution = resolution;
 
     const user = await checkCredits(req.user.id);
     if (user.credits < COST) {

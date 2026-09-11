@@ -79,6 +79,7 @@ export function StudioWorkflow() {
   const [error,            setError]           = useState<string | null>(null);
   const [isDragging,       setIsDragging]      = useState(false);
   const [activeTool,       setActiveTool]      = useState<ToolId>('templates');
+  const [resolution,       setResolution]      = useState('original');
 
   const videoRef    = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -212,7 +213,7 @@ export function StudioWorkflow() {
     if (!currentProject) return;
     try {
       setIsProcessing(true); setError(null); setStep(6); setProcessingMsg('RENDERING...');
-      const res = await api.render(currentProject.id, editorSegments, activeTemplate);
+      const res = await api.render(currentProject.id, editorSegments, activeTemplate, resolution);
       const poll = setInterval(async () => {
         try {
           const jobRes = await api.getJob(res.job.id);
@@ -283,14 +284,27 @@ export function StudioWorkflow() {
                 Reset
               </button>
               {/* Render & Export CTA */}
-              <button
-                onClick={handleRender}
-                disabled={isProcessing || editorSegments.length === 0}
-                className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold bg-foreground text-background hover:opacity-85 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
-              >
-                <Download className="w-4 h-4" />
-                Render & Export
-              </button>
+              <div className="flex items-center gap-0 bg-foreground text-background rounded-full pl-2 pr-1 py-1">
+                <select 
+                  value={resolution}
+                  onChange={(e) => setResolution(e.target.value)}
+                  className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:opacity-80 py-1 pl-2 pr-6 appearance-none"
+                  style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5em top 50%', backgroundSize: '0.65em auto' }}
+                >
+                  <option value="original">Original</option>
+                  <option value="1080p">1080p</option>
+                  <option value="720p">720p</option>
+                </select>
+                <div className="w-px h-4 bg-background/20 ml-1 mr-1" />
+                <button
+                  onClick={handleRender}
+                  disabled={isProcessing || editorSegments.length === 0}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold hover:bg-background/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-4 h-4" />
+                  Export
+                </button>
+              </div>
             </>
           )}
           {currentStep === 7 && currentProject && (

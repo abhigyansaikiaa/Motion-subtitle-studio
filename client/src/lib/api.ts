@@ -104,11 +104,11 @@ export const api = {
     }),
     
   // Render
-  render: (projectId: string, segments: any[], template: TemplateDefinition) =>
+  render: (projectId: string, segments: any[], template: TemplateDefinition, resolution?: string) =>
     fetchApi<{ job: Job }>('/api/render', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectId, segments, template })
+      body: JSON.stringify({ projectId, segments, template, resolution })
     }),
     
   // Job polling

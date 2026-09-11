@@ -59,18 +59,18 @@ function runCommand(cmd) {
  * Simple front-only render path (no segmentation needed).
  * Captures a single caption layer and overlays it on the video.
  */
-async function renderFront(inputPath, outputPath, durationSec, projectId, token, width, height) {
+async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight) {
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
 
-  console.log(`[RENDER] Capturing foreground text layer (front-only mode) at ${width}x${height}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, width, height);
+  console.log(`[RENDER] Capturing foreground text layer (front-only mode) at ${targetWidth}x${targetHeight}...`);
+  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight);
 
   console.log(`[RENDER] Compositing (front-only)...`);
 
-  const filterGraph = [
-    // Overlay the text on the base video exactly as it is (since they have the exact same dimensions)
-    `[0:v][1:v]overlay=0:0[final_out]`
-  ].join(';');
+  let filterGraph = `[0:v][1:v]overlay=0:0[final_out]`;
+  if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
+    filterGraph = `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][1:v]overlay=0:0[final_out]`;
+  }
 
   const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
               `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
@@ -88,16 +88,16 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
  * Uses Python MediaPipe segmentation to composite:
  *   [behind captions] → [subject fg extracted from mask] → [front captions]
  */
-async function renderDepth(inputPath, outputPath, durationSec, projectId, token, width, height) {
+async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight) {
   const bgTextPath = outputPath.replace(/\.[^.]+$/, '_bg.webm');
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
   const maskPath   = outputPath.replace(/\.[^.]+$/, '_mask.mp4');
 
-  console.log(`[RENDER] Capturing background text layer (depth mode) at ${width}x${height}...`);
-  await captureCaptionVideo(projectId, 'behind', durationSec, bgTextPath, token, width, height);
+  console.log(`[RENDER] Capturing background text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
+  await captureCaptionVideo(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight);
 
-  console.log(`[RENDER] Capturing foreground text layer (depth mode) at ${width}x${height}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, width, height);
+  console.log(`[RENDER] Capturing foreground text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
+  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight);
 
   console.log(`[RENDER] Generating subject mask via Python MediaPipe...`);
   await new Promise((resolve, reject) => {
@@ -110,23 +110,24 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
 
   console.log(`[RENDER] Compositing (depth mode)...`);
 
-  // Mask generation likely alters colorspace to gray; we composite directly
-  // assuming mask matches video dimensions.
-  const filterGraph = [
-    // Overlay background text onto base video
+  let filterGraph = [
     `[0:v][1:v]overlay=0:0[base_with_bg]`,
-
-    // Extract subject foreground using mask
-    // We assume [2:v] is the mask generated from the base video and matches dimensions
     `[2:v]format=gray[mask]`,
     `[0:v][mask]alphamerge[fg_subject]`,
-
-    // Place subject on top of bg captions
     `[base_with_bg][fg_subject]overlay=0:0[with_fg_subject]`,
-
-    // Overlay front captions on top of everything
     `[with_fg_subject][3:v]overlay=0:0[final_out]`
   ].join(';');
+
+  if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
+    filterGraph = [
+      `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in]`,
+      `[2:v]scale=${targetWidth}:${targetHeight},format=gray[mask]`,
+      `[scaled_in][1:v]overlay=0:0[base_with_bg]`,
+      `[scaled_in][mask]alphamerge[fg_subject]`,
+      `[base_with_bg][fg_subject]overlay=0:0[with_fg_subject]`,
+      `[with_fg_subject][3:v]overlay=0:0[final_out]`
+    ].join(';');
+  }
 
   const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${bgTextPath}" -i "${maskPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
               `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
@@ -153,17 +154,43 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
  * @param {Object} template    - Template object containing captionDepth and other style props
  * @param {string} projectId   - Project ID used by PuppeteerRenderer to fetch segments from the API
  */
-async function renderVideo(inputPath, outputPath, segments, template, projectId, token) {
+async function renderVideo(inputPath, outputPath, segments, template, projectId, token, resolution = 'original') {
   const { durationSec, width, height } = await getVideoMeta(inputPath);
-  console.log(`[RENDER] Video dimensions: ${width}x${height}, duration: ${durationSec}s | project: ${projectId} | depth: ${template?.captionDepth || 'front'}`);
+  console.log(`[RENDER] Original dimensions: ${width}x${height}, duration: ${durationSec}s | project: ${projectId} | depth: ${template?.captionDepth || 'front'} | resolution: ${resolution}`);
+
+  let targetWidth = width;
+  let targetHeight = height;
+
+  if (resolution === '1080p') {
+     if (height > width) {
+        targetHeight = 1920;
+        targetWidth = Math.round((1920 / height) * width);
+     } else {
+        targetWidth = 1920;
+        targetHeight = Math.round((1920 / width) * height);
+     }
+  } else if (resolution === '720p') {
+     if (height > width) {
+        targetHeight = 1280;
+        targetWidth = Math.round((1280 / height) * width);
+     } else {
+        targetWidth = 1280;
+        targetHeight = Math.round((1280 / width) * height);
+     }
+  }
+  
+  targetWidth = targetWidth % 2 === 0 ? targetWidth : targetWidth + 1;
+  targetHeight = targetHeight % 2 === 0 ? targetHeight : targetHeight + 1;
+  
+  console.log(`[RENDER] Target dimensions: ${targetWidth}x${targetHeight}`);
 
   const captionDepth = template?.captionDepth || 'front';
 
   if (captionDepth === 'behind-subject' || captionDepth === 'mixed') {
-    await renderDepth(inputPath, outputPath, durationSec, projectId, token, width, height);
+    await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height);
   } else {
     // 'front' (default) — simple, fast path with no segmentation
-    await renderFront(inputPath, outputPath, durationSec, projectId, token, width, height);
+    await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height);
   }
 }
 

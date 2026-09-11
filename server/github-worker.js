@@ -95,7 +95,7 @@ async function processRenderJob(jobId) {
   }
 
   const job = claimed[0];
-  const { data: project } = await supabase.from('projects').select('video_id, videos(storage_path)').eq('id', job.project_id).single();
+  const { data: project } = await supabase.from('projects').select('video_id, videos!projects_video_id_fkey(storage_path)').eq('id', job.project_id).single();
   const b2Key = project?.videos?.storage_path || job.video_id;
   const inputFilename = path.basename(b2Key);
   const inputPath = path.join(uploadDir, inputFilename);
@@ -111,7 +111,7 @@ async function processRenderJob(jobId) {
 
     await updateJobState(jobId, 'RENDERING', 40, 'Speech cadence composition');
     const token = jwt.sign({ id: job.user_id }, JWT_SECRET, { expiresIn: '1h' });
-    await renderVideo(inputPath, outputPath, job.segments, job.style, job.project_id, token);
+    await renderVideo(inputPath, outputPath, job.segments, job.style, job.project_id, token, job.style?.resolution || 'original');
 
     await updateJobState(jobId, 'ENCODING', 90, `Uploading to storage`);
     await storageProvider.uploadFile(outputPath, outputB2Key);
