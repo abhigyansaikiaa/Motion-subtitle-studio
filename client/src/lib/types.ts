@@ -106,6 +106,7 @@ export interface TemplateDefinition {
   captionDepth: 'front' | 'behind-subject' | 'mixed';
   position: 'center' | 'top' | 'bottom' | 'bottom-left' | 'bottom-right' | 'top-left' | 'top-right';
   offsetY?: number;
+  offsetX?: number;
 
   // Number Emphasis
   numberEmphasis?: 'auto' | 'always' | 'never';

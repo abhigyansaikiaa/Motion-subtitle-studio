@@ -326,13 +326,26 @@ export function LayoutPanel() {
               <option value="top-right">Top Right</option>
             </Select>
           </div>
-          <Slider
-            label="Vertical Offset (Y)"
-            min={-500} max={500} step={10}
-            value={activeTemplate.offsetY ?? 0}
-            onChange={(v: number) => set('offsetY', v)}
-            display={`${activeTemplate.offsetY ?? 0}px`}
-          />
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <Slider
+                label="Offset Y"
+                min={-500} max={500} step={10}
+                value={activeTemplate.offsetY ?? 0}
+                onChange={(v: number) => set('offsetY', v)}
+                display={`${activeTemplate.offsetY ?? 0}px`}
+              />
+            </div>
+            <div className="flex-1">
+              <Slider
+                label="Offset X"
+                min={-500} max={500} step={10}
+                value={activeTemplate.offsetX ?? 0}
+                onChange={(v: number) => set('offsetX', v)}
+                display={`${activeTemplate.offsetX ?? 0}px`}
+              />
+            </div>
+          </div>
         </div>
       </section>
     </div>

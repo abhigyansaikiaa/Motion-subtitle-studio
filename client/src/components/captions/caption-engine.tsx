@@ -392,8 +392,9 @@ export function CaptionEngine({
     const pb = 96 * (refH / 1920) * scale;
     const px = 48 * (refH / 1920) * scale;
     const yOffset = (templateConfig.offsetY || 0) * (refH / 1920) * scale;
+    const xOffset = (templateConfig.offsetX || 0) * (refH / 1920) * scale;
     
-    const baseStyle: React.CSSProperties = { transform: `translateY(${yOffset}px)` };
+    const baseStyle: React.CSSProperties = { transform: `translate(${xOffset}px, ${yOffset}px)` };
 
     switch (templateConfig.position) {
       case 'top':          return { ...baseStyle, paddingTop: `${pt}px` };
@@ -431,6 +432,37 @@ export function CaptionEngine({
   const isEditorial = templateConfig.layoutType === 'editorial';
   const CustomLayoutComponent = LayoutRegistry[templateConfig.layoutType];
 
+  const handlePointerDown = (e: React.PointerEvent) => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    
+    const startX = e.clientX;
+    const startY = e.clientY;
+    
+    const storeState = useAppStore.getState();
+    const startOffsetX = storeState.customOverrides.offsetX ?? templateConfig.offsetX ?? 0;
+    const startOffsetY = storeState.customOverrides.offsetY ?? templateConfig.offsetY ?? 0;
+
+    const handlePointerMove = (moveEvent: PointerEvent) => {
+      const deltaX = (moveEvent.clientX - startX) / (scale * (refH / 1920));
+      const deltaY = (moveEvent.clientY - startY) / (scale * (refH / 1920));
+      
+      useAppStore.getState().setCustomOverrides({
+        ...useAppStore.getState().customOverrides,
+        offsetX: startOffsetX + deltaX,
+        offsetY: startOffsetY + deltaY,
+      });
+    };
+
+    const handlePointerUp = () => {
+      document.removeEventListener('pointermove', handlePointerMove);
+      document.removeEventListener('pointerup', handlePointerUp);
+    };
+
+    document.addEventListener('pointermove', handlePointerMove);
+    document.addEventListener('pointerup', handlePointerUp);
+  };
+
   return (
     <div
       data-testid="caption-engine"
@@ -440,7 +472,12 @@ export function CaptionEngine({
       )}
       style={{ opacity: isVisibleLayer ? 1 : 0, ...getPaddingStyle() }}
     >
-      {CustomLayoutComponent ? (
+      <div 
+        className="pointer-events-auto cursor-move flex flex-col items-center justify-center w-full h-full"
+        onPointerDown={handlePointerDown}
+        style={{ touchAction: 'none' }}
+      >
+        {CustomLayoutComponent ? (
         /* ── Dynamic Editorial Layout from Registry ────────────────────── */
         <CustomLayoutComponent
           segment={activeSegment}
@@ -501,6 +538,7 @@ export function CaptionEngine({
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

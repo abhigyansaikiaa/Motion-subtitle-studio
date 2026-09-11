@@ -1129,6 +1129,10 @@
     cursor: grab;
   }
 
+  .cursor-move {
+    cursor: move;
+  }
+
   .cursor-pointer {
     cursor: pointer;
   }
