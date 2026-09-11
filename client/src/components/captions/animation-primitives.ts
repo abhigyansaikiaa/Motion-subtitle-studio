@@ -18,7 +18,9 @@ export function generateAnimationState(
   eased: number,
   invEased: number,
   amplitude: number,
-  index: number
+  index: number,
+  compositionWidth: number = 1080,
+  compositionHeight: number = 1920
 ) {
   let scaleX = 1, scaleY = 1;
   let translateY = 0, translateX = 0;
@@ -130,10 +132,12 @@ export function generateAnimationState(
       scaleX = Math.max(0.1, eased); // simulates a growing mask
       break;
     case 'collision-left':
-      translateX = invEased * -80 * amplitude;
+      // Move in from the left, scaled by composition width
+      translateX = invEased * -0.4 * compositionWidth;
       break;
     case 'collision-right':
-      translateX = invEased * 80 * amplitude;
+      // Move in from the right, scaled by composition width
+      translateX = invEased * 0.4 * compositionWidth;
       break;
 
     // ── MOGRT-DERIVED ANIMATIONS ──────────────────────────────────────────────
@@ -146,21 +150,18 @@ export function generateAnimationState(
       break;
 
     // Smooth Slide Left: whole segment slides in from right (positive X → 0)
-    // Extracted from Smooth_Slide_Left.mogrt — 1.3s easeOutCubic, right-to-center
     case 'slide-from-right':
-      translateX = invEased * 120 * amplitude;
+      translateX = invEased * 0.5 * compositionWidth;
       break;
 
     // Sliding Bottom To Up: segment slides up from below (positive Y → 0)
-    // Extracted from Sliding_Bottom_To_Up.mogrt — 1.0s easeOutCubic, bottom-to-center
     case 'slide-from-bottom':
-      translateY = invEased * 120 * amplitude;
+      translateY = invEased * 0.5 * compositionHeight;
       break;
 
     // Sliding Right To Left: segment enters from far right, stops at center
-    // Extracted from Sliding_Right_To_Left.mogrt — 1.0s easeOutCubic, right-to-left
     case 'slide-right-to-left':
-      translateX = invEased * 160 * amplitude;
+      translateX = invEased * 0.6 * compositionWidth;
       break;
 
     case 'fade':

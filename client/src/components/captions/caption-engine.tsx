@@ -28,6 +28,8 @@ export const AnimatedWord = ({
   templateConfig,
   time,
   videoScale = 1,
+  compositionWidth = 1080,
+  compositionHeight = 1920,
   forceColor,
   forceFontSize,
   forceFontFamily,
@@ -43,6 +45,8 @@ export const AnimatedWord = ({
   templateConfig: TemplateDefinition;
   time: any;
   videoScale?: number;
+  compositionWidth?: number;
+  compositionHeight?: number;
   forceColor?: string;
   forceFontSize?: number;
   forceFontFamily?: string;
@@ -53,11 +57,13 @@ export const AnimatedWord = ({
 }) => {
   const speed = templateConfig.animationSpeed ?? 1.0;
   const entranceDuration = 0.35 * speed;
-  const staggerDelay = index * 0.06 * speed;
+  
+  // If animationLevel is segment, all words animate together (no stagger)
+  const staggerDelay = templateConfig.animationLevel === 'segment' ? 0 : index * 0.06 * speed;
   const entranceStart = segmentStart + staggerDelay;
 
   const derived = useTransform(time, (t: number) => {
-    const isActive = t >= word.start && t <= word.end;
+    const isActive = t >= word.start && t < word.end;
     const raw = clamp((t - entranceStart) / entranceDuration, 0, 1);
     const eased = easeOutCubic(raw);
     const exitRaw = clamp((t - segmentEnd) / (0.25 * speed), 0, 1);
@@ -97,11 +103,15 @@ export const AnimatedWord = ({
       }
     }
 
-    const amplitude = videoScale;
-    const animName = forceEntranceAnimation || (isHero && templateConfig.heroEntranceAnimation ? templateConfig.heroEntranceAnimation : templateConfig.entranceAnimation);
+    let animName = forceEntranceAnimation || (isHero && templateConfig.heroEntranceAnimation ? templateConfig.heroEntranceAnimation : templateConfig.entranceAnimation);
+
+    // True Slide Collide logic: alternate odd/even words from left/right
+    if (animName === 'slide-collide') {
+      animName = index % 2 === 0 ? 'collision-right' : 'collision-left';
+    }
 
     const { scaleX: baseScaleX, scaleY: baseScaleY, translateY, translateX, blur, rotation } = generateAnimationState(
-      animName, raw, eased, invEased, amplitude, index
+      animName, raw, eased, invEased, videoScale, index, compositionWidth, compositionHeight
     );
 
     let finalScaleX = baseScaleX;
@@ -116,7 +126,7 @@ export const AnimatedWord = ({
       opacity,
       color,
       transform: `translate(${translateX}px, ${translateY}px) scale(${finalScaleX}, ${finalScaleY}) rotateZ(${rotation}deg)`,
-      filter: blur > 0 ? `blur(${blur * amplitude}px)` : 'none',
+      filter: blur > 0 ? `blur(${blur * videoScale}px)` : 'none',
     };
   });
 
@@ -154,6 +164,8 @@ const EditorialLayout = ({
   dynamicBaseSize,
   dynamicHeroSize,
   videoScale,
+  compositionWidth,
+  compositionHeight,
   alignment,
   targetDepth = 'all',
 }: {
@@ -163,6 +175,8 @@ const EditorialLayout = ({
   dynamicBaseSize: number;
   dynamicHeroSize: number;
   videoScale: number;
+  compositionWidth: number;
+  compositionHeight: number;
   alignment: string;
   targetDepth?: 'all' | 'front' | 'behind';
 }) => {
@@ -222,6 +236,8 @@ const EditorialLayout = ({
               templateConfig={templateConfig}
               time={time}
               videoScale={videoScale}
+              compositionWidth={compositionWidth}
+              compositionHeight={compositionHeight}
               forceColor={templateConfig.baseColor}
               targetDepth={targetDepth}
             />
@@ -247,6 +263,8 @@ const EditorialLayout = ({
               templateConfig={templateConfig}
               time={time}
               videoScale={videoScale}
+              compositionWidth={compositionWidth}
+              compositionHeight={compositionHeight}
               forceColor={templateConfig.heroColor}
               forceFontSize={dynamicHeroSize}
               forceFontFamily={heroFontFamily}
@@ -283,6 +301,8 @@ const EditorialLayout = ({
               templateConfig={templateConfig}
               time={time}
               videoScale={videoScale}
+              compositionWidth={compositionWidth}
+              compositionHeight={compositionHeight}
               forceColor={templateConfig.baseColor}
               targetDepth={targetDepth}
             />
@@ -293,56 +313,19 @@ const EditorialLayout = ({
   );
 };
 
+// ─── CAPTION ENGINE ───────────────────────────────────────────────────────────
 import { LayoutRegistry } from './caption-layouts';
 
-function injectNumberGroups(segments: Segment[]): Segment[] {
-  return segments.map(seg => {
-    let currentGroupId: string | undefined = undefined;
-    let inGroup = false;
-    
-    const newWords = seg.words.map((w, index) => {
-      // If it already has it, preserve it
-      if (w.isNumberGroup !== undefined) return w;
-      
-      const newWord = { ...w };
-      const text = w.cleanText || w.text;
-      const isNumeric = text.match(/^[\d.,$€£₹%+-]+[a-z]*$/i);
-      
-      if (isNumeric) {
-        if (!inGroup) {
-          inGroup = true;
-          currentGroupId = 'g_' + Math.random().toString(36).substring(2, 9);
-        }
-        newWord.isNumberGroup = true;
-        newWord.groupId = currentGroupId;
-      } else {
-        const lower = text.toLowerCase();
-        if (inGroup && ['k', 'm', 'b', 'percent', 'seconds', 'second', 'secs', 'sec', 'days', 'day', 'hours', 'hour', 'years', 'year', 'months', 'month', 'minutes', 'minute', 'mins', 'min', 'x'].includes(lower)) {
-          newWord.isNumberGroup = true;
-          newWord.groupId = currentGroupId;
-          inGroup = false;
-        } else {
-          inGroup = false;
-          currentGroupId = undefined;
-        }
-      }
-      return newWord;
-    });
-
-    return { ...seg, words: newWords };
-  });
-}
-
-// ─── CAPTION ENGINE ───────────────────────────────────────────────────────────
 export function CaptionEngine({
   targetDepth = 'all',
   segments: propSegments,
   currentTime: propTime,
   template: propTemplate,
-  compositionWidth,
-  compositionHeight,
+  compositionWidth = 1080,
+  compositionHeight = 1920,
   scale = 1,
-}: CaptionEngineProps) {
+  getVideoTime,
+}: CaptionEngineProps & { getVideoTime?: () => number }) {
   const storeSegments       = useAppStore(state => state.editorSegments);
   const selectedStyleId     = useAppStore(state => state.selectedStyleId);
   const customOverrides     = useAppStore(state => state.customOverrides);
@@ -355,8 +338,7 @@ export function CaptionEngine({
     ...customOverrides,
   }), [selectedStyleId, customOverrides]);
 
-  const rawSegments    = propSegments     || storeSegments;
-  const segments       = useMemo(() => injectNumberGroups(rawSegments), [rawSegments]);
+  const segments       = propSegments     || storeSegments;
   const templateConfig = propTemplate     || storeTemplateConfig;
 
   const time = useMotionValue(propTime ?? storeTime);
@@ -364,14 +346,21 @@ export function CaptionEngine({
 
   // Sync MotionValue from store or props
   useAnimationFrame(() => {
-    if (propTime !== undefined) {
-      time.set(propTime);
+    let t = 0;
+    if (getVideoTime) {
+      t = getVideoTime();
+    } else if (propTime !== undefined) {
+      t = propTime;
     } else {
-      time.set(useAppStore.getState().currentTime);
+      t = useAppStore.getState().currentTime;
     }
-    const t = time.get();
-    const currentSeg = segments.find(s => t >= s.start && t <= s.end + 1.0);
-    if (currentSeg?.id !== activeSegment?.id) setActiveSegment(currentSeg);
+    time.set(t);
+    
+    // Exact segment boundary check: t >= s.start && t < s.end
+    const currentSeg = segments.find(s => t >= s.start && t < s.end);
+    if (currentSeg?.id !== activeSegment?.id) {
+       setActiveSegment(currentSeg);
+    }
   });
 
   if (!activeSegment || !templateConfig) return null;
@@ -468,6 +457,8 @@ export function CaptionEngine({
           dynamicBaseSize={dynamicBaseSize}
           dynamicHeroSize={dynamicHeroSize}
           videoScale={videoScale}
+          compositionWidth={compositionWidth}
+          compositionHeight={compositionHeight}
           alignment={templateConfig.alignment}
           targetDepth={targetDepth}
         />
@@ -499,6 +490,8 @@ export function CaptionEngine({
               templateConfig={templateConfig}
               time={time}
               videoScale={videoScale}
+              compositionWidth={compositionWidth}
+              compositionHeight={compositionHeight}
               targetDepth={targetDepth}
             />
           ))}

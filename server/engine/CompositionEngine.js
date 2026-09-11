@@ -35,7 +35,8 @@ function compose(wordsRaw) {
       
       // Break if we hit a sentence end, BUT only if the current segment isn't too short 
       // (prevents breaking "I am." / "Happy.")
-      if (END_PUNCTUATION.test(word.word) && currentWords.length >= 3) {
+      const wText = word.text || word.word || '';
+      if (END_PUNCTUATION.test(wText) && currentWords.length >= 3) {
         shouldBreak = true;
       }
       
@@ -51,7 +52,51 @@ function compose(wordsRaw) {
     if (shouldBreak) {
       // 2. Format segment into lines
       const lines = breakIntoLines(currentWords);
-      segments.push(createSegment(`seg_${segIndex++}`, currentWords, lines));
+      
+      // 3. Inject Number Groups
+      let currentGroupId = null;
+      let inGroup = false;
+      
+      const normalizedWords = currentWords.map((w, index) => {
+        const text = (w.cleanText || w.word || '').toString();
+        const isNumeric = text.match(/^[\d.,$€£₹%+-]+[a-z]*$/i);
+        
+        // Ensure consistent schema: { id, text, start, end, index, groupId?, isNumberGroup? }
+        // The original whisper word uses w.word, we normalize to w.text
+        const newWord = {
+          id: w.id || `w_${segIndex}_${index}`,
+          text: w.word || text,
+          start: w.start,
+          end: w.end,
+          index: index,
+        };
+
+        if (isNumeric) {
+          if (!inGroup) {
+            inGroup = true;
+            currentGroupId = 'g_' + Math.random().toString(36).substring(2, 9);
+          }
+          newWord.isNumberGroup = true;
+          newWord.groupId = currentGroupId;
+        } else {
+          const lower = text.toLowerCase();
+          const numberUnits = ['k', 'm', 'b', 'percent', 'seconds', 'second', 'secs', 'sec', 'days', 'day', 'hours', 'hour', 'years', 'year', 'months', 'month', 'minutes', 'minute', 'mins', 'min', 'x'];
+          if (inGroup && numberUnits.includes(lower)) {
+            newWord.isNumberGroup = true;
+            newWord.groupId = currentGroupId;
+            inGroup = false;
+          } else {
+            inGroup = false;
+            currentGroupId = null;
+          }
+        }
+        return newWord;
+      });
+
+      // Update lines to reference the normalized words
+      const normalizedLines = breakIntoLines(normalizedWords);
+      
+      segments.push(createSegment(`seg_${segIndex++}`, normalizedWords, normalizedLines));
       currentWords = [];
     }
   }
@@ -66,7 +111,8 @@ function breakIntoLines(words) {
 
   for (let i = 0; i < words.length; i++) {
     const word = words[i];
-    const wordLen = word.word.length;
+    const text = word.text || word.word || '';
+    const wordLen = text.length;
 
     // Check if adding this word would overflow the line constraints
     const wouldOverflowChars = currentLineChars + wordLen + (currentLine.length > 0 ? 1 : 0) > MAX_CHARS_PER_LINE;
@@ -74,7 +120,8 @@ function breakIntoLines(words) {
     
     // Check if previous word had a pause punctuation (like a comma)
     const prevWord = i > 0 ? words[i - 1] : null;
-    const isAfterComma = prevWord && PAUSE_PUNCTUATION.test(prevWord.word);
+    const prevText = prevWord ? (prevWord.text || prevWord.word || '') : '';
+    const isAfterComma = prevWord && PAUSE_PUNCTUATION.test(prevText);
     
     // Smart line breaks: try to keep sentences together, break on commas/pauses
     if (currentLine.length > 0 && (wouldOverflowChars || wouldOverflowWords || (isAfterComma && currentLine.length >= 2))) {

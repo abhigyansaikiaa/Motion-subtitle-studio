@@ -128,16 +128,29 @@ export function CompositedPreview() {
     }
   }, [isPlaying]);
 
-  const handleTimeUpdate = () => {
-    if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
-  };
-
   const handleLoadedMetadata = () => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
       updateRect();
     }
   };
+
+  // Provide exact time to CaptionEngine without React state lag
+  const getVideoTime = useCallback(() => {
+    return videoRef.current?.currentTime ?? 0;
+  }, []);
+
+  // Sync store time periodically for UI (scrubber), but NOT for captions
+  useEffect(() => {
+    if (!isPlaying) return;
+    let raf: number;
+    const sync = () => {
+      if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
+      raf = requestAnimationFrame(sync);
+    };
+    raf = requestAnimationFrame(sync);
+    return () => cancelAnimationFrame(raf);
+  }, [isPlaying, setCurrentTime]);
 
   // Segmentation canvas drawing
   useEffect(() => {
@@ -173,7 +186,6 @@ export function CompositedPreview() {
         ref={videoRef}
         src={videoUrl || undefined}
         className="absolute inset-0 w-full h-full object-contain"
-        onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         playsInline
         crossOrigin="anonymous"
@@ -210,6 +222,7 @@ export function CompositedPreview() {
               compositionWidth={videoRect.nativeW}
               compositionHeight={videoRect.nativeH}
               scale={videoRect.scale}
+              getVideoTime={getVideoTime}
             />
           )}
 
@@ -227,6 +240,7 @@ export function CompositedPreview() {
             compositionWidth={videoRect.nativeW}
             compositionHeight={videoRect.nativeH}
             scale={videoRect.scale}
+            getVideoTime={getVideoTime}
           />
         </div>
       )}

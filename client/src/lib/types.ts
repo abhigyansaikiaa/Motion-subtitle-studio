@@ -9,20 +9,23 @@ export interface User {
 export interface Word {
   id: string;
   text: string;
-  cleanText: string;
   start: number;
   end: number;
-  emphasis?: 'hero' | 'accent' | 'none'; // added by emphasis engine
+  index?: number;
+  emphasis?: 'none' | 'hero' | 'accent';
   isNumberGroup?: boolean;
-  groupId?: string;
+  groupId?: string | null;
 }
 
 export interface Segment {
   id: string;
   start: number;
   end: number;
+  text: string;
   words: Word[];
-  lines: Word[][];
+  lines?: Word[][];
+  emphasis?: { wordId: string; reason: string };
+  style?: string;
 }
 
 export interface Project {
@@ -60,7 +63,9 @@ export interface TemplateDefinition {
   id: string;
   name: string;
   description: string;
-  category?: string;
+  category?: 'Modern' | 'Minimalist' | 'Dynamic' | 'Editorial' | 'MOGRT' | string;
+  animationLevel?: 'word' | 'segment';
+  
   fontFamily: string;
   fontWeight: string | number;
   fontStyle: string; // 'normal' | 'italic'

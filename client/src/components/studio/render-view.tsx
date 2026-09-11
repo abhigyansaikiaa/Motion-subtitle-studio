@@ -8,7 +8,9 @@ export function RenderView() {
   const [projectId, setProjectId] = useState<string | null>(null);
   const [depth, setDepth] = useState<'front' | 'behind'>('front');
   const [project, setProject] = useState<any>(null);
-  const [time, setTime] = useState<number>(0);
+  
+  // Keep render time in a ref to avoid React state re-renders during Puppeteer export
+  const renderTimeRef = React.useRef(0);
 
   useEffect(() => {
     const hashSplit = window.location.hash.split('?');
@@ -34,7 +36,11 @@ export function RenderView() {
 
     // Expose setRenderTime to Puppeteer
     (window as any).setRenderTime = (t: number) => {
-      setTime(t);
+      renderTimeRef.current = t;
+      // Trigger CaptionEngine sync immediately
+      if ((window as any).__syncCaptionTime) {
+         (window as any).__syncCaptionTime(t);
+      }
     };
 
     // Tell Puppeteer we are ready
@@ -69,12 +75,12 @@ export function RenderView() {
     <div style={{ width: 1080, height: 1920, position: 'relative', overflow: 'hidden' }}>
       <CaptionEngine 
         segments={project.segments || []} 
-        currentTime={time} 
         template={template} 
         targetDepth={depth} 
         compositionWidth={1080}
         compositionHeight={1920}
         scale={1}
+        getVideoTime={() => renderTimeRef.current}
       />
     </div>
   );

@@ -46,7 +46,7 @@ export const CountUpWord = ({
   const [displayValue, setDisplayValue] = useState(word.text);
 
   // We extract numeric value to count up to
-  const targetValueMatch = word.cleanText.match(/(\d+)/);
+  const targetValueMatch = word.text.match(/(\d+)/);
   const targetValue = targetValueMatch ? parseInt(targetValueMatch[1], 10) : 0;
 
   useEffect(() => {
