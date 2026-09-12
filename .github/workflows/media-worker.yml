@@ -109,6 +109,31 @@ jobs:
         working-directory: ./server
         run: npm ci
 
+      # ── RENDER: Cache the Puppeteer browser (Chrome) ─────────────────────
+      # The node_modules cache restores puppeteer but NOT its downloaded browser.
+      # When node_modules cache hits, npm ci is skipped so the Puppeteer
+      # postinstall (which downloads Chrome) never runs → "Could not find Chrome".
+      # Fix: cache ~/.cache/puppeteer separately, keyed on the puppeteer package
+      # version. On a cache miss, explicitly install the browser before the worker.
+      - name: Cache Puppeteer browser
+        id: cache-puppeteer
+        if: github.event.inputs.type == 'render'
+        uses: actions/cache@v4
+        with:
+          path: /home/runner/.cache/puppeteer
+          key: ${{ runner.os }}-puppeteer-${{ hashFiles('server/package-lock.json') }}
+
+      - name: Install Puppeteer browser (render — cache miss only)
+        if: github.event.inputs.type == 'render' && steps.cache-puppeteer.outputs.cache-hit != 'true'
+        working-directory: ./server
+        env:
+          PUPPETEER_CACHE_DIR: /home/runner/.cache/puppeteer
+        run: |
+          # Install the exact Chrome revision that puppeteer expects.
+          # Uses Puppeteer's own CLI so the build ID is always in sync with
+          # the installed package version — no hardcoded revision numbers.
+          node node_modules/puppeteer/install.mjs
+
       - name: Run GitHub Worker
         working-directory: ./server
         env:
@@ -122,6 +147,7 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CLIENT_ORIGIN: ${{ secrets.CLIENT_ORIGIN }}
           HF_HUB_CACHE: /home/runner/.cache/huggingface/hub
+          PUPPETEER_CACHE_DIR: /home/runner/.cache/puppeteer
         run: |
           # Use the venv node_modules and python explicitly
           export PATH="$(pwd)/venv/bin:$PATH"
