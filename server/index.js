@@ -401,6 +401,16 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
     const b2Key = project.videoId;
     if (!b2Key) return res.status(404).json({ error: 'Video not found' });
 
+    // FAST PATH: If the backend is running locally, or if the file was just uploaded
+    // and still exists on the ephemeral disk, serve it directly to avoid B2 Class B transaction costs!
+    const localFilename = b2Key.split('/').pop();
+    const localPath = require('path').join(__dirname, 'uploads', localFilename);
+    if (require('fs').existsSync(localPath)) {
+      // res.sendFile automatically handles HTTP Range requests and CORS headers correctly
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.sendFile(localPath);
+    }
+
     // Proxy the stream through the server instead of redirecting to B2.
     // This is required because:
     //   1. The <video crossOrigin="anonymous"> needs the response to come from
