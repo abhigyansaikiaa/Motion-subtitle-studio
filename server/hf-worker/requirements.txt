@@ -1,0 +1,7 @@
+fastapi
+uvicorn
+supabase
+boto3
+faster-whisper
+ffmpeg-python
+python-multipart
