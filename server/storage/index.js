@@ -10,11 +10,13 @@ function getProvider() {
   
   if (providerType === 'b2') {
     provider = b2;
+  } else if (providerType === 'r2') {
+    provider = require('./r2');
   } else if (providerType === 'local') {
     provider = local;
   } else {
     // If not set, maybe default to local, but user said "STORAGE_PROVIDER must be explicit".
-    throw new Error('STORAGE_PROVIDER must be explicitly set to "b2" or "local"');
+    throw new Error('STORAGE_PROVIDER must be explicitly set to "b2", "r2" or "local"');
   }
   
   return provider;
