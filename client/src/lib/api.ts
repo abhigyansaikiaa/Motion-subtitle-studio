@@ -38,14 +38,14 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password, name })
     }),
-    
+
   getMe: () => fetchApi<{ user: User }>('/api/me'),
-  
+
   // Projects
   getProjects: () => fetchApi<{ projects: Project[] }>('/api/projects'),
   getProject: (id: string) => fetchApi<{ project: Project }>('/api/projects/' + id),
   deleteProject: (id: string) => fetchApi<{ success: boolean }>('/api/projects/' + id, { method: 'DELETE' }),
-  
+
   // Upload
   uploadVideo: (file: File, onProgress?: (p: number) => void) => {
     return new Promise<{ projectId: string, videoId: string }>((resolve, reject) => {
@@ -57,7 +57,7 @@ export const api = {
       if (headers.Authorization) {
         xhr.setRequestHeader('Authorization', headers.Authorization);
       }
-      
+
       if (onProgress) {
         xhr.upload.addEventListener('progress', (e) => {
           if (e.lengthComputable) {
@@ -65,7 +65,7 @@ export const api = {
           }
         });
       }
-      
+
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve(JSON.parse(xhr.responseText));
@@ -77,24 +77,24 @@ export const api = {
           }
         }
       };
-      
+
       xhr.onerror = () => reject(new Error('Network error — server may be starting up. Please retry in 30 seconds.'));
       xhr.ontimeout = () => reject(new Error('Upload timed out — server may be starting up. Please retry.'));
-      
+
       const formData = new FormData();
       formData.append('video', file);
       xhr.send(formData);
     });
   },
-  
+
   // Transcribe
-  transcribe: (projectId: string, language: string) => 
+  transcribe: (projectId: string, language: string) =>
     fetchApi<{ project: Project }>('/api/transcribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectId, language: language === 'auto' ? null : language })
     }),
-    
+
   // Compose
   compose: (projectId: string, styleId: string) =>
     fetchApi<{ project: Project }>('/api/compose', {
@@ -102,7 +102,7 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectId, styleId })
     }),
-    
+
   // Render
   render: (projectId: string, segments: any[], template: TemplateDefinition, resolution?: string) =>
     fetchApi<{ job: Job }>('/api/render', {
@@ -110,10 +110,10 @@ export const api = {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ projectId, segments, template, resolution })
     }),
-    
+
   // Job polling
   getJob: (jobId: string) => fetchApi<{ job: Job }>(`/api/jobs/${jobId}`),
-  
+
   // Save specific step without full compose (if needed)
   saveSegments: (projectId: string, segments: any[]) =>
     fetchApi<{ project: Project }>(`/api/projects/${projectId}/segments`, { // Note: endpoint might need creation if we need partial saves, but for now we'll just keep segments in state and send at render

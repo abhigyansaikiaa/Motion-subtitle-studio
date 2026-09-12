@@ -4,9 +4,9 @@ import { api } from '../../lib/api';
 import { ShiningText } from '../ui/shining-text';
 import { TemplateBrowser } from './template-browser';
 import { WordEditor } from './word-editor';
-import { 
-  TypographyPanel, ColorPanel, AnimationPanel, 
-  LayoutPanel, NumbersPanel, DepthPanel, ResetControlsButton 
+import {
+  TypographyPanel, ColorPanel, AnimationPanel,
+  LayoutPanel, NumbersPanel, DepthPanel, ResetControlsButton
 } from './customization-controls';
 import { CompositedPreview } from '../captions/composited-preview';
 import { DesignWheel, type ToolId } from './design-wheel';
@@ -28,19 +28,18 @@ function StepBar({ current }: { current: number }) {
     <div className="flex items-center gap-1">
       {STEP_SEQUENCE.map((s, i) => {
         const isActive = uiStep === s;
-        const isPast   = uiStep > s;
+        const isPast = uiStep > s;
         return (
           <React.Fragment key={s}>
             {i > 0 && (
               <div className={`w-8 h-px mx-0.5 transition-all duration-500 ${isPast ? 'bg-foreground/30' : 'bg-border'}`} />
             )}
-            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${
-              isActive
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold tracking-wide transition-all duration-300 ${isActive
                 ? 'bg-foreground text-background'
                 : isPast
-                ? 'text-foreground/40 border border-border'
-                : 'text-muted-foreground border border-border'
-            }`}>
+                  ? 'text-foreground/40 border border-border'
+                  : 'text-muted-foreground border border-border'
+              }`}>
               <span>{isPast ? '✓' : s}</span>
               <span className="hidden sm:inline">{STEP_LABELS[s]}</span>
             </div>
@@ -56,34 +55,34 @@ type RightTab = 'templates' | 'design';
 
 // ─── MAIN COMPONENT ───────────────────────────────────────────────────────────
 export function StudioWorkflow() {
-  const currentStep        = useAppStore(s => s.currentStep);
-  const setStep            = useAppStore(s => s.setStep);
-  const currentProject     = useAppStore(s => s.currentProject);
-  const setCurrentProject  = useAppStore(s => s.setCurrentProject);
-  const selectedStyleId    = useAppStore(s => s.selectedStyleId);
-  const editorSegments     = useAppStore(s => s.editorSegments);
-  const setEditorSegments  = useAppStore(s => s.setEditorSegments);
-  const currentTime        = useAppStore(s => s.currentTime);
-  const setCurrentTime     = useAppStore(s => s.setCurrentTime);
-  const duration           = useAppStore(s => s.duration);
-  const setDuration        = useAppStore(s => s.setDuration);
-  const isPlaying          = useAppStore(s => s.isPlaying);
-  const setIsPlaying       = useAppStore(s => s.setIsPlaying);
-  const getActiveTemplate  = useAppStore(s => s.getActiveTemplate);
-  const token              = useAppStore(s => s.token) || localStorage.getItem('rt_token');
+  const currentStep = useAppStore(s => s.currentStep);
+  const setStep = useAppStore(s => s.setStep);
+  const currentProject = useAppStore(s => s.currentProject);
+  const setCurrentProject = useAppStore(s => s.setCurrentProject);
+  const selectedStyleId = useAppStore(s => s.selectedStyleId);
+  const editorSegments = useAppStore(s => s.editorSegments);
+  const setEditorSegments = useAppStore(s => s.setEditorSegments);
+  const currentTime = useAppStore(s => s.currentTime);
+  const setCurrentTime = useAppStore(s => s.setCurrentTime);
+  const duration = useAppStore(s => s.duration);
+  const setDuration = useAppStore(s => s.setDuration);
+  const isPlaying = useAppStore(s => s.isPlaying);
+  const setIsPlaying = useAppStore(s => s.setIsPlaying);
+  const getActiveTemplate = useAppStore(s => s.getActiveTemplate);
+  const token = useAppStore(s => s.token) || localStorage.getItem('rt_token');
 
-  const [uploadProgress,   setUploadProgress]  = useState(0);
-  const [transcribeLang,   setTranscribeLang]  = useState('auto');
-  const [isProcessing,     setIsProcessing]    = useState(false);
-  const [processingMsg,    setProcessingMsg]   = useState('');
-  const [error,            setError]           = useState<string | null>(null);
-  const [isDragging,       setIsDragging]      = useState(false);
-  const [activeTool,       setActiveTool]      = useState<ToolId>('templates');
-  const [resolution,       setResolution]      = useState('original');
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [transcribeLang, setTranscribeLang] = useState('auto');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processingMsg, setProcessingMsg] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [activeTool, setActiveTool] = useState<ToolId>('templates');
+  const [resolution, setResolution] = useState('original');
 
-  const videoRef    = useRef<HTMLVideoElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const seekBarRef  = useRef<HTMLDivElement>(null);
+  const seekBarRef = useRef<HTMLDivElement>(null);
 
   const activeTemplate = getActiveTemplate();
   const inStudio = currentStep >= 3 && currentStep <= 7 && !!currentProject;
@@ -153,7 +152,7 @@ export function StudioWorkflow() {
                 if (videoRef.current) videoRef.current.currentTime = t;
               }
               setStep(3);
-            } catch (err: any) { 
+            } catch (err: any) {
               console.error('Compose failed:', err);
               setError('Failed to build captions: ' + (err.message || 'Unknown error'));
             }
@@ -208,8 +207,8 @@ export function StudioWorkflow() {
 
   const videoSrc = currentProject
     ? (currentStep === 7 && currentProject.downloadUrl
-        ? `${BACKEND}${currentProject.downloadUrl}?token=${token}`
-        : `${BACKEND}${currentProject.videoUrl}?token=${token}`)
+      ? `${BACKEND}${currentProject.downloadUrl}?token=${token}`
+      : `${BACKEND}${currentProject.videoUrl}?token=${token}`)
     : undefined;
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
@@ -246,7 +245,7 @@ export function StudioWorkflow() {
               </button>
               {/* Render & Export CTA */}
               <div className="flex items-center gap-0 bg-foreground text-background rounded-full pl-2 pr-1 py-1">
-                <select 
+                <select
                   value={resolution}
                   onChange={(e) => setResolution(e.target.value)}
                   className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:opacity-80 py-1 pl-2 pr-6 appearance-none"
@@ -334,11 +333,10 @@ export function StudioWorkflow() {
                 onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
                 onDragLeave={() => setIsDragging(false)}
                 onDrop={handleDrop}
-                className={`relative flex flex-col items-center w-full max-w-lg p-12 rounded-2xl border-2 border-dashed transition-all duration-300 ${
-                  isDragging
+                className={`relative flex flex-col items-center w-full max-w-lg p-12 rounded-2xl border-2 border-dashed transition-all duration-300 ${isDragging
                     ? 'border-foreground/40 bg-foreground/5 scale-[1.01]'
                     : 'border-border bg-card/50 hover:border-foreground/20 hover:bg-card/80'
-                }`}
+                  }`}
               >
                 {/* Background texture */}
                 <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-30 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 70%)' }} />
@@ -545,9 +543,9 @@ export function StudioWorkflow() {
             <div className="absolute top-6 right-6 z-10 flex gap-2">
               {/* Optional top right actions could go here */}
             </div>
-            
+
             <DesignWheel activeTool={activeTool} onSelectTool={setActiveTool} />
-            
+
             <div className="absolute bottom-8 left-0 w-full px-8 text-center pointer-events-none">
               <p className="text-[11px] text-muted-foreground/60 leading-relaxed max-w-[240px] mx-auto">
                 Rotate the wheel to switch between tools.
