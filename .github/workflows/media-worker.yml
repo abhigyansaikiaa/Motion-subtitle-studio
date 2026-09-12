@@ -35,12 +35,15 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
-          cache: 'pip'
-          # Use the lean requirements file for transcription, full file for render.
-          # This avoids downloading mediapipe+opencv (~400MB) on transcription runs.
-          cache-dependency-path: |
-            server/requirements-transcribe.txt
-            server/requirements.txt
+
+      - name: Cache Python venv
+        id: cache-venv
+        uses: actions/cache@v4
+        with:
+          path: server/venv
+          # Cache key depends on both requirements files and OS
+          key: ${{ runner.os }}-venv-${{ hashFiles('server/requirements*.txt') }}
+
 
       # Cache the faster-whisper 'tiny' model.
       # Stable key — only busts when model name changes.
@@ -60,14 +63,10 @@ jobs:
             echo "⚠️ Tiny model cache missed. Model will be downloaded."
           fi
 
-      # ── TRANSCRIBE: only FFmpeg + Python, no Chrome deps ──────────────────
+      # ── TRANSCRIBE: no system deps needed ─────────────────────────────────
       # Chrome/Puppeteer system deps (libnss3, libasound2t64, etc.) are only
       # needed for render jobs. Skipping them saves ~12s on transcription runs.
-      - name: Install system dependencies (transcribe — FFmpeg only)
-        if: github.event.inputs.type == 'transcribe'
-        run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ffmpeg
+      # FFmpeg is also not needed because we use ffmpeg-static via npm.
 
       # ── RENDER: FFmpeg + full Chrome deps ─────────────────────────────────
       - name: Install system dependencies (render — FFmpeg + Chrome)
@@ -81,22 +80,32 @@ jobs:
             libatk-bridge2.0-0t64 \
             libgtk-3-0t64
 
-      # ── TRANSCRIBE: pip install only faster-whisper (~50MB, already cached) ─
+      # ── TRANSCRIBE: pip install only faster-whisper (~50MB) ─────────────────
       # Skips mediapipe + opencv (~400MB) which are only needed for render.
       - name: Install Python dependencies (transcribe — faster-whisper only)
-        if: github.event.inputs.type == 'transcribe'
+        if: github.event.inputs.type == 'transcribe' && steps.cache-venv.outputs.cache-hit != 'true'
         run: |
-          python -m pip install --upgrade pip
-          pip install -r server/requirements-transcribe.txt
+          python -m venv server/venv
+          server/venv/bin/python -m pip install --upgrade pip
+          server/venv/bin/pip install -r server/requirements-transcribe.txt
 
       # ── RENDER: pip install full stack ────────────────────────────────────
       - name: Install Python dependencies (render — full stack)
-        if: github.event.inputs.type == 'render'
+        if: github.event.inputs.type == 'render' && steps.cache-venv.outputs.cache-hit != 'true'
         run: |
-          python -m pip install --upgrade pip
-          pip install -r server/requirements.txt
+          python -m venv server/venv
+          server/venv/bin/python -m pip install --upgrade pip
+          server/venv/bin/pip install -r server/requirements.txt
+
+      - name: Cache Node Modules
+        id: cache-node-modules
+        uses: actions/cache@v4
+        with:
+          path: server/node_modules
+          key: ${{ runner.os }}-node-${{ hashFiles('server/package-lock.json') }}
 
       - name: Install Node dependencies
+        if: steps.cache-node-modules.outputs.cache-hit != 'true'
         working-directory: ./server
         run: npm ci
 
@@ -114,4 +123,6 @@ jobs:
           CLIENT_ORIGIN: ${{ secrets.CLIENT_ORIGIN }}
           HF_HUB_CACHE: /home/runner/.cache/huggingface/hub
         run: |
+          # Use the venv node_modules and python explicitly
+          export PATH="$(pwd)/server/venv/bin:$PATH"
           node github-worker.js --job-id "${{ github.event.inputs.jobId }}" --type "${{ github.event.inputs.type }}"

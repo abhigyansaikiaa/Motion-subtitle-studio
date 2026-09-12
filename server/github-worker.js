@@ -55,11 +55,19 @@ async function processTranscription(projectId) {
   const language = project.segments?._meta?.language || 'auto';
 
   try {
-    if (!fs.existsSync(inputPath)) {
+    let videoSource = inputPath;
+    
+    // For transcription, we don't need to download the full video.
+    // ffmpeg can stream the audio directly from a presigned URL.
+    if (storageProvider.type !== 'local') {
+      videoSource = await storageProvider.getPresignedUrl(b2Key, 3600);
+      console.log(`[Worker] Using presigned URL for audio extraction (bypassing download)`);
+    } else if (!fs.existsSync(inputPath)) {
       await storageProvider.downloadFile(b2Key, inputPath);
     }
 
-    const transcriptData = await transcribeVideo(inputPath, language);
+    // Pass the inputFilename so transcription.js knows what to name the temp audio file
+    const transcriptData = await transcribeVideo(videoSource, language, inputFilename);
     // transcribeVideo now returns { language, languageProbability, words: [{id, text, start, end, index}] }
     const wordsRaw = transcriptData.words;
 

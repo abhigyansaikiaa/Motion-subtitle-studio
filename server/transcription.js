@@ -163,8 +163,10 @@ function normalizeToWords(segments) {
  *
  * Returns: { language, languageProbability, words: [{id, text, start, end, index}] }
  */
-async function transcribeVideo(videoPath, language = null) {
-  const audioPath = videoPath.replace(/\.[^.]+$/, '.wav');
+async function transcribeVideo(videoPath, language = null, b2KeyForTemp = null) {
+  const isUrl = videoPath.startsWith('http://') || videoPath.startsWith('https://');
+  const tempFilename = b2KeyForTemp ? b2KeyForTemp.replace(/\.[^.]+$/, '.wav') : `temp-${Date.now()}.wav`;
+  const audioPath = isUrl ? path.join(__dirname, 'uploads', tempFilename) : videoPath.replace(/\.[^.]+$/, '.wav');
   const startTime = Date.now();
 
   try {
