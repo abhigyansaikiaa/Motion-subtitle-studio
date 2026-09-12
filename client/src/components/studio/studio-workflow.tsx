@@ -88,45 +88,7 @@ export function StudioWorkflow() {
   const activeTemplate = getActiveTemplate();
   const inStudio = currentStep >= 3 && currentStep <= 7 && !!currentProject;
 
-  // ─── VIDEO EVENTS ─────────────────────────────────────────────────────────
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    const onTime  = () => setCurrentTime(video.currentTime);
-    const onMeta  = () => { setDuration(video.duration); };
-    const onPlay  = () => setIsPlaying(true);
-    const onPause = () => setIsPlaying(false);
-    const onEnded = () => setIsPlaying(false);
-    video.addEventListener('timeupdate', onTime);
-    video.addEventListener('loadedmetadata', onMeta);
-    video.addEventListener('play', onPlay);
-    video.addEventListener('pause', onPause);
-    video.addEventListener('ended', onEnded);
-    return () => {
-      video.removeEventListener('timeupdate', onTime);
-      video.removeEventListener('loadedmetadata', onMeta);
-      video.removeEventListener('play', onPlay);
-      video.removeEventListener('pause', onPause);
-      video.removeEventListener('ended', onEnded);
-    };
-  }, [currentProject, setCurrentTime, setDuration, setIsPlaying]);
-
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (isPlaying && video.paused)  video.play().catch(() => setIsPlaying(false));
-    if (!isPlaying && !video.paused) video.pause();
-  }, [isPlaying, setIsPlaying]);
-
-  const lastSentRef = useRef(0);
-  useEffect(() => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (Math.abs(video.currentTime - currentTime) > 0.3 && Math.abs(currentTime - lastSentRef.current) > 0.1) {
-      video.currentTime = currentTime;
-      lastSentRef.current = currentTime;
-    }
-  }, [currentTime]);
+  // Note: Video events and playback sync are now entirely handled by CompositedPreview.
 
   // ─── UPLOAD ───────────────────────────────────────────────────────────────
   const processFile = async (file: File) => {
@@ -240,7 +202,6 @@ export function StudioWorkflow() {
     const rect = seekBarRef.current.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
     setCurrentTime(pct * duration);
-    lastSentRef.current = pct * duration;
   }, [duration, setCurrentTime]);
 
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
@@ -553,19 +514,6 @@ export function StudioWorkflow() {
 
                   <span className="text-xs font-mono text-muted-foreground w-10 flex-shrink-0">{fmt(duration)}</span>
 
-                  {/* hidden video element — CompositedPreview drives the actual display */}
-                  <video
-                    ref={videoRef}
-                    src={videoSrc}
-                    className="hidden"
-                    playsInline
-                    muted
-                    onLoadedMetadata={e => {
-                      if (e.currentTarget.videoWidth) {
-                        // aspect handled by CompositedPreview
-                      }
-                    }}
-                  />
                 </div>
               )}
 

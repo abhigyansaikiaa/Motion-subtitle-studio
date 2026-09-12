@@ -68,6 +68,7 @@ export function CompositedPreview() {
     : undefined;
 
   const isPlaying = useAppStore(state => state.isPlaying);
+  const currentTime = useAppStore(state => state.currentTime);
   const setCurrentTime = useAppStore(state => state.setCurrentTime);
   const setDuration = useAppStore(state => state.setDuration);
   const selectedStyleId = useAppStore(state => state.selectedStyleId);
@@ -118,6 +119,8 @@ export function CompositedPreview() {
 
   const results = useSegmentation(videoRef.current, depthEnabled);
 
+  const setIsPlaying = useAppStore(state => state.setIsPlaying);
+
   // Video playback sync
   useEffect(() => {
     if (!videoRef.current) return;
@@ -135,22 +138,37 @@ export function CompositedPreview() {
     }
   };
 
+  const handleEnded = () => {
+    setIsPlaying(false);
+  };
+
   // Provide exact time to CaptionEngine without React state lag
   const getVideoTime = useCallback(() => {
     return videoRef.current?.currentTime ?? 0;
   }, []);
 
+  // Handle seeking from scrubber (external changes to store's currentTime)
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (Math.abs(video.currentTime - currentTime) > 0.3) {
+      video.currentTime = currentTime;
+    }
+  }, [currentTime]);
+
   // Sync store time periodically for UI (scrubber), but NOT for captions
   useEffect(() => {
-    if (!isPlaying) return;
-    let raf: number;
-    const sync = () => {
-      if (videoRef.current) setCurrentTime(videoRef.current.currentTime);
-      raf = requestAnimationFrame(sync);
+    const video = videoRef.current;
+    if (!video) return;
+    const onTimeUpdate = () => {
+      // Only update store if playing to avoid feedback loop with the seek effect above
+      if (!video.paused) {
+        setCurrentTime(video.currentTime);
+      }
     };
-    raf = requestAnimationFrame(sync);
-    return () => cancelAnimationFrame(raf);
-  }, [isPlaying, setCurrentTime]);
+    video.addEventListener('timeupdate', onTimeUpdate);
+    return () => video.removeEventListener('timeupdate', onTimeUpdate);
+  }, [setCurrentTime]);
 
   // Segmentation canvas drawing
   useEffect(() => {
@@ -187,6 +205,7 @@ export function CompositedPreview() {
         src={videoUrl || undefined}
         className="absolute inset-0 w-full h-full object-contain"
         onLoadedMetadata={handleLoadedMetadata}
+        onEnded={handleEnded}
         playsInline
         crossOrigin="anonymous"
       />
