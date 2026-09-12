@@ -124,6 +124,7 @@ async function updateProjectStatus(projectId, status, extra = {}) {
   if (extra.styleId) segmentsObj._meta.styleId = extra.styleId;
   if (extra.language) segmentsObj._meta.language = extra.language;
   if (extra.error) segmentsObj._meta.error = extra.error;
+  if (extra.metrics) segmentsObj._meta.metrics = extra.metrics;
   
   await supabase
     .from('projects')

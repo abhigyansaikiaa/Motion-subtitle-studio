@@ -176,9 +176,11 @@ async function transcribeVideo(videoPath, language = null, b2KeyForTemp = null) 
     await runCommand(
       `"${ffmpegPath}" -i "${videoPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${audioPath}" -y`
     );
-    console.log(`[TRANSCRIBE] audio extraction: ${Date.now() - extStart}ms`);
+    const audioExtTime = Date.now() - extStart;
+    console.log(`[TRANSCRIBE] audio extraction: ${audioExtTime}ms`);
 
     let result;
+    let whisperTime = 0;
 
     // 2a. Try daemon mode (persistent server — model stays warm)
     if (!daemonFailed) {
@@ -192,7 +194,8 @@ async function transcribeVideo(videoPath, language = null, b2KeyForTemp = null) 
         console.log('[TRANSCRIBE] Using daemon (warm model)');
         const workerStart = Date.now();
         const daemonResult = await processTaskViaDaemon(audioPath, language);
-        console.log(`[TRANSCRIBE] daemon completed: ${Date.now() - workerStart}ms`);
+        whisperTime = Date.now() - workerStart;
+        console.log(`[TRANSCRIBE] daemon completed: ${whisperTime}ms`);
         result = {
           language: daemonResult.language,
           languageProbability: daemonResult.language_probability,
@@ -226,6 +229,7 @@ async function transcribeVideo(videoPath, language = null, b2KeyForTemp = null) 
       } catch (err) {
         throw new Error(`Failed to parse python output. Output: ${rawJson.slice(-500)}`);
       }
+      whisperTime = Date.now() - workerStart;
       result = {
         language: parsed.language || null,
         languageProbability: parsed.language_probability || null,
@@ -233,7 +237,9 @@ async function transcribeVideo(videoPath, language = null, b2KeyForTemp = null) 
       };
     }
 
-    console.log(`[TRANSCRIBE] total: ${Date.now() - startTime}ms, words: ${result.words.length}`);
+    const totalTime = Date.now() - startTime;
+    console.log(`[TRANSCRIBE] total: ${totalTime}ms, words: ${result.words.length}`);
+    result.metrics = { audioExtTime, whisperTime, totalTime };
     return result;
 
   } finally {

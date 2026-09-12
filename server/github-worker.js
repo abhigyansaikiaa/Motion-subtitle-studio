@@ -74,7 +74,8 @@ async function processTranscription(projectId) {
     await saveTranscript(projectId, wordsRaw);
     await updateProjectStatus(projectId, 'TRANSCRIBED', {
       language: transcriptData.language || language,
-      duration: wordsRaw.length > 0 ? wordsRaw[wordsRaw.length - 1].end : 0
+      duration: wordsRaw.length > 0 ? wordsRaw[wordsRaw.length - 1].end : 0,
+      metrics: transcriptData.metrics
     });
     console.log(`[Worker] Transcription successful for project ${projectId} (words: ${wordsRaw.length})`);
   } catch (err) {
