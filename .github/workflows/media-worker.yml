@@ -124,5 +124,5 @@ jobs:
           HF_HUB_CACHE: /home/runner/.cache/huggingface/hub
         run: |
           # Use the venv node_modules and python explicitly
-          export PATH="$(pwd)/server/venv/bin:$PATH"
+          export PATH="$(pwd)/venv/bin:$PATH"
           node github-worker.js --job-id "${{ github.event.inputs.jobId }}" --type "${{ github.event.inputs.type }}"
