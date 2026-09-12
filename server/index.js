@@ -401,14 +401,42 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
     const b2Key = project.videoId;
     if (!b2Key) return res.status(404).json({ error: 'Video not found' });
 
-    // Issue a 302 redirect to a presigned URL instead of proxying the stream.
-    // This allows the browser to connect directly to B2, natively handle HTTP Range requests,
-    // and drastically reduces backend bandwidth and Class B transaction exhaustion.
-    const url = await storageProvider.getPresignedUrl(b2Key, 3600);
-    res.redirect(url);
+    // Proxy the stream through the server instead of redirecting to B2.
+    // This is required because:
+    //   1. The <video crossOrigin="anonymous"> needs the response to come from
+    //      the same origin (Render) so the browser can draw it to a canvas
+    //      for the behind-subject segmentation feature.
+    //   2. HTML5 video requires Range request support for seeking and metadata.
+    const range = req.headers.range;
+    const { stream, contentLength, contentType, contentRange, acceptRanges } = await storageProvider.getStream(b2Key, range);
+
+    // Provide default mime type if provider doesn't have it
+    const ext = b2Key.split('.').pop().toLowerCase();
+    const mime = ext === 'webm' ? 'video/webm' : ext === 'mov' ? 'video/quicktime' : 'video/mp4';
+
+    res.setHeader('Accept-Ranges', acceptRanges || 'bytes');
+    res.setHeader('Content-Type', contentType || mime);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+
+    if (contentLength) {
+      res.setHeader('Content-Length', contentLength);
+    }
+    
+    if (range && contentRange) {
+      res.setHeader('Content-Range', contentRange);
+      res.status(206);
+    } else {
+      res.status(200);
+    }
+
+    stream.pipe(res);
+    stream.on('error', (err) => {
+      console.error('[video proxy] stream error:', err);
+      if (!res.headersSent) res.status(500).json({ error: 'Stream failed' });
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Failed to generate signed URL for video' });
+    res.status(500).json({ error: 'Failed to stream video' });
   }
 });
 
