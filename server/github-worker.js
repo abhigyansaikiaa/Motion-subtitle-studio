@@ -200,6 +200,9 @@ async function start() {
     console.error('Invalid type. Must be "render", "transcribe", or "sweep"');
     process.exit(1);
   }
+
+  // Ensure process exits even if daemon is running
+  process.exit(0);
 }
 
 start().catch(err => {

@@ -53,7 +53,8 @@ function formatProjectInfo(p) {
     style: meta.styleId || p.styleId, // frontend uses project.style
     filename: meta.filename,
     downloadUrl: meta.b2Key ? `/api/projects/${p.id}/download` : meta.downloadUrl,
-    latestJobId: meta.latestJobId
+    latestJobId: meta.latestJobId,
+    error: meta.error || p.error
   };
 
   return result;
@@ -122,6 +123,7 @@ async function updateProjectStatus(projectId, status, extra = {}) {
   if (extra.downloadUrl) segmentsObj._meta.downloadUrl = extra.downloadUrl;
   if (extra.styleId) segmentsObj._meta.styleId = extra.styleId;
   if (extra.language) segmentsObj._meta.language = extra.language;
+  if (extra.error) segmentsObj._meta.error = extra.error;
   
   await supabase
     .from('projects')

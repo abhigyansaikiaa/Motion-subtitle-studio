@@ -212,8 +212,18 @@ async function transcribeVideo(videoPath, language = null) {
       console.log('[TRANSCRIBE] Using one-shot Python worker');
       const workerStart = Date.now();
       const rawJson = await runPythonWorker(scriptPath, audioPath, language);
-      console.log(`[TRANSCRIBE] one-shot completed: ${Date.now() - workerStart}ms`);
-      const parsed = JSON.parse(rawJson);
+      let parsed;
+      try {
+        const jsonStart = rawJson.indexOf('{');
+        const jsonEnd = rawJson.lastIndexOf('}');
+        if (jsonStart !== -1 && jsonEnd !== -1) {
+          parsed = JSON.parse(rawJson.substring(jsonStart, jsonEnd + 1));
+        } else {
+          parsed = JSON.parse(rawJson);
+        }
+      } catch (err) {
+        throw new Error(`Failed to parse python output. Output: ${rawJson.slice(-500)}`);
+      }
       result = {
         language: parsed.language || null,
         languageProbability: parsed.language_probability || null,
