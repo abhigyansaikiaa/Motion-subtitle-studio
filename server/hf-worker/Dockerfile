@@ -2,30 +2,42 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies (ffmpeg is required for audio extraction)
-RUN apt-get update && apt-get install -y ffmpeg && rm -rf /var/lib/apt/lists/*
+# Install system dependencies.
+# ffmpeg is required for audio extraction.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
 
-# Install python dependencies
+# Install Python dependencies first (layer cached unless requirements change).
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Create a non-root user (Hugging Face Spaces requirement)
+# FIX #3: Bake the faster-whisper model weights into the image layer.
+# This downloads the weights exactly once at build time and stores them in
+# ~/.cache/huggingface/hub/ inside the image. On every container start the
+# model loads from the local cache — no network download, no cold-start delay.
+#
+# Model spec: tiny / cpu / int8  — IDENTICAL to server/transcribe_daemon.py
+# Image size overhead: ~75 MB (tiny model quantised weights).
+RUN python -c "\
+from faster_whisper import WhisperModel; \
+print('Downloading faster-whisper tiny (int8) weights...'); \
+WhisperModel('tiny', device='cpu', compute_type='int8'); \
+print('Model weights cached successfully.') \
+"
+
+# Create a non-root user (Hugging Face Spaces requirement).
 RUN useradd -m -u 1000 user
 USER user
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH
 
-# Change working directory to the user's home
 WORKDIR $HOME/app
 
-# Copy application code
+# Copy application code (changes here do NOT invalidate the model cache layer above).
 COPY --chown=user . $HOME/app
 
-# Pre-download the Whisper model to avoid downloading it on every restart
-# (This is optional but good practice. For now, it will download on first run)
-
-# Expose port 7860 (Hugging Face Spaces default port)
+# Expose port 7860 (Hugging Face Spaces default).
 EXPOSE 7860
 
-# Run the FastAPI server
 CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
