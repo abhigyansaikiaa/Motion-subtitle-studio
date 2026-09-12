@@ -56,13 +56,10 @@ async function processTranscription(projectId) {
 
   try {
     let videoSource = inputPath;
-    
-    // For transcription, we don't need to download the full video.
-    // ffmpeg can stream the audio directly from a presigned URL.
-    if (storageProvider.type !== 'local') {
-      videoSource = await storageProvider.getPresignedUrl(b2Key, 3600);
-      console.log(`[Worker] Using presigned URL for audio extraction (bypassing download)`);
-    } else if (!fs.existsSync(inputPath)) {
+    // Explicitly download the file. Using a presigned URL directly in ffmpeg-static
+    // on Linux GitHub Actions runners causes a Segmentation Fault (core dumped).
+    if (!fs.existsSync(inputPath)) {
+      console.log(`[Worker] Downloading video from R2 to disk to avoid ffmpeg HTTPS segfault...`);
       await storageProvider.downloadFile(b2Key, inputPath);
     }
 
