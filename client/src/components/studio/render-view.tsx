@@ -26,8 +26,11 @@ export function RenderView() {
       useAppStore.getState().setToken(tokenParam);
     }
 
-    if (pid) {
-      // Fetch project from API since the render view runs in Puppeteer and won't have local state
+    if ((window as any).injectedProject) {
+      // Use project injected directly by PuppeteerRenderer
+      setProject((window as any).injectedProject);
+    } else if (pid) {
+      // Fallback: Fetch project from API since the render view runs in Puppeteer and won't have local state
       api.getProjects().then(res => {
         const fetched = res.projects.find((x: any) => x.id === pid);
         if (fetched) setProject(fetched);
@@ -44,9 +47,11 @@ export function RenderView() {
     };
 
     // Tell Puppeteer we are ready
-    setTimeout(() => {
-      (window as any).renderReady = true;
-    }, 1000); // Give fonts time to load
+    document.fonts.ready.then(() => {
+      setTimeout(() => {
+        (window as any).renderReady = true;
+      }, 50);
+    });
   }, []);
 
   if (!project) return null;

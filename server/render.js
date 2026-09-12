@@ -59,11 +59,11 @@ function runCommand(cmd) {
  * Simple front-only render path (no segmentation needed).
  * Captures a single caption layer and overlays it on the video.
  */
-async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight) {
+async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
 
   console.log(`[RENDER] Capturing foreground text layer (front-only mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight);
+  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
   console.log(`[RENDER] Compositing (front-only)...`);
 
@@ -88,16 +88,16 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
  * Uses Python MediaPipe segmentation to composite:
  *   [behind captions] → [subject fg extracted from mask] → [front captions]
  */
-async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight) {
+async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
   const bgTextPath = outputPath.replace(/\.[^.]+$/, '_bg.webm');
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
   const maskPath   = outputPath.replace(/\.[^.]+$/, '_mask.mp4');
 
   console.log(`[RENDER] Capturing background text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight);
+  await captureCaptionVideo(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
   console.log(`[RENDER] Capturing foreground text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight);
+  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
   console.log(`[RENDER] Generating subject mask via Python MediaPipe...`);
   await new Promise((resolve, reject) => {
@@ -178,6 +178,10 @@ async function renderVideo(inputPath, outputPath, segments, template, projectId,
         targetHeight = Math.round((1280 / width) * height);
      }
   }
+
+  // Enforce even dimensions for libx264
+  if (targetWidth % 2 !== 0) targetWidth += 1;
+  if (targetHeight % 2 !== 0) targetHeight += 1;
   
   targetWidth = targetWidth % 2 === 0 ? targetWidth : targetWidth + 1;
   targetHeight = targetHeight % 2 === 0 ? targetHeight : targetHeight + 1;
@@ -187,10 +191,10 @@ async function renderVideo(inputPath, outputPath, segments, template, projectId,
   const captionDepth = template?.captionDepth || 'front';
 
   if (captionDepth === 'behind-subject' || captionDepth === 'mixed') {
-    await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height);
+    await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
   } else {
     // 'front' (default) — simple, fast path with no segmentation
-    await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height);
+    await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
   }
 }
 
