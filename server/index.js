@@ -21,6 +21,14 @@ if (process.env.STORAGE_PROVIDER === 'b2') {
       process.exit(1);
     }
   }
+} else if (process.env.STORAGE_PROVIDER === 'r2') {
+  const r2Env = ['R2_ACCOUNT_ID', 'R2_BUCKET', 'R2_ACCESS_KEY_ID', 'R2_SECRET_ACCESS_KEY'];
+  for (const env of r2Env) {
+    if (!process.env[env]) {
+      console.error(`Missing required R2 environment variable: ${env}`);
+      process.exit(1);
+    }
+  }
 }
 // --------------------------
 
@@ -417,6 +425,14 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
     //      the same origin (Render) so the browser can draw it to a canvas
     //      for the behind-subject segmentation feature.
     //   2. HTML5 video requires Range request support for seeking and metadata.
+    // NOTE: For R2, we use presigned GET URLs instead of proxying to save bandwidth,
+    // as R2 supports CORS and Range requests directly from the browser.
+    
+    if (storageProvider.type === 'r2') {
+      const url = await storageProvider.getPresignedUrl(b2Key, 3600);
+      return res.redirect(url);
+    }
+    
     const range = req.headers.range;
     const { stream, contentLength, contentType, contentRange, acceptRanges } = await storageProvider.getStream(b2Key, range);
 

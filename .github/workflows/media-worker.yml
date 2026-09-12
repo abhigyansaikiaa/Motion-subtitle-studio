@@ -105,12 +105,11 @@ jobs:
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          STORAGE_PROVIDER: b2
-          B2_ENDPOINT: ${{ secrets.B2_ENDPOINT }}
-          B2_REGION: ${{ secrets.B2_REGION }}
-          B2_BUCKET: ${{ secrets.B2_BUCKET }}
-          B2_KEY_ID: ${{ secrets.B2_KEY_ID }}
-          B2_APPLICATION_KEY: ${{ secrets.B2_APPLICATION_KEY }}
+          STORAGE_PROVIDER: r2
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_BUCKET: ${{ secrets.R2_BUCKET }}
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           CLIENT_ORIGIN: ${{ secrets.CLIENT_ORIGIN }}
           HF_HUB_CACHE: /home/runner/.cache/huggingface/hub
