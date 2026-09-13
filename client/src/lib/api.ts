@@ -128,9 +128,12 @@ export const api = {
     });
     if (!res.ok) throw new Error(`Download failed: ${res.statusText}`);
     
-    // For redirect responses, fetch transparently follows them.
-    // The final response will be the binary data from the presigned URL.
-    const blob = await res.blob();
+    const data = await res.json();
+    
+    const fileRes = await fetch(data.url);
+    if (!fileRes.ok) throw new Error(`Download failed: ${fileRes.statusText}`);
+    
+    const blob = await fileRes.blob();
     const blobUrl = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = blobUrl;

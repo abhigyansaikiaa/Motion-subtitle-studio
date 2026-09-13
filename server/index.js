@@ -491,7 +491,7 @@ app.get('/api/projects/:id/download', authMiddleware, async (req, res) => {
     if (!b2Key) return res.status(404).json({ error: 'Download not found' });
     
     const url = await storageProvider.getPresignedUrl(b2Key, 3600);
-    res.redirect(url);
+    res.json({ url });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: 'Failed to generate signed URL' });
