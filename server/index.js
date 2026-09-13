@@ -238,6 +238,33 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     // Delegate transcription to the HF Python Worker polling for QUEUED_TRANSCRIPTION
     await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language });
     res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
+
+    // Wake up the HF Space if a URL is provided
+    const hfWorkerUrl = process.env.HF_TRANSCRIPTION_WORKER_URL;
+    if (hfWorkerUrl) {
+      setImmediate(() => {
+        console.log(`[HF WAKE] ping requested`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        fetch(`${hfWorkerUrl.replace(/\/$/, '')}/health`, { 
+          method: 'GET',
+          signal: controller.signal 
+        })
+          .then(res => {
+            clearTimeout(timeoutId);
+            if (res.ok) {
+              console.log(`[HF WAKE] ping succeeded`);
+            } else {
+              console.log(`[HF WAKE] ping returned non-200 status: ${res.status}`);
+            }
+          })
+          .catch(err => {
+            clearTimeout(timeoutId);
+            console.log(`[HF WAKE] ping failed: ${err.message}`);
+          });
+      });
+    }
   } catch (err) {
     console.error('[API] /api/transcribe error:', err);
     res.status(500).json({ error: 'Failed to queue transcription' });
