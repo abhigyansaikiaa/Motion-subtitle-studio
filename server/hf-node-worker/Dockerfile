@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Add non-root user (Hugging Face requires running as non-root)
-RUN useradd -m -u 1000 user
+RUN useradd -m -u 1001 user
 
 WORKDIR /app
 
