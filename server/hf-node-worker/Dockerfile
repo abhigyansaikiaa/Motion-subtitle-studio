@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libgtk-3-0 \
     libgbm-dev \
     ffmpeg \
+    unzip \
     && rm -rf /var/lib/apt/lists/*
 
 # Add non-root user (Hugging Face requires running as non-root)
