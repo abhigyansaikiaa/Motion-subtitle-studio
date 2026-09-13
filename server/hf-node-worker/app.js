@@ -71,7 +71,8 @@ async function processJob(job) {
     await storageProvider.uploadFile(outputPath, outputB2Key);
 
     const user = await checkCredits(job.user_id);
-    if (process.env.CREDITS_ENABLED !== 'false' && (!user || user.credits < COST)) {
+    const CREDITS_ENABLED = process.env.CREDITS_ENABLED === 'true';
+    if (CREDITS_ENABLED && (!user || user.credits < COST)) {
       throw new Error('Insufficient credits at completion');
     }
 
@@ -88,7 +89,7 @@ async function processJob(job) {
     await attachRenderJob(job.project_id, jobId, path.basename(outputPath), outputB2Key);
     await updateProjectStatus(job.project_id, 'COMPLETED');
     
-    if (process.env.CREDITS_ENABLED !== 'false') {
+    if (CREDITS_ENABLED) {
       await deductCredits(job.user_id, COST);
     }
     await incrementVideosUsed(job.user_id);

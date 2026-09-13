@@ -325,7 +325,8 @@ app.post('/api/render', authMiddleware, async (req, res) => {
     template.resolution = resolution;
 
     const user = await checkCredits(req.user.id);
-    if (process.env.CREDITS_ENABLED !== 'false' && user.credits < COST) {
+    const CREDITS_ENABLED = process.env.CREDITS_ENABLED === 'true';
+    if (CREDITS_ENABLED && user.credits < COST) {
       return res.status(402).json({ error: 'Insufficient credits' });
     }
 

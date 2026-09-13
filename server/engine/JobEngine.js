@@ -112,11 +112,12 @@ async function processJob(jobId, inputPath, outputPath, outputB2Key) {
     // After success, atomically deduct credits
     const { checkCredits, deductCredits, incrementVideosUsed } = require('../credits');
     const user = await checkCredits(job.userId);
-    if (process.env.CREDITS_ENABLED !== 'false' && (!user || user.credits < COST)) {
+    const CREDITS_ENABLED = process.env.CREDITS_ENABLED === 'true';
+    if (CREDITS_ENABLED && (!user || user.credits < COST)) {
       throw new Error('Insufficient credits at completion');
     }
     
-    if (process.env.CREDITS_ENABLED !== 'false') {
+    if (CREDITS_ENABLED) {
       await deductCredits(job.userId, COST);
     }
     await incrementVideosUsed(job.userId);
