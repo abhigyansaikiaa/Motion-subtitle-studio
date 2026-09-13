@@ -32,4 +32,4 @@ USER user
 
 EXPOSE 7860
 
-CMD ["node", "hf-node-worker/app.js"]
+CMD ["node", "app.js"]
