@@ -268,14 +268,21 @@ export function StudioWorkflow() {
             </>
           )}
           {currentStep === 7 && currentProject && (
-            <a
-              href={BACKEND + currentProject.downloadUrl}
-              download={currentProject.filename}
+            <button
+              onClick={async () => {
+                try {
+                  await api.downloadVideo(currentProject.downloadUrl || '', currentProject.filename || 'download.mp4');
+                } catch (err: any) {
+                  console.error(err);
+                  // Optionally show an error toast here since jobError doesn't exist on AppState
+                  alert('Download failed: ' + err.message);
+                }
+              }}
               className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold bg-foreground text-background hover:opacity-85 transition-all"
             >
               <Download className="w-4 h-4" />
               Download Video
-            </a>
+            </button>
           )}
         </div>
       </header>

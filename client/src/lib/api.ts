@@ -120,5 +120,24 @@ export const api = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ segments })
-    })
+    }),
+
+  downloadVideo: async (url: string, filename?: string) => {
+    const res = await fetch(API + url, {
+      headers: { ...authHeaders() }
+    });
+    if (!res.ok) throw new Error(`Download failed: ${res.statusText}`);
+    
+    // For redirect responses, fetch transparently follows them.
+    // The final response will be the binary data from the presigned URL.
+    const blob = await res.blob();
+    const blobUrl = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename || 'download.mp4';
+    document.body.appendChild(a);
+    a.click();
+    window.URL.revokeObjectURL(blobUrl);
+    document.body.removeChild(a);
+  }
 };

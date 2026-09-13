@@ -468,14 +468,27 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
 
 
 app.get('/api/projects/:id/download', authMiddleware, async (req, res) => {
-  const { getProject } = require('./engine/ProjectEngine');
-  const project = await getProject(req.params.id);
-  if (!project || project.userId !== req.user.id) {
+  const { data: rawProject, error } = await supabase
+    .from('projects')
+    .select('segments, user_id')
+    .eq('id', req.params.id)
+    .single();
+
+  if (error || !rawProject || rawProject.user_id !== req.user.id) {
     return res.status(404).json({ error: 'Project not found' });
   }
+
   try {
-    const b2Key = project.segments?._meta?.b2Key;
+    let meta = {};
+    if (rawProject.segments && typeof rawProject.segments === 'object' && !Array.isArray(rawProject.segments) && rawProject.segments._meta) {
+      meta = rawProject.segments._meta;
+    } else if (rawProject.segments && rawProject.segments.hasOwnProperty('_meta')) {
+      meta = rawProject.segments._meta;
+    }
+
+    const b2Key = meta.b2Key;
     if (!b2Key) return res.status(404).json({ error: 'Download not found' });
+    
     const url = await storageProvider.getPresignedUrl(b2Key, 3600);
     res.redirect(url);
   } catch (err) {
