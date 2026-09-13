@@ -235,38 +235,9 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     const videoPath = path.join(uploadDir, inputFilename);
     const language = req.body.language || null;
 
-    const hasGitHub = !!(process.env.GITHUB_PAT && process.env.GITHUB_REPO);
-    
-    if (hasGitHub) {
-      // Use GitHub Actions runner (has Python + faster-whisper)
-      await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language });
-      await dispatchGitHubAction(project.id, 'transcribe');
-      return res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
-    } else {
-      // No GitHub Actions — run transcription directly in background
-      // (works in local dev and if Render has Python available)
-      await updateProjectStatus(project.id, 'TRANSCRIBING', { language });
-      res.json({ status: 'TRANSCRIBING', projectId: project.id });
-
-      // Fire and forget background task
-      setImmediate(async () => {
-        try {
-          if (!fs.existsSync(videoPath)) {
-            console.log(`[TRANSCRIBE] Downloading ${b2Key} to ${videoPath}`);
-            await storageProvider.downloadFile(b2Key, videoPath);
-          }
-          const transcriptData = await transcribeVideo(videoPath, language);
-          await saveTranscript(project.id, transcriptData.words);
-          await updateProjectStatus(project.id, 'TRANSCRIBED', {
-            language: transcriptData.language || language
-          });
-          console.log(`[TRANSCRIBE] Completed for ${project.id} (words: ${transcriptData.words.length})`);
-        } catch (workerErr) {
-          console.error(`[TRANSCRIBE] Failed for ${project.id}:`, workerErr.message);
-          await updateProjectStatus(project.id, 'FAILED', { error: workerErr.message || 'Transcription failed' });
-        }
-      });
-    }
+    // Delegate transcription to the HF Python Worker polling for QUEUED_TRANSCRIPTION
+    await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language });
+    res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
   } catch (err) {
     console.error('[API] /api/transcribe error:', err);
     res.status(500).json({ error: 'Failed to queue transcription' });
@@ -352,10 +323,7 @@ app.post('/api/render', authMiddleware, async (req, res) => {
     
     await attachRenderJob(projectId, job.id, null, null);
     
-    // Trigger GitHub Action
-    await dispatchGitHubAction(job.id, 'render');
-    
-    // The background rendering is now handled by the Media Worker.
+    // The background rendering is now handled by the HF Node Worker.
     // The worker will claim this QUEUED job, process it, and update to COMPLETED.
 
     res.json({ job });
