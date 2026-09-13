@@ -108,19 +108,26 @@ async function processRenderJob(jobId) {
   const outputFilename = `captioned-${job.video_id}-${Date.now()}.mp4`;
   const outputPath = path.join(outputDir, outputFilename);
   const outputB2Key = `outputs/${job.user_id}/${job.video_id}/${outputFilename}`;
-
+  const { performance } = require('perf_hooks');
+  const tWorkerStart = performance.now();
   try {
     await updateJobState(jobId, 'PROCESSING', 10, 'Preparing video matrix');
     if (!fs.existsSync(inputPath)) {
+      const tDownloadStart = performance.now();
       await storageProvider.downloadFile(b2Key, inputPath);
+      console.log(`[PERF] R2 source download: ${(performance.now() - tDownloadStart).toFixed(2)}ms`);
     }
 
     await updateJobState(jobId, 'RENDERING', 40, 'Speech cadence composition');
     const token = jwt.sign({ id: job.user_id }, JWT_SECRET, { expiresIn: '1h' });
+    const tRenderVideoStart = performance.now();
     await renderVideo(inputPath, outputPath, job.segments, job.style, job.project_id, token, job.style?.resolution || 'original');
+    console.log(`[PERF] renderVideo function total time: ${(performance.now() - tRenderVideoStart).toFixed(2)}ms`);
 
     await updateJobState(jobId, 'ENCODING', 90, `Uploading to storage`);
+    const tUploadStart = performance.now();
     await storageProvider.uploadFile(outputPath, outputB2Key);
+    console.log(`[PERF] R2 output upload: ${(performance.now() - tUploadStart).toFixed(2)}ms`);
 
     const user = await checkCredits(job.user_id);
     if (!user || user.credits < COST) {
@@ -143,6 +150,7 @@ async function processRenderJob(jobId) {
     await deductCredits(job.user_id, COST);
     await incrementVideosUsed(job.user_id);
     console.log(`[Worker] Render successful for job ${jobId}`);
+    console.log(`[PERF] Node worker total time: ${(performance.now() - tWorkerStart).toFixed(2)}ms`);
   } catch (err) {
     console.error(`[Worker] Render failed for job ${jobId}:`, err);
     await updateJobState(jobId, 'FAILED', 0, err.message || 'Render failed');

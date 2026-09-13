@@ -3,7 +3,7 @@ const path = require('path');
 const crypto = require('crypto');
 
 async function runTests() {
-  const BACKEND = 'http://127.0.0.1:3000';
+  const BACKEND = 'http://127.0.0.1:5000';
   let token = '';
   let projectId = '';
   
@@ -11,8 +11,7 @@ async function runTests() {
 
   try {
     // 1. Generate dummy video
-    const dummyVideoPath = path.join(__dirname, 'dummy.mp4');
-    fs.writeFileSync(dummyVideoPath, 'dummy video content ' + Date.now());
+
     
     // 2. Auth (Login)
     console.log('Testing Authentication...');
@@ -58,7 +57,7 @@ async function runTests() {
     // 4. /api/upload
     console.log('Testing /api/upload...');
     const formData = new FormData();
-    const blob = new Blob([fs.readFileSync(dummyVideoPath)], { type: 'video/mp4' });
+    const blob = new Blob([fs.readFileSync(path.join(__dirname, 'test.mp4'))], { type: 'video/mp4' });
     formData.append('video', blob, 'dummy.mp4');
     formData.append('aspectRatio', '9:16');
     

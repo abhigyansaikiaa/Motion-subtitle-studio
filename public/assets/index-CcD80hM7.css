@@ -2288,10 +2288,6 @@
     color: var(--color-red-300);
   }
 
-  .text-red-500 {
-    color: var(--color-red-500);
-  }
-
   .text-secondary {
     color: var(--color-secondary);
   }
@@ -2769,16 +2765,8 @@
     cursor: not-allowed;
   }
 
-  .disabled\:cursor-wait:disabled {
-    cursor: wait;
-  }
-
   .disabled\:opacity-30:disabled {
     opacity: .3;
-  }
-
-  .disabled\:opacity-50:disabled {
-    opacity: .5;
   }
 
   @media (min-width: 40rem) {

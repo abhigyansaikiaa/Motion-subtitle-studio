@@ -468,6 +468,7 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
 
 
 app.get('/api/projects/:id/download', authMiddleware, async (req, res) => {
+  const { supabase } = require('./supabase');
   const { data: rawProject, error } = await supabase
     .from('projects')
     .select('segments, user_id')

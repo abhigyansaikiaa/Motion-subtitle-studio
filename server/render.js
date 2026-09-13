@@ -2,8 +2,7 @@ const { exec } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const ffmpegPath = require('ffmpeg-static');
-const { captureCaptionVideo } = require('./engine/PuppeteerRenderer');
-
+const { captureCaptionVideo, captureCaptionVideoFast, captureCaptionVideoConcurrent } = require('./engine/PuppeteerRenderer');
 const ffprobePath = require('ffprobe-static').path;
 
 /**
@@ -57,47 +56,72 @@ function runCommand(cmd) {
 
 /**
  * Simple front-only render path (no segmentation needed).
- * Captures a single caption layer and overlays it on the video.
+ *
+ * PRIMARY:  captureCaptionVideoFast — single-pass FFmpeg, no VP9 intermediate.
+ * FALLBACK: captureCaptionVideo    — proven sequential renderer (VP9 → H.264).
+ *
+ * The fallback activates automatically on any failure of the fast path so
+ * a transient FFmpeg or Puppeteer error never fails the job silently.
  */
 async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
-  const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
+  console.log(`[RENDER] Capturing foreground and compositing (front-only single-pass) at ${targetWidth}x${targetHeight}...`);
+  try {
+    await captureCaptionVideoFast(
+      projectId,
+      'front',
+      durationSec,
+      outputPath,
+      inputPath,
+      token,
+      targetWidth,
+      targetHeight,
+      { segments, customOverrides: template, style: template.id || 'classic' },
+      targetWidth,
+      targetHeight,
+      originalWidth,
+      originalHeight
+    );
+    console.log('[RENDER] Fast single-pass render completed successfully.');
+  } catch (fastErr) {
+    console.error('[RENDER] Fast single-pass render failed, falling back to sequential VP9 renderer:', fastErr.message);
+    // Clean up any partial output left by the failed fast render
+    try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch(e) {}
 
-  console.log(`[RENDER] Capturing foreground text layer (front-only mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+    const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
+    await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
-  console.log(`[RENDER] Compositing (front-only)...`);
-
-  let filterGraph = `[0:v][1:v]overlay=0:0[final_out]`;
-  if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
-    filterGraph = `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][1:v]overlay=0:0[final_out]`;
+    let filterGraph = `[0:v][1:v]overlay=0:0[final_out]`;
+    if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
+      filterGraph = `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][1:v]overlay=0:0[final_out]`;
+    }
+    const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
+                `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
+                `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
+                `-movflags +faststart -y "${outputPath}"`;
+    await runCommand(cmd);
+    try { fs.unlinkSync(fgTextPath); } catch(e) {}
+    console.log('[RENDER] Sequential VP9 fallback render completed successfully.');
   }
-
-  const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
-              `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
-              `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
-              `-movflags +faststart -y "${outputPath}"`;
-
-  await runCommand(cmd);
-
-  // Cleanup
-  try { fs.unlinkSync(fgTextPath); } catch(e) {}
 }
 
 /**
  * Full depth render path: behind-subject or mixed.
+ * SAFETY: This path is ONLY reached when captionDepth === 'behind-subject'
+ * or 'mixed'. Front-only projects can never reach this function.
  * Uses Python MediaPipe segmentation to composite:
  *   [behind captions] → [subject fg extracted from mask] → [front captions]
  */
 async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
+  console.log('[RENDER] Depth render path selected — VP9 alpha intermediates required.');
   const bgTextPath = outputPath.replace(/\.[^.]+$/, '_bg.webm');
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
   const maskPath   = outputPath.replace(/\.[^.]+$/, '_mask.mp4');
 
   console.log(`[RENDER] Capturing background text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+  await captureCaptionVideoConcurrent(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
   console.log(`[RENDER] Capturing foreground text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+  await captureCaptionVideoConcurrent(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
 
   console.log(`[RENDER] Generating subject mask via Python MediaPipe...`);
   await new Promise((resolve, reject) => {
@@ -190,10 +214,15 @@ async function renderVideo(inputPath, outputPath, segments, template, projectId,
 
   const captionDepth = template?.captionDepth || 'front';
 
+  // SAFETY: only behind-subject and mixed modes use the depth compositor.
+  // All other values — including undefined, null, 'front', or any unknown value —
+  // fall through to the fast single-pass renderer.
   if (captionDepth === 'behind-subject' || captionDepth === 'mixed') {
+    console.log(`[RENDER] Dispatching to depth renderer (captionDepth=${captionDepth})`);
     await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
   } else {
-    // 'front' (default) — simple, fast path with no segmentation
+    // 'front' (default) — fast single-pass path with sequential VP9 fallback
+    console.log(`[RENDER] Dispatching to fast renderer (captionDepth=${captionDepth || 'front'})`);
     await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
   }
 }
