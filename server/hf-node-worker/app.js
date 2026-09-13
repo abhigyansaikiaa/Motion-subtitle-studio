@@ -71,7 +71,7 @@ async function processJob(job) {
     await storageProvider.uploadFile(outputPath, outputB2Key);
 
     const user = await checkCredits(job.user_id);
-    if (!user || user.credits < COST) {
+    if (process.env.CREDITS_ENABLED !== 'false' && (!user || user.credits < COST)) {
       throw new Error('Insufficient credits at completion');
     }
 
@@ -88,7 +88,9 @@ async function processJob(job) {
     await attachRenderJob(job.project_id, jobId, path.basename(outputPath), outputB2Key);
     await updateProjectStatus(job.project_id, 'COMPLETED');
     
-    await deductCredits(job.user_id, COST);
+    if (process.env.CREDITS_ENABLED !== 'false') {
+      await deductCredits(job.user_id, COST);
+    }
     await incrementVideosUsed(job.user_id);
     console.log(`[HF-Node-Worker] Render successful for job ${jobId}`);
 

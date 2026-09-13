@@ -130,7 +130,7 @@ async function processRenderJob(jobId) {
     console.log(`[PERF] R2 output upload: ${(performance.now() - tUploadStart).toFixed(2)}ms`);
 
     const user = await checkCredits(job.user_id);
-    if (!user || user.credits < COST) {
+    if (process.env.CREDITS_ENABLED !== 'false' && (!user || user.credits < COST)) {
       throw new Error('Insufficient credits at completion');
     }
     
@@ -147,7 +147,9 @@ async function processRenderJob(jobId) {
     await attachRenderJob(job.project_id, jobId, path.basename(outputPath), outputB2Key);
     await updateProjectStatus(job.project_id, 'COMPLETED');
     
-    await deductCredits(job.user_id, COST);
+    if (process.env.CREDITS_ENABLED !== 'false') {
+      await deductCredits(job.user_id, COST);
+    }
     await incrementVideosUsed(job.user_id);
     console.log(`[Worker] Render successful for job ${jobId}`);
     console.log(`[PERF] Node worker total time: ${(performance.now() - tWorkerStart).toFixed(2)}ms`);
