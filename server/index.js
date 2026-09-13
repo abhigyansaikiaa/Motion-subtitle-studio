@@ -353,6 +353,33 @@ app.post('/api/render', authMiddleware, async (req, res) => {
     
     // The background rendering is now handled by the HF Node Worker.
     // The worker will claim this QUEUED job, process it, and update to COMPLETED.
+    
+    // Wake up the HF Space if a URL is provided
+    const hfRenderWorkerUrl = process.env.HF_RENDER_WORKER_URL;
+    if (hfRenderWorkerUrl) {
+      setImmediate(() => {
+        console.log(`[HF RENDER WAKE] ping requested`);
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 5000);
+        
+        fetch(`${hfRenderWorkerUrl.replace(/\/$/, '')}/health`, { 
+          method: 'GET',
+          signal: controller.signal 
+        })
+          .then(res => {
+            clearTimeout(timeoutId);
+            if (res.ok) {
+              console.log(`[HF RENDER WAKE] ping succeeded`);
+            } else {
+              console.log(`[HF RENDER WAKE] ping returned non-200 status: ${res.status}`);
+            }
+          })
+          .catch(err => {
+            clearTimeout(timeoutId);
+            console.log(`[HF RENDER WAKE] ping failed: ${err.message}`);
+          });
+      });
+    }
 
     res.json({ job });
   } catch (err) {
