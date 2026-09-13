@@ -25,6 +25,12 @@ WORKDIR /app
 COPY --chown=user package*.json ./
 RUN npm install
 
+# Setup puppeteer cache and install Chrome for the non-root user
+ENV PUPPETEER_CACHE_DIR=/home/user/.cache/puppeteer
+RUN mkdir -p /home/user/.cache/puppeteer \
+    && chown -R user:user /home/user/.cache/puppeteer \
+    && npx puppeteer browsers install chrome
+
 # Copy all server code to the worker, ensuring the user owns it
 COPY --chown=user . .
 
