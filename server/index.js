@@ -513,7 +513,8 @@ app.get('/api/projects/:id/download', authMiddleware, async (req, res) => {
     const b2Key = meta.b2Key;
     if (!b2Key) return res.status(404).json({ error: 'Download not found' });
     
-    const url = await storageProvider.getPresignedUrl(b2Key, 3600);
+    const originalFilename = rawProject.segments?._meta?.originalFilename || 'download.mp4';
+    const url = await storageProvider.getPresignedUrl(b2Key, 3600, originalFilename);
     res.json({ url });
   } catch (err) {
     console.error(err);

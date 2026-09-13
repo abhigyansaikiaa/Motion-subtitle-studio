@@ -5,13 +5,13 @@ const { spawn } = require('child_process');
 const ffmpegPath = require('ffmpeg-static');
 const { performance } = require('perf_hooks');
 
-async function captureCaptionVideo(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null) {
+async function captureCaptionVideo(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null, onProgress = null) {
   console.log(`[PERF] captureCaptionVideo started for ${depth}`);
   const tBrowserStart = performance.now();
   // Spawn a headless browser
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
   const tBrowserEnd = performance.now();
   console.log(`[PERF] Puppeteer browser launch: ${(tBrowserEnd - tBrowserStart).toFixed(2)}ms`);
@@ -97,6 +97,8 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
         const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
         totalScreenshotTime += (performance.now() - tE3);
         
+        if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
+        
         // Write the frame buffer to FFmpeg's stdin
         // Handle backpressure
         if (!ffmpegProcess.stdin.write(buffer)) {
@@ -145,14 +147,14 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
  * @param {number} originalWidth   - Original source video width
  * @param {number} originalHeight  - Original source video height
  */
-async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath, inputVideoPath, token, captureWidth = 1080, captureHeight = 1920, projectData = null, targetWidth = 1080, targetHeight = 1920, originalWidth = 1080, originalHeight = 1920) {
+async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath, inputVideoPath, token, captureWidth = 1080, captureHeight = 1920, projectData = null, targetWidth = 1080, targetHeight = 1920, originalWidth = 1080, originalHeight = 1920, onProgress = null) {
   console.log(`[PERF] captureCaptionVideoFast (single-pass) started for ${depth}`);
   const tStart = performance.now();
 
   const tBrowserStart = performance.now();
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
   console.log(`[PERF] Browser launch: ${(performance.now() - tBrowserStart).toFixed(2)}ms`);
 
@@ -244,6 +246,8 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
         const tE3 = performance.now();
         const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
         totalScreenshotTime += (performance.now() - tE3);
+        
+        if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
 
         if (!ffmpegProcess.stdin.write(buffer)) {
           await new Promise(r => ffmpegProcess.stdin.once('drain', r));
@@ -268,7 +272,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   });
 }
 
-async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null) {
+async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null, onProgress = null) {
   console.log(`[PERF] captureCaptionVideoConcurrent started for ${depth}`);
   const tStart = performance.now();
   
@@ -278,7 +282,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   
   const browser = await puppeteer.launch({
     headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
 
   const chunkSize = Math.ceil(totalFrames / CONCURRENCY);
@@ -334,6 +338,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const pipeLoop = async () => {
     for (let i = 0; i < totalFrames; i++) {
       const buffer = await frames[i].promise;
+      if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
       if (!ffmpegProcess.stdin.write(buffer)) {
         await new Promise(r => ffmpegProcess.stdin.once('drain', r));
       }

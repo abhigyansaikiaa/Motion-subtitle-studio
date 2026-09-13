@@ -65,7 +65,20 @@ async function processJob(job) {
     await updateJobState(jobId, 'RENDERING', 40, 'Speech cadence composition');
     const token = jwt.sign({ id: job.user_id }, JWT_SECRET, { expiresIn: '1h' });
     
-    await renderVideo(inputPath, outputPath, job.segments, job.style, job.project_id, token, job.style?.resolution || 'original');
+    await renderVideo(
+      inputPath, 
+      outputPath, 
+      job.segments, 
+      job.style, 
+      job.project_id, 
+      token, 
+      job.style?.resolution || '1080p',
+      async (progressPercent) => {
+        // e.g. scale 0.0-1.0 to 40%-85%
+        const displayProgress = 40 + Math.floor(progressPercent * 45);
+        await updateJobState(jobId, 'RENDERING', displayProgress, `Rendering frames (${Math.floor(progressPercent * 100)}%)`);
+      }
+    );
 
     await updateJobState(jobId, 'ENCODING', 90, `Uploading to storage`);
     await storageProvider.uploadFile(outputPath, outputB2Key);

@@ -130,17 +130,11 @@ export const api = {
     
     const data = await res.json();
     
-    const fileRes = await fetch(data.url);
-    if (!fileRes.ok) throw new Error(`Download failed: ${fileRes.statusText}`);
-    
-    const blob = await fileRes.blob();
-    const blobUrl = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = blobUrl;
+    a.href = data.url;
     a.download = filename || 'download.mp4';
     document.body.appendChild(a);
     a.click();
-    window.URL.revokeObjectURL(blobUrl);
     document.body.removeChild(a);
   }
 };

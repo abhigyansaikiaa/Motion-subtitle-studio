@@ -63,7 +63,7 @@ function runCommand(cmd) {
  * The fallback activates automatically on any failure of the fast path so
  * a transient FFmpeg or Puppeteer error never fails the job silently.
  */
-async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
+async function renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template, onProgress = null) {
   console.log(`[RENDER] Capturing foreground and compositing (front-only single-pass) at ${targetWidth}x${targetHeight}...`);
   try {
     await captureCaptionVideoFast(
@@ -79,7 +79,8 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
       targetWidth,
       targetHeight,
       originalWidth,
-      originalHeight
+      originalHeight,
+      onProgress
     );
     console.log('[RENDER] Fast single-pass render completed successfully.');
   } catch (fastErr) {
@@ -88,7 +89,7 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
     try { if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath); } catch(e) {}
 
     const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
-    await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+    await captureCaptionVideo(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' }, onProgress);
 
     let filterGraph = `[0:v][1:v]overlay=0:0[final_out]`;
     if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
@@ -111,17 +112,17 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
  * Uses Python MediaPipe segmentation to composite:
  *   [behind captions] → [subject fg extracted from mask] → [front captions]
  */
-async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template) {
+async function renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, originalWidth, originalHeight, segments, template, onProgress = null) {
   console.log('[RENDER] Depth render path selected — VP9 alpha intermediates required.');
   const bgTextPath = outputPath.replace(/\.[^.]+$/, '_bg.webm');
   const fgTextPath = outputPath.replace(/\.[^.]+$/, '_fg.webm');
   const maskPath   = outputPath.replace(/\.[^.]+$/, '_mask.mp4');
 
   console.log(`[RENDER] Capturing background text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideoConcurrent(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+  await captureCaptionVideoConcurrent(projectId, 'behind', durationSec, bgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' }, onProgress);
 
   console.log(`[RENDER] Capturing foreground text layer (depth mode) at ${targetWidth}x${targetHeight}...`);
-  await captureCaptionVideoConcurrent(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' });
+  await captureCaptionVideoConcurrent(projectId, 'front', durationSec, fgTextPath, token, targetWidth, targetHeight, { segments, customOverrides: template, style: template.id || 'classic' }, onProgress);
 
   console.log(`[RENDER] Generating subject mask via Python MediaPipe...`);
   await new Promise((resolve, reject) => {
@@ -178,7 +179,7 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
  * @param {Object} template    - Template object containing captionDepth and other style props
  * @param {string} projectId   - Project ID used by PuppeteerRenderer to fetch segments from the API
  */
-async function renderVideo(inputPath, outputPath, segments, template, projectId, token, resolution = 'original') {
+async function renderVideo(inputPath, outputPath, segments, template, projectId, token, resolution = '1080p', onProgress = null) {
   const { durationSec, width, height } = await getVideoMeta(inputPath);
   console.log(`[RENDER] Original dimensions: ${width}x${height}, duration: ${durationSec}s | project: ${projectId} | depth: ${template?.captionDepth || 'front'} | resolution: ${resolution}`);
 
@@ -219,11 +220,11 @@ async function renderVideo(inputPath, outputPath, segments, template, projectId,
   // fall through to the fast single-pass renderer.
   if (captionDepth === 'behind-subject' || captionDepth === 'mixed') {
     console.log(`[RENDER] Dispatching to depth renderer (captionDepth=${captionDepth})`);
-    await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
+    await renderDepth(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template, onProgress);
   } else {
     // 'front' (default) — fast single-pass path with sequential VP9 fallback
     console.log(`[RENDER] Dispatching to fast renderer (captionDepth=${captionDepth || 'front'})`);
-    await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template);
+    await renderFront(inputPath, outputPath, durationSec, projectId, token, targetWidth, targetHeight, width, height, segments, template, onProgress);
   }
 }
 

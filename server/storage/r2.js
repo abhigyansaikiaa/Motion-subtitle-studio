@@ -67,11 +67,15 @@ async function downloadFile(remoteKey, localPath) {
   });
 }
 
-async function getPresignedUrl(remoteKey, expiresInSeconds = 3600) {
-  const command = new GetObjectCommand({
+async function getPresignedUrl(remoteKey, expiresInSeconds = 3600, filename = null) {
+  const params = {
     Bucket: bucketName,
     Key: remoteKey
-  });
+  };
+  if (filename) {
+    params.ResponseContentDisposition = `attachment; filename="${filename}"`;
+  }
+  const command = new GetObjectCommand(params);
   return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
 }
 
