@@ -11,7 +11,6 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
   // Spawn a headless browser
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: puppeteer.executablePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
   const tBrowserEnd = performance.now();
@@ -155,7 +154,6 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const tBrowserStart = performance.now();
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: puppeteer.executablePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
   console.log(`[PERF] Browser launch: ${(performance.now() - tBrowserStart).toFixed(2)}ms`);
@@ -284,7 +282,6 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   
   const browser = await puppeteer.launch({
     headless: "new",
-    executablePath: puppeteer.executablePath(),
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
   });
 
