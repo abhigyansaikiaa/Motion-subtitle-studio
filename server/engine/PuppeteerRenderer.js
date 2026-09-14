@@ -5,30 +5,40 @@ const { spawn } = require('child_process');
 const ffmpegPath = require('ffmpeg-static');
 const { performance } = require('perf_hooks');
 
-let globalBrowser = null;
-let globalPage = null;
+let initPromise = null;
 
 async function getGlobalBrowserAndPage(width, height) {
-  if (!globalBrowser) {
-    console.log(`[PERF] Launching global headless browser...`);
-    globalBrowser = await puppeteer.launch({
-      headless: "new",
-      args: [
-        '--no-sandbox', 
-        '--disable-setuid-sandbox', 
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--disable-gpu',
-        '--disable-animations',
-        '--disable-background-networking',
-        '--disable-background-timer-throttling',
-        '--disable-renderer-backgrounding'
-      ]
-    });
-    globalPage = await globalBrowser.newPage();
+  if (!initPromise) {
+    initPromise = (async () => {
+      console.log(`[PERF] Launching global headless browser...`);
+      const browser = await puppeteer.launch({
+        headless: "new",
+        args: [
+          '--no-sandbox', 
+          '--disable-setuid-sandbox', 
+          '--disable-dev-shm-usage',
+          '--disable-accelerated-2d-canvas',
+          '--disable-gpu',
+          '--disable-animations',
+          '--disable-background-networking',
+          '--disable-background-timer-throttling',
+          '--disable-renderer-backgrounding'
+        ]
+      });
+      const page = await browser.newPage();
+      return { browser, page };
+    })();
   }
-  await globalPage.setViewport({ width, height, deviceScaleFactor: 1 });
-  return { browser: globalBrowser, page: globalPage };
+  
+  try {
+    const { browser, page } = await initPromise;
+    await page.setViewport({ width, height, deviceScaleFactor: 1 });
+    return { browser, page };
+  } catch (err) {
+    // Reset so subsequent calls can retry instead of being permanently broken
+    initPromise = null;
+    throw err;
+  }
 }
 
 async function captureCaptionVideo(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null, onProgress = null) {
@@ -279,9 +289,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const CONCURRENCY = 4;
   
   // Reuse global browser but create multiple ephemeral pages
-  if (!globalBrowser) {
-    await getGlobalBrowserAndPage(width, height);
-  }
+  const { browser } = await getGlobalBrowserAndPage(width, height);
 
   const chunkSize = Math.ceil(totalFrames / CONCURRENCY);
   const chunks = [];
@@ -347,7 +355,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
     let page;
     let cdpSession;
     try {
-      page = await globalBrowser.newPage();
+      page = await browser.newPage();
       await page.setViewport({ width, height, deviceScaleFactor: 1 });
       cdpSession = await page.target().createCDPSession();
       
