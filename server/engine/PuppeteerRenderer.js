@@ -78,20 +78,17 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
     try {
       const tRenderStart = performance.now();
       let totalEvalTime = 0;
-      let totalRafTime = 0;
       let totalScreenshotTime = 0;
 
       for (let i = 0; i < totalFrames; i++) {
         const timeSec = i / fps;
         
         const tE1 = performance.now();
-        await page.evaluate((t) => { window.setRenderTime(t); }, timeSec);
+        await page.evaluate(async (t) => { 
+          window.setRenderTime(t); 
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        }, timeSec);
         totalEvalTime += (performance.now() - tE1);
-        
-        const tE2 = performance.now();
-        // Wait for the next animation frame so React/Framer Motion paints
-        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
-        totalRafTime += (performance.now() - tE2);
         
         const tE3 = performance.now();
         const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
@@ -111,8 +108,7 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
       console.log(`[PERF] Total renderFrames duration: ${totalRenderDuration.toFixed(2)}ms`);
       console.log(`[PERF] Number of frames: ${totalFrames}`);
       console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
-      console.log(`[PERF] Total page.evaluate time (setRenderTime): ${totalEvalTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total rAF wait time (DOM work): ${totalRafTime.toFixed(2)}ms`);
+      console.log(`[PERF] Total page.evaluate time (setRenderTime + rAF): ${totalEvalTime.toFixed(2)}ms`);
       console.log(`[PERF] Total screenshot time: ${totalScreenshotTime.toFixed(2)}ms`);
 
       ffmpegProcess.stdin.end();
@@ -182,92 +178,19 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const fps = 30;
   const totalFrames = Math.ceil(durationSec * fps);
 
-  const tempCaptionsPath = outputPath.replace(/\.[^.]+$/, '_captions.mkv');
-  console.log(`[RENDER] Using 2-step lossless pipeline. Intermediate captions: ${tempCaptionsPath}`);
-
-  // Step 1: Encode PNG pipe to ffvhuff RGBA (lossless, universally available on Linux FFmpeg, native alpha)
-  const ffmpegArgs1 = [
-    '-framerate', fps.toString(),
-    '-f', 'image2pipe',
-    '-i', 'pipe:0',          // Input 0: caption PNG frames from stdin
-    '-c:v', 'ffvhuff',
-    '-pix_fmt', 'rgba',
-    '-y',
-    tempCaptionsPath
-  ];
-
-  console.log(`[PERF] FFmpeg step 1 command: ffmpeg ${ffmpegArgs1.join(' ')}`);
-
-  await new Promise(async (resolve, reject) => {
-    const tFfmpegStart = performance.now();
-    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs1);
-
-    let ffmpegError = '';
-    ffmpegProcess.stderr.on('data', (data) => { ffmpegError += data.toString(); });
-
-    ffmpegProcess.on('close', (code) => {
-      console.log(`[PERF] FFmpeg step 1 (captions encode) duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
-      if (code !== 0) {
-        return reject(new Error(`FFmpeg step 1 exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
-      }
-      resolve();
-    });
-
-    try {
-      const tRenderStart = performance.now();
-      let totalEvalTime = 0;
-      let totalRafTime = 0;
-      let totalScreenshotTime = 0;
-
-      for (let i = 0; i < totalFrames; i++) {
-        const timeSec = i / fps;
-
-        const tE1 = performance.now();
-        await page.evaluate((t) => { window.setRenderTime(t); }, timeSec);
-        totalEvalTime += (performance.now() - tE1);
-
-        const tE2 = performance.now();
-        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
-        totalRafTime += (performance.now() - tE2);
-
-        const tE3 = performance.now();
-        const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
-        totalScreenshotTime += (performance.now() - tE3);
-        
-        if (onProgress && i % 30 === 0) onProgress((i / totalFrames) * 0.8); // 80% progress for step 1
-
-        if (!ffmpegProcess.stdin.write(buffer)) {
-          await new Promise(r => ffmpegProcess.stdin.once('drain', r));
-        }
-      }
-
-      const totalRenderDuration = performance.now() - tRenderStart;
-      console.log(`[PERF] Total renderFrames duration: ${totalRenderDuration.toFixed(2)}ms`);
-      console.log(`[PERF] Number of frames: ${totalFrames}`);
-      console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
-      console.log(`[PERF] Total page.evaluate time: ${totalEvalTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total rAF wait time: ${totalRafTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total screenshot time: ${totalScreenshotTime.toFixed(2)}ms`);
-
-      ffmpegProcess.stdin.end();
-      await browser.close();
-    } catch (err) {
-      ffmpegProcess.kill();
-      await browser.close();
-      reject(err);
-    }
-  });
-
-  // Step 2: Overlay lossless RGBA captions onto source video
-  // [0:v] = captions (RGBA, lossless), [1:v] = source video
-  // overlay=format=auto handles alpha compositing correctly for rgba input
+  // TRUE SINGLE-PASS RENDERING
+  // We pipe PNG frames (Input 0) directly into the same FFmpeg process that reads
+  // the source video (Input 1), scales it, and overlays the captions on the fly.
+  
   const filterGraph = (targetWidth !== originalWidth || targetHeight !== originalHeight)
     ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=format=auto[final_out]`
     : `[1:v][0:v]overlay=format=auto[final_out]`;
 
-  const ffmpegArgs2 = [
-    '-i', tempCaptionsPath,   // Input 0: transparent captions
-    '-i', inputVideoPath,     // Input 1: source video
+  const ffmpegArgs = [
+    '-framerate', fps.toString(),
+    '-f', 'image2pipe',
+    '-i', 'pipe:0',           // Input 0: PNG frames (captions) from stdin
+    '-i', inputVideoPath,     // Input 1: Source video
     '-filter_complex', filterGraph,
     '-map', '[final_out]',
     '-map', '1:a?',           // Preserve audio from source video
@@ -281,31 +204,70 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
     outputPath
   ];
 
-  console.log(`[PERF] FFmpeg step 2 command: ffmpeg ${ffmpegArgs2.join(' ')}`);
+  console.log(`[PERF] FFmpeg true single-pass command: ffmpeg ${ffmpegArgs.join(' ')}`);
 
-  return new Promise((resolve, reject) => {
+  await new Promise(async (resolve, reject) => {
     const tFfmpegStart = performance.now();
-    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs2);
+    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
     let ffmpegError = '';
     ffmpegProcess.stderr.on('data', (data) => { ffmpegError += data.toString(); });
 
     ffmpegProcess.on('close', (code) => {
-      console.log(`[PERF] FFmpeg step 2 (overlay) duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
-      
-      try {
-        if (fs.existsSync(tempCaptionsPath)) fs.unlinkSync(tempCaptionsPath);
-      } catch (e) {}
-
+      console.log(`[PERF] FFmpeg single-pass duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
       if (code !== 0) {
-        return reject(new Error(`FFmpeg step 2 exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
+        return reject(new Error(`FFmpeg single-pass exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
       }
-      console.log(`[PERF] captureCaptionVideoFast total time: ${(performance.now() - tStart).toFixed(2)}ms`);
-      
-      if (onProgress) onProgress(1.0); // 100% progress
-      resolve(outputPath);
+      resolve();
     });
+
+    try {
+      const tRenderStart = performance.now();
+      let totalEvalTime = 0;
+      let totalScreenshotTime = 0;
+
+      for (let i = 0; i < totalFrames; i++) {
+        const timeSec = i / fps;
+
+        const tE1 = performance.now();
+        // Combined evaluate to save IPC overhead (one roundtrip instead of two)
+        await page.evaluate(async (t) => { 
+          window.setRenderTime(t); 
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        }, timeSec);
+        totalEvalTime += (performance.now() - tE1);
+
+        const tE3 = performance.now();
+        const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
+        totalScreenshotTime += (performance.now() - tE3);
+        
+        if (onProgress && i % 30 === 0) onProgress(i / totalFrames); 
+
+        if (!ffmpegProcess.stdin.write(buffer)) {
+          await new Promise(r => ffmpegProcess.stdin.once('drain', r));
+        }
+      }
+
+      const totalRenderDuration = performance.now() - tRenderStart;
+      console.log(`[PERF] Total renderFrames duration: ${totalRenderDuration.toFixed(2)}ms`);
+      console.log(`[PERF] Number of frames: ${totalFrames}`);
+      console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
+      console.log(`[PERF] Total combined evaluate time: ${totalEvalTime.toFixed(2)}ms`);
+      console.log(`[PERF] Total screenshot time: ${totalScreenshotTime.toFixed(2)}ms`);
+
+      ffmpegProcess.stdin.end();
+      await browser.close();
+    } catch (err) {
+      ffmpegProcess.kill();
+      await browser.close();
+      reject(err);
+    }
   });
+
+  console.log(`[PERF] captureCaptionVideoFast total time: ${(performance.now() - tStart).toFixed(2)}ms`);
+  
+  if (onProgress) onProgress(1.0); // 100% progress
+  return outputPath;
 }
 
 async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null, onProgress = null) {
@@ -406,8 +368,10 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
 
       for (let i = chunk.startFrame; i < chunk.endFrame; i++) {
         const timeSec = i / fps;
-        await page.evaluate((t) => { window.setRenderTime(t); }, timeSec);
-        await page.evaluate(() => new Promise(resolve => requestAnimationFrame(resolve)));
+        await page.evaluate(async (t) => { 
+          window.setRenderTime(t); 
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        }, timeSec);
         
         const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
         frames[i].resolve(buffer);
