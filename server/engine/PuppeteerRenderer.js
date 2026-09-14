@@ -182,48 +182,34 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const fps = 30;
   const totalFrames = Math.ceil(durationSec * fps);
 
-  // Build the filter graph.
-  // Input 0: image2pipe PNG stream (captions, transparent background)
-  // Input 1: source video file
-  // overlay=0:0 composites captions on top of source video.
-  let filterGraph = `[1:v][0:v]overlay=0:0[final_out]`;
-  if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
-    filterGraph = `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=0:0[final_out]`;
-  }
+  const tempCaptionsPath = outputPath.replace(/\.[^.]+$/, '_captions.mov');
+  console.log(`[RENDER] Using 2-step QTRLE pipeline. Intermediate captions: ${tempCaptionsPath}`);
 
-  const ffmpegArgs = [
+  // Step 1: Encode PNG pipe to QTRLE (transparent, fast, lossless RLE)
+  const ffmpegArgs1 = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
     '-i', 'pipe:0',          // Input 0: caption PNG frames from stdin
-    '-i', inputVideoPath,     // Input 1: source video (file, not stdin)
-    '-filter_complex', filterGraph,
-    '-map', '[final_out]',
-    '-map', '1:a?',           // Preserve audio from source video
-    '-c:v', 'libx264',
-    '-preset', 'ultrafast',
-    '-crf', '23',
-    '-c:a', 'aac',
-    '-b:a', '192k',
-    '-movflags', '+faststart',
-    '-y', outputPath
+    '-c:v', 'qtrle',
+    '-y',
+    tempCaptionsPath
   ];
 
-  console.log(`[PERF] FFmpeg single-pass command: ffmpeg ${ffmpegArgs.join(' ')}`);
+  console.log(`[PERF] FFmpeg step 1 command: ffmpeg ${ffmpegArgs1.join(' ')}`);
 
-  return new Promise(async (resolve, reject) => {
+  await new Promise(async (resolve, reject) => {
     const tFfmpegStart = performance.now();
-    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
+    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs1);
 
     let ffmpegError = '';
     ffmpegProcess.stderr.on('data', (data) => { ffmpegError += data.toString(); });
 
     ffmpegProcess.on('close', (code) => {
-      console.log(`[PERF] FFmpeg single-pass encode duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
+      console.log(`[PERF] FFmpeg step 1 (captions encode) duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
       if (code !== 0) {
-        return reject(new Error(`FFmpeg (fast) exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
+        return reject(new Error(`FFmpeg step 1 exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
       }
-      console.log(`[PERF] captureCaptionVideoFast total time: ${(performance.now() - tStart).toFixed(2)}ms`);
-      resolve(outputPath);
+      resolve();
     });
 
     try {
@@ -247,7 +233,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
         const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
         totalScreenshotTime += (performance.now() - tE3);
         
-        if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
+        if (onProgress && i % 30 === 0) onProgress((i / totalFrames) * 0.8); // 80% progress for step 1
 
         if (!ffmpegProcess.stdin.write(buffer)) {
           await new Promise(r => ffmpegProcess.stdin.once('drain', r));
@@ -269,6 +255,53 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
       await browser.close();
       reject(err);
     }
+  });
+
+  // Step 2: Overlay QTRLE captions onto source video
+  const filterGraph = (targetWidth !== originalWidth || targetHeight !== originalHeight)
+    ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=0:0[final_out]`
+    : `[1:v][0:v]overlay=0:0[final_out]`;
+
+  const ffmpegArgs2 = [
+    '-i', tempCaptionsPath,   // Input 0: transparent captions
+    '-i', inputVideoPath,     // Input 1: source video
+    '-filter_complex', filterGraph,
+    '-map', '[final_out]',
+    '-map', '1:a?',           // Preserve audio from source video
+    '-c:v', 'libx264',
+    '-preset', 'ultrafast',
+    '-crf', '23',
+    '-c:a', 'aac',
+    '-b:a', '192k',
+    '-movflags', '+faststart',
+    '-y',
+    outputPath
+  ];
+
+  console.log(`[PERF] FFmpeg step 2 command: ffmpeg ${ffmpegArgs2.join(' ')}`);
+
+  return new Promise((resolve, reject) => {
+    const tFfmpegStart = performance.now();
+    const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs2);
+
+    let ffmpegError = '';
+    ffmpegProcess.stderr.on('data', (data) => { ffmpegError += data.toString(); });
+
+    ffmpegProcess.on('close', (code) => {
+      console.log(`[PERF] FFmpeg step 2 (overlay) duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
+      
+      try {
+        if (fs.existsSync(tempCaptionsPath)) fs.unlinkSync(tempCaptionsPath);
+      } catch (e) {}
+
+      if (code !== 0) {
+        return reject(new Error(`FFmpeg step 2 exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
+      }
+      console.log(`[PERF] captureCaptionVideoFast total time: ${(performance.now() - tStart).toFixed(2)}ms`);
+      
+      if (onProgress) onProgress(1.0); // 100% progress
+      resolve(outputPath);
+    });
   });
 }
 
