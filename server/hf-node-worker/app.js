@@ -112,6 +112,13 @@ async function processJob(job) {
     console.log(`[HF-Node-Worker] Render failed for job ${jobId}:`, err);
     await updateJobState(jobId, 'FAILED', 0, err.message || 'Render failed');
     await updateProjectStatus(job.project_id, 'FAILED', { error: err.message || 'Render failed' });
+    
+    // Cleanup temporary R2 source file on failure (Requirement #5)
+    if (b2Key) {
+      await storageProvider.deleteFile(b2Key).catch(e => {
+        console.error(`[HF-Node-Worker] Failed to delete R2 source ${b2Key} after job failure:`, e.message);
+      });
+    }
   } finally {
     if (fs.existsSync(inputPath)) try { fs.unlinkSync(inputPath); } catch(e) {}
     if (fs.existsSync(outputPath)) try { fs.unlinkSync(outputPath); } catch(e) {}

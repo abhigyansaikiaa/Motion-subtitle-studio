@@ -585,24 +585,34 @@ app.get('/api/credits', authMiddleware, async (req, res) => {
 setInterval(async () => {
   try {
     const { supabase } = require('./supabase');
+    const storageProvider = require('./storage');
     const now = new Date();
-    now.setHours(now.getHours() - 2);
+    // 24 hours retention window for videos before expiration
+    now.setHours(now.getHours() - 24);
     
+    // Find all old projects that are not already marked EXPIRED
     const { data: expiredProjects } = await supabase
       .from('projects')
-      .select('id, videos!projects_video_id_fkey(storage_path), segments')
-      .lt('created_at', now.toISOString());
+      .select('id, status, videos!projects_video_id_fkey(storage_path), segments')
+      .lt('created_at', now.toISOString())
+      .neq('status', 'EXPIRED');
 
     if (expiredProjects && expiredProjects.length > 0) {
-      expiredProjects.forEach(project => {
-        // Cleanup files
+      for (const project of expiredProjects) {
+        // 1. Cleanup R2 source and local temporary files
         try {
-          const videoId = project.videos?.storage_path;
+          const videoId = project.videos?.storage_path; // This is the b2Key for source
           if (videoId) {
             const inputPath = path.join(uploadDir, videoId);
             if (fs.existsSync(inputPath)) fs.unlinkSync(inputPath);
+            
+            // Delete source from R2 (Requirement #3)
+            await storageProvider.deleteFile(videoId).catch(e => {
+              console.error(`Failed to delete R2 source ${videoId}:`, e.message);
+            });
           }
           
+          // 2. Cleanup R2 output and local temporary files
           let segmentsObj = project.segments || {};
           let filename = segmentsObj._meta ? segmentsObj._meta.filename : null;
           if (!filename && Array.isArray(segmentsObj)) filename = null; // fallback
@@ -610,15 +620,25 @@ setInterval(async () => {
           if (filename) {
             const outputPath = path.join(outputDir, filename);
             if (fs.existsSync(outputPath)) fs.unlinkSync(outputPath);
+            
+            // The output B2 key is stored in segments._meta.outputB2Key if attached.
+            // Let's check if outputB2Key exists. If so, delete it from R2 (Requirement #4).
+            const outputB2Key = segmentsObj._meta ? segmentsObj._meta.outputB2Key : null;
+            if (outputB2Key) {
+              await storageProvider.deleteFile(outputB2Key).catch(e => {
+                console.error(`Failed to delete R2 output ${outputB2Key}:`, e.message);
+              });
+            }
           }
         } catch (e) {
           console.error('Auto-cleanup error for project', project.id, e);
         }
-      });
+      }
 
+      // Mark projects as EXPIRED without deleting DB metadata (Requirement #13)
       const expiredIds = expiredProjects.map(p => p.id);
-      await supabase.from('projects').delete().in('id', expiredIds);
-      console.log(`[CLEANUP] Removed ${expiredProjects.length} expired projects and their temporary files.`);
+      await supabase.from('projects').update({ status: 'EXPIRED' }).in('id', expiredIds);
+      console.log(`[CLEANUP] Marked ${expiredProjects.length} projects as EXPIRED and cleaned up their temporary R2 media.`);
     }
   } catch (err) {
     console.error('Periodic cleanup error:', err);
