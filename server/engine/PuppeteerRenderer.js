@@ -195,12 +195,47 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
     ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=format=auto[final_out]`
     : `[1:v][0:v]overlay=format=auto[final_out]`;
 
+  const tempDirName = `.temp_frames_${Math.random().toString(36).slice(2)}`;
+  const tempDirPath = path.join(__dirname, '..', tempDirName);
+  if (!fs.existsSync(tempDirPath)) fs.mkdirSync(tempDirPath);
+
+  const tRenderStart = performance.now();
+  let totalEvalTime = 0;
+  let totalScreenshotTime = 0;
+
+  try {
+    for (let i = 0; i < totalFrames; i++) {
+      const timeSec = i / fps;
+
+      const tE1 = performance.now();
+      await page.evaluate(async (t) => { 
+        window.setRenderTime(t); 
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }, timeSec);
+      totalEvalTime += (performance.now() - tE1);
+
+      const tE3 = performance.now();
+      const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'webp', quality: 90 });
+      const buffer = Buffer.from(data, 'base64');
+      totalScreenshotTime += (performance.now() - tE3);
+      
+      if (onProgress && i % 30 === 0) onProgress(i / totalFrames); 
+
+      const framePath = path.join(tempDirPath, `frame_${i.toString().padStart(4, '0')}.webp`);
+      fs.writeFileSync(framePath, buffer);
+    }
+  } catch (err) {
+    cdpSession.detach();
+    fs.rmSync(tempDirPath, { recursive: true, force: true });
+    throw err;
+  }
+
+  const totalRenderDuration = performance.now() - tRenderStart;
+  console.log(`[PERF] Total frame extraction duration: ${totalRenderDuration.toFixed(2)}ms`);
+
   const ffmpegArgs = [
     '-framerate', fps.toString(),
-    '-f', 'image2pipe',
-    '-thread_queue_size', '64',
-    '-i', 'pipe:0',           // Input 0: PNG/WebP frames (captions) from stdin
-    '-thread_queue_size', '64',
+    '-i', path.join(tempDirPath, 'frame_%04d.webp'), // Input 0: WebP frames from disk
     '-i', inputVideoPath,     // Input 1: Source video
     '-filter_complex', filterGraph,
     '-map', '[final_out]',
@@ -217,7 +252,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
 
   console.log(`[PERF] FFmpeg true single-pass command: ffmpeg ${ffmpegArgs.join(' ')}`);
 
-  await new Promise(async (resolve, reject) => {
+  await new Promise((resolve, reject) => {
     const tFfmpegStart = performance.now();
     const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
@@ -226,53 +261,14 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
 
     ffmpegProcess.on('close', (code) => {
       console.log(`[PERF] FFmpeg single-pass duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
+      fs.rmSync(tempDirPath, { recursive: true, force: true });
+      cdpSession.detach();
+      
       if (code !== 0) {
         return reject(new Error(`FFmpeg single-pass exited with code ${code}. Stderr: ${ffmpegError.slice(-2000)}`));
       }
       resolve();
     });
-
-    try {
-      const tRenderStart = performance.now();
-      let totalEvalTime = 0;
-      let totalScreenshotTime = 0;
-
-      for (let i = 0; i < totalFrames; i++) {
-        const timeSec = i / fps;
-
-        const tE1 = performance.now();
-        await page.evaluate(async (t) => { 
-          window.setRenderTime(t); 
-          await new Promise(resolve => requestAnimationFrame(resolve));
-        }, timeSec);
-        totalEvalTime += (performance.now() - tE1);
-
-        const tE3 = performance.now();
-        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'webp', quality: 90 });
-        const buffer = Buffer.from(data, 'base64');
-        totalScreenshotTime += (performance.now() - tE3);
-        
-        if (onProgress && i % 30 === 0) onProgress(i / totalFrames); 
-
-        if (!ffmpegProcess.stdin.write(buffer)) {
-          await new Promise((r, reject) => { const onDrain = () => { cleanup(); r(); }; const onError = (err) => { cleanup(); reject(err); }; const onClose = () => { cleanup(); reject(new Error('FFmpeg closed before drain')); }; const cleanup = () => { ffmpegProcess.stdin.removeListener('drain', onDrain); ffmpegProcess.stdin.removeListener('error', onError); ffmpegProcess.removeListener('close', onClose); }; ffmpegProcess.stdin.once('drain', onDrain); ffmpegProcess.stdin.once('error', onError); ffmpegProcess.once('close', onClose); });
-        }
-      }
-
-      const totalRenderDuration = performance.now() - tRenderStart;
-      console.log(`[PERF] Total renderFrames duration: ${totalRenderDuration.toFixed(2)}ms`);
-      console.log(`[PERF] Number of frames: ${totalFrames}`);
-      console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
-      console.log(`[PERF] Total combined evaluate time: ${totalEvalTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total CDP capture time: ${totalScreenshotTime.toFixed(2)}ms`);
-
-      ffmpegProcess.stdin.end();
-      cdpSession.detach();
-    } catch (err) {
-      ffmpegProcess.kill();
-      cdpSession.detach();
-      reject(err);
-    }
   });
 
   console.log(`[PERF] captureCaptionVideoFast total time: ${(performance.now() - tStart).toFixed(2)}ms`);
