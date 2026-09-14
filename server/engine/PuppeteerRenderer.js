@@ -5,23 +5,41 @@ const { spawn } = require('child_process');
 const ffmpegPath = require('ffmpeg-static');
 const { performance } = require('perf_hooks');
 
+let globalBrowser = null;
+let globalPage = null;
+
+async function getGlobalBrowserAndPage(width, height) {
+  if (!globalBrowser) {
+    console.log(`[PERF] Launching global headless browser...`);
+    globalBrowser = await puppeteer.launch({
+      headless: "new",
+      args: [
+        '--no-sandbox', 
+        '--disable-setuid-sandbox', 
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--disable-gpu',
+        '--disable-animations',
+        '--disable-background-networking',
+        '--disable-background-timer-throttling',
+        '--disable-renderer-backgrounding'
+      ]
+    });
+    globalPage = await globalBrowser.newPage();
+  }
+  await globalPage.setViewport({ width, height, deviceScaleFactor: 1 });
+  return { browser: globalBrowser, page: globalPage };
+}
+
 async function captureCaptionVideo(projectId, depth, durationSec, outputPath, token, width = 1080, height = 1920, projectData = null, onProgress = null) {
   console.log(`[PERF] captureCaptionVideo started for ${depth}`);
-  const tBrowserStart = performance.now();
-  // Spawn a headless browser
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-  });
-  const tBrowserEnd = performance.now();
-  console.log(`[PERF] Puppeteer browser launch: ${(tBrowserEnd - tBrowserStart).toFixed(2)}ms`);
-
-  const tPageSetupStart = performance.now();
-  const page = await browser.newPage();
-  await page.setViewport({ width, height, deviceScaleFactor: 1 });
+  const tStart = performance.now();
+  
+  const { page } = await getGlobalBrowserAndPage(width, height);
+  const cdpSession = await page.target().createCDPSession();
 
   if (projectData) {
-    await page.evaluateOnNewDocument((data) => {
+    await page.evaluate((data) => {
       window.injectedProject = data;
     }, projectData);
   }
@@ -29,17 +47,14 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
   const clientOrigin = process.env.CLIENT_ORIGIN || 'https://motion-subtitle-studio.vercel.app';
   const clientUrl = `${clientOrigin}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
   
+  const tPageSetupStart = performance.now();
   await page.goto(clientUrl, { waitUntil: 'networkidle0' });
-  const tPageSetupEnd = performance.now();
-  console.log(`[PERF] Page setup and load: ${(tPageSetupEnd - tPageSetupStart).toFixed(2)}ms`);
+  console.log(`[PERF] Page setup and load: ${(performance.now() - tPageSetupStart).toFixed(2)}ms`);
 
   const tVideoReadyStart = performance.now();
-  // Wait for React to mount and say it's ready
   await page.waitForFunction('window.renderReady === true', { timeout: 15000 });
-  const tVideoReadyEnd = performance.now();
-  console.log(`[PERF] Video readiness (renderReady): ${(tVideoReadyEnd - tVideoReadyStart).toFixed(2)}ms`);
+  console.log(`[PERF] Video readiness (renderReady): ${(performance.now() - tVideoReadyStart).toFixed(2)}ms`);
 
-  // Hide scrollbars just in case
   await page.addStyleTag({ content: '::-webkit-scrollbar { display: none; } body { margin: 0; background: transparent; }' });
 
   const fps = 30;
@@ -58,7 +73,6 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
       '-y', outputPath
     ];
     console.log(`[PERF] FFmpeg command: ffmpeg ${ffmpegArgs.join(' ')}`);
-    // Spawn FFmpeg to read PNG sequence from stdin
     const ffmpegProcess = spawn(ffmpegPath, ffmpegArgs);
 
     let ffmpegError = '';
@@ -67,8 +81,7 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
     });
 
     ffmpegProcess.on('close', (code) => {
-      const tFfmpegEnd = performance.now();
-      console.log(`[PERF] FFmpeg total encode duration: ${(tFfmpegEnd - tFfmpegStart).toFixed(2)}ms`);
+      console.log(`[PERF] FFmpeg total encode duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
       if (code !== 0) {
         return reject(new Error(`FFmpeg exited with code ${code}. Stderr: ${ffmpegError}`));
       }
@@ -91,31 +104,30 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
         totalEvalTime += (performance.now() - tE1);
         
         const tE3 = performance.now();
-        const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const buffer = Buffer.from(data, 'base64');
         totalScreenshotTime += (performance.now() - tE3);
         
         if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
         
-        // Write the frame buffer to FFmpeg's stdin
-        // Handle backpressure
         if (!ffmpegProcess.stdin.write(buffer)) {
           await new Promise(r => ffmpegProcess.stdin.once('drain', r));
         }
       }
       
-      const tRenderEnd = performance.now();
-      const totalRenderDuration = tRenderEnd - tRenderStart;
+      const totalRenderDuration = performance.now() - tRenderStart;
       console.log(`[PERF] Total renderFrames duration: ${totalRenderDuration.toFixed(2)}ms`);
       console.log(`[PERF] Number of frames: ${totalFrames}`);
       console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
       console.log(`[PERF] Total page.evaluate time (setRenderTime + rAF): ${totalEvalTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total screenshot time: ${totalScreenshotTime.toFixed(2)}ms`);
+      console.log(`[PERF] Total CDP capture time: ${totalScreenshotTime.toFixed(2)}ms`);
 
       ffmpegProcess.stdin.end();
-      await browser.close();
+      // NOTE: We do not close the global browser/page here!
+      cdpSession.detach();
     } catch (err) {
       ffmpegProcess.kill();
-      await browser.close();
+      cdpSession.detach();
       reject(err);
     }
   });
@@ -123,49 +135,24 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
 
 /**
  * FAST single-pass renderer for front-only caption renders.
- *
- * Eliminates the VP9 yuva420p intermediate WebM by piping PNG frames
- * directly into a single FFmpeg invocation that simultaneously reads the
- * source video and overlays the caption frames, producing the final H.264
- * MP4 in one pass.
- *
- * Alpha-transparency semantics are fully preserved: PNG frames captured with
- * omitBackground:true are transparent where there are no captions, and
- * FFmpeg's overlay filter composites only non-transparent pixels on top of
- * the source video — identical to the VP9 → overlay pipeline, but ~3-4× faster.
- *
- * NOT suitable for depth renders (behind-subject/mixed) which require VP9
- * alpha for the alphamerge compositor. Those must use captureCaptionVideo.
- *
- * @param {string} inputVideoPath  - Source video file path (read by FFmpeg directly)
- * @param {number} targetWidth     - Output width (may differ from capture width if scaling)
- * @param {number} targetHeight    - Output height
- * @param {number} originalWidth   - Original source video width
- * @param {number} originalHeight  - Original source video height
  */
 async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath, inputVideoPath, token, captureWidth = 1080, captureHeight = 1920, projectData = null, targetWidth = 1080, targetHeight = 1920, originalWidth = 1080, originalHeight = 1920, onProgress = null) {
   console.log(`[PERF] captureCaptionVideoFast (single-pass) started for ${depth}`);
   const tStart = performance.now();
 
-  const tBrowserStart = performance.now();
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-  });
-  console.log(`[PERF] Browser launch: ${(performance.now() - tBrowserStart).toFixed(2)}ms`);
-
-  const tPageSetupStart = performance.now();
-  const page = await browser.newPage();
-  await page.setViewport({ width: captureWidth, height: captureHeight, deviceScaleFactor: 1 });
+  const { page } = await getGlobalBrowserAndPage(captureWidth, captureHeight);
+  const cdpSession = await page.target().createCDPSession();
 
   if (projectData) {
-    await page.evaluateOnNewDocument((data) => {
+    await page.evaluate((data) => {
       window.injectedProject = data;
     }, projectData);
   }
 
   const clientOrigin = process.env.CLIENT_ORIGIN || 'https://motion-subtitle-studio.vercel.app';
   const clientUrl = `${clientOrigin}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
+  
+  const tPageSetupStart = performance.now();
   await page.goto(clientUrl, { waitUntil: 'networkidle0' });
   console.log(`[PERF] Page setup and load: ${(performance.now() - tPageSetupStart).toFixed(2)}ms`);
 
@@ -178,10 +165,6 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const fps = 30;
   const totalFrames = Math.ceil(durationSec * fps);
 
-  // TRUE SINGLE-PASS RENDERING
-  // We pipe PNG frames (Input 0) directly into the same FFmpeg process that reads
-  // the source video (Input 1), scales it, and overlays the captions on the fly.
-  
   const filterGraph = (targetWidth !== originalWidth || targetHeight !== originalHeight)
     ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=format=auto[final_out]`
     : `[1:v][0:v]overlay=format=auto[final_out]`;
@@ -189,6 +172,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const ffmpegArgs = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
+    '-thread_queue_size', '512',
     '-i', 'pipe:0',           // Input 0: PNG frames (captions) from stdin
     '-i', inputVideoPath,     // Input 1: Source video
     '-filter_complex', filterGraph,
@@ -230,7 +214,6 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
         const timeSec = i / fps;
 
         const tE1 = performance.now();
-        // Combined evaluate to save IPC overhead (one roundtrip instead of two)
         await page.evaluate(async (t) => { 
           window.setRenderTime(t); 
           await new Promise(resolve => requestAnimationFrame(resolve));
@@ -238,7 +221,8 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
         totalEvalTime += (performance.now() - tE1);
 
         const tE3 = performance.now();
-        const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const buffer = Buffer.from(data, 'base64');
         totalScreenshotTime += (performance.now() - tE3);
         
         if (onProgress && i % 30 === 0) onProgress(i / totalFrames); 
@@ -253,13 +237,13 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
       console.log(`[PERF] Number of frames: ${totalFrames}`);
       console.log(`[PERF] Average ms per frame: ${(totalRenderDuration / totalFrames).toFixed(2)}ms`);
       console.log(`[PERF] Total combined evaluate time: ${totalEvalTime.toFixed(2)}ms`);
-      console.log(`[PERF] Total screenshot time: ${totalScreenshotTime.toFixed(2)}ms`);
+      console.log(`[PERF] Total CDP capture time: ${totalScreenshotTime.toFixed(2)}ms`);
 
       ffmpegProcess.stdin.end();
-      await browser.close();
+      cdpSession.detach();
     } catch (err) {
       ffmpegProcess.kill();
-      await browser.close();
+      cdpSession.detach();
       reject(err);
     }
   });
@@ -278,10 +262,10 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const totalFrames = Math.ceil(durationSec * fps);
   const CONCURRENCY = 4;
   
-  const browser = await puppeteer.launch({
-    headless: "new",
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
-  });
+  // Reuse global browser but create multiple ephemeral pages
+  if (!globalBrowser) {
+    await getGlobalBrowserAndPage(width, height);
+  }
 
   const chunkSize = Math.ceil(totalFrames / CONCURRENCY);
   const chunks = [];
@@ -295,7 +279,6 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const clientOrigin = process.env.CLIENT_ORIGIN || 'https://motion-subtitle-studio.vercel.app';
   const clientUrl = `${clientOrigin}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
 
-  // Create deferred promises for each frame
   const frames = Array.from({ length: totalFrames }).map(() => {
     let resolve, reject;
     const promise = new Promise((res, rej) => { resolve = res; reject = rej; });
@@ -304,11 +287,11 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
 
   console.log(`[PERF] Rendering ${totalFrames} frames across ${chunks.length} parallel pages with stream piping...`);
 
-  // Start FFmpeg immediately
   const tFfmpegStart = performance.now();
   const ffmpegArgs = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
+    '-thread_queue_size', '512',
     '-i', '-',
     '-c:v', 'libvpx-vp9',
     '-pix_fmt', 'yuva420p',
@@ -323,8 +306,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
 
   const ffmpegPromise = new Promise((resolve, reject) => {
     ffmpegProcess.on('close', (code) => {
-      const tFfmpegEnd = performance.now();
-      console.log(`[PERF] FFmpeg stream encode duration: ${(tFfmpegEnd - tFfmpegStart).toFixed(2)}ms`);
+      console.log(`[PERF] FFmpeg stream encode duration: ${(performance.now() - tFfmpegStart).toFixed(2)}ms`);
       if (code !== 0) {
         return reject(new Error(`FFmpeg exited with code ${code}. Stderr: ${ffmpegError}`));
       }
@@ -332,7 +314,6 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
     });
   });
 
-  // Consumer loop: pipes frames in sequential order to FFmpeg
   const pipeLoop = async () => {
     for (let i = 0; i < totalFrames; i++) {
       const buffer = await frames[i].promise;
@@ -344,20 +325,19 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
     ffmpegProcess.stdin.end();
   };
 
-  // Start consumer
   const pipePromise = pipeLoop();
-
   const tRenderStart = performance.now();
 
-  // Producer loops
   await Promise.all(chunks.map(async (chunk) => {
     let page;
+    let cdpSession;
     try {
-      page = await browser.newPage();
+      page = await globalBrowser.newPage();
       await page.setViewport({ width, height, deviceScaleFactor: 1 });
+      cdpSession = await page.target().createCDPSession();
       
       if (projectData) {
-        await page.evaluateOnNewDocument((data) => {
+        await page.evaluate((data) => {
           window.injectedProject = data;
         }, projectData);
       }
@@ -373,15 +353,16 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
           await new Promise(resolve => requestAnimationFrame(resolve));
         }, timeSec);
         
-        const buffer = await page.screenshot({ type: 'png', omitBackground: true, encoding: 'binary' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const buffer = Buffer.from(data, 'base64');
         frames[i].resolve(buffer);
       }
     } catch (err) {
-      // Reject any pending frames from this chunk so the consumer doesn't hang forever
       for (let i = chunk.startFrame; i < chunk.endFrame; i++) {
         frames[i].reject(err);
       }
     } finally {
+      if (cdpSession) cdpSession.detach();
       if (page) await page.close();
     }
   }));
@@ -389,9 +370,6 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const tRenderEnd = performance.now();
   console.log(`[PERF] Concurrent frame rendering completed in ${(tRenderEnd - tRenderStart).toFixed(2)}ms`);
 
-  await browser.close();
-
-  // Wait for piping and FFmpeg to finish
   await pipePromise;
   await ffmpegPromise;
   
