@@ -442,19 +442,12 @@ app.get('/api/projects/:id/video', authMiddleware, async (req, res) => {
       return res.sendFile(localPath);
     }
 
-    // Proxy the stream through the server instead of redirecting to B2.
+    // NOTE: Proxying the stream through the server instead of redirecting to B2/R2.
     // This is required because:
     //   1. The <video crossOrigin="anonymous"> needs the response to come from
     //      the same origin (Render) so the browser can draw it to a canvas
     //      for the behind-subject segmentation feature.
-    //   2. HTML5 video requires Range request support for seeking and metadata.
-    // NOTE: For R2, we use presigned GET URLs instead of proxying to save bandwidth,
-    // as R2 supports CORS and Range requests directly from the browser.
-    
-    if (storageProvider.type === 'r2') {
-      const url = await storageProvider.getPresignedUrl(b2Key, 3600);
-      return res.redirect(url);
-    }
+    //   2. If we redirect to R2, we hit bucket CORS policy issues. Proxying guarantees CORS headers.
     
     const range = req.headers.range;
     const { stream, contentLength, contentType, contentRange, acceptRanges } = await storageProvider.getStream(b2Key, range);
