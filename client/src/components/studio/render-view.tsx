@@ -50,22 +50,26 @@ export function RenderView() {
     const handleProjectUpdate = (e: any) => {
       if (e.detail) {
         setProject(e.detail);
-        (window as any).renderReady = true;
+        // Do NOT set renderReady here; wait for useEffect
       }
     };
     window.addEventListener('updateProject', handleProjectUpdate);
-
-    // Tell Puppeteer we are ready (for the initial load)
-    document.fonts.ready.then(() => {
-      setTimeout(() => {
-        (window as any).renderReady = true;
-      }, 50);
-    });
 
     return () => {
       window.removeEventListener('updateProject', handleProjectUpdate);
     };
   }, []);
+
+  // Tell Puppeteer we are ready after the project has actually rendered
+  useEffect(() => {
+    if (project) {
+      document.fonts.ready.then(() => {
+        setTimeout(() => {
+          (window as any).renderReady = true;
+        }, 50);
+      });
+    }
+  }, [project]);
 
   if (!project) return null;
 
