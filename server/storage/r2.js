@@ -20,6 +20,7 @@ async function init() {
   s3Client = new S3Client({
     endpoint,
     region: 'auto',
+    forcePathStyle: true,
     credentials: {
       accessKeyId,
       secretAccessKey
