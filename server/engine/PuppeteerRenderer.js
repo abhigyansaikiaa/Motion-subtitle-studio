@@ -188,7 +188,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const ffmpegArgs = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
-    '-thread_queue_size', '512',
+    
     '-i', 'pipe:0',           // Input 0: PNG frames (captions) from stdin
     '-i', inputVideoPath,     // Input 1: Source video
     '-filter_complex', filterGraph,
@@ -307,7 +307,6 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
   const ffmpegArgs = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
-    '-thread_queue_size', '512',
     '-i', '-',
     '-c:v', 'libvpx-vp9',
     '-pix_fmt', 'yuva420p',
