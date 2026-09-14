@@ -10,6 +10,7 @@ import {
 } from './customization-controls';
 import { CompositedPreview } from '../captions/composited-preview';
 import { DesignWheel, type ToolId } from './design-wheel';
+import { RenderSnakeGame } from './render-snake-game';
 import {
   Upload, Play, Pause, Download, AlertCircle, RefreshCw,
   Sliders, LayoutGrid, Type, RotateCcw,
@@ -462,11 +463,17 @@ export function StudioWorkflow() {
                 >
                   <CompositedPreview />
 
-                  {/* Rendering overlay */}
+                  {/* Rendering overlay — snake game to pass the time */}
                   {currentStep === 6 && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center z-50" style={{ background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(16px)' }}>
-                      <ShiningText text="RENDERING VIDEO..." className="text-2xl font-bold mb-3 text-white" />
-                      <p className="text-white/40 text-sm">Burning captions into your video. This takes a moment.</p>
+                    <div
+                      className="absolute inset-0 flex flex-col items-center justify-center z-50 gap-5"
+                      style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)' }}
+                    >
+                      <div className="flex flex-col items-center gap-1">
+                        <ShiningText text="RENDERING VIDEO..." className="text-xl font-bold text-white" />
+                        <p className="text-white/35 text-xs">Play while you wait ↓</p>
+                      </div>
+                      <RenderSnakeGame />
                     </div>
                   )}
 

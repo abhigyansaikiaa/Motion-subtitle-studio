@@ -37,6 +37,8 @@ async function processJob(job) {
   const jobId = job.id;
   const inputPath = path.join(uploadDir, `hf-${jobId}-in.mp4`);
   const outputPath = path.join(outputDir, `hf-${jobId}-out.mp4`);
+  // Declared here so catch block can reference it for cleanup on failure
+  let b2Key = null;
   
   try {
     const { data: claimData, error: claimErr } = await supabase
@@ -53,7 +55,7 @@ async function processJob(job) {
     
     // We must query project to get the video b2Key correctly
     const { data: project } = await supabase.from('projects').select('video_id, videos!projects_video_id_fkey(storage_path)').eq('id', job.project_id).single();
-    const b2Key = project?.videos?.storage_path || job.video_id;
+    b2Key = project?.videos?.storage_path || job.video_id;
     const outputB2Key = `outputs/${job.user_id}/${job.project_id}/${Date.now()}-rendered.mp4`;
 
     console.log(`[HF-Node-Worker] Processing job ${jobId}`);

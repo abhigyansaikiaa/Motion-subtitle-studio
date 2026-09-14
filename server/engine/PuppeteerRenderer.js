@@ -182,15 +182,16 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const fps = 30;
   const totalFrames = Math.ceil(durationSec * fps);
 
-  const tempCaptionsPath = outputPath.replace(/\.[^.]+$/, '_captions.mov');
-  console.log(`[RENDER] Using 2-step QTRLE pipeline. Intermediate captions: ${tempCaptionsPath}`);
+  const tempCaptionsPath = outputPath.replace(/\.[^.]+$/, '_captions.mkv');
+  console.log(`[RENDER] Using 2-step lossless pipeline. Intermediate captions: ${tempCaptionsPath}`);
 
-  // Step 1: Encode PNG pipe to QTRLE (transparent, fast, lossless RLE)
+  // Step 1: Encode PNG pipe to ffvhuff RGBA (lossless, universally available on Linux FFmpeg, native alpha)
   const ffmpegArgs1 = [
     '-framerate', fps.toString(),
     '-f', 'image2pipe',
     '-i', 'pipe:0',          // Input 0: caption PNG frames from stdin
-    '-c:v', 'qtrle',
+    '-c:v', 'ffvhuff',
+    '-pix_fmt', 'rgba',
     '-y',
     tempCaptionsPath
   ];
@@ -257,10 +258,12 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
     }
   });
 
-  // Step 2: Overlay QTRLE captions onto source video
+  // Step 2: Overlay lossless RGBA captions onto source video
+  // [0:v] = captions (RGBA, lossless), [1:v] = source video
+  // overlay=format=auto handles alpha compositing correctly for rgba input
   const filterGraph = (targetWidth !== originalWidth || targetHeight !== originalHeight)
-    ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=0:0[final_out]`
-    : `[1:v][0:v]overlay=0:0[final_out]`;
+    ? `[1:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][0:v]overlay=format=auto[final_out]`
+    : `[1:v][0:v]overlay=format=auto[final_out]`;
 
   const ffmpegArgs2 = [
     '-i', tempCaptionsPath,   // Input 0: transparent captions
