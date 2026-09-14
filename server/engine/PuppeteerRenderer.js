@@ -38,24 +38,40 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
   const { page } = await getGlobalBrowserAndPage(width, height);
   const cdpSession = await page.target().createCDPSession();
 
-  if (projectData) {
-    await page.evaluate((data) => {
-      window.injectedProject = data;
-    }, projectData);
-  }
-
   const clientOrigin = process.env.CLIENT_ORIGIN || 'https://motion-subtitle-studio.vercel.app';
   const clientUrl = `${clientOrigin}/#/render?projectId=${projectId}&depth=${depth}&token=${token}`;
   
   const tPageSetupStart = performance.now();
-  await page.goto(clientUrl, { waitUntil: 'networkidle0' });
-  console.log(`[PERF] Page setup and load: ${(performance.now() - tPageSetupStart).toFixed(2)}ms`);
-
-  const tVideoReadyStart = performance.now();
-  await page.waitForFunction('window.renderReady === true', { timeout: 15000 });
-  console.log(`[PERF] Video readiness (renderReady): ${(performance.now() - tVideoReadyStart).toFixed(2)}ms`);
-
-  await page.addStyleTag({ content: '::-webkit-scrollbar { display: none; } body { margin: 0; background: transparent; }' });
+  
+  if (page.url() === 'about:blank' || !page.url().includes('#/render')) {
+    // First load
+    if (projectData) {
+      await page.evaluateOnNewDocument((data) => {
+        window.injectedProject = data;
+      }, projectData);
+    }
+    await page.goto(clientUrl, { waitUntil: 'networkidle0' });
+    console.log(`[PERF] Page setup and load (cold): ${(performance.now() - tPageSetupStart).toFixed(2)}ms`);
+    
+    const tVideoReadyStart = performance.now();
+    await page.waitForFunction('window.renderReady === true', { timeout: 15000 });
+    console.log(`[PERF] Video readiness (renderReady): ${(performance.now() - tVideoReadyStart).toFixed(2)}ms`);
+    
+    await page.addStyleTag({ content: '::-webkit-scrollbar { display: none; } body { margin: 0; background: transparent; }' });
+  } else {
+    // Cached load
+    if (projectData) {
+      await page.evaluate((data) => {
+        window.renderReady = false;
+        window.dispatchEvent(new CustomEvent('updateProject', { detail: data }));
+      }, projectData);
+      console.log(`[PERF] Page setup (cached): ${(performance.now() - tPageSetupStart).toFixed(2)}ms`);
+      
+      const tVideoReadyStart = performance.now();
+      await page.waitForFunction('window.renderReady === true', { timeout: 15000 });
+      console.log(`[PERF] Video readiness (renderReady): ${(performance.now() - tVideoReadyStart).toFixed(2)}ms`);
+    }
+  }
 
   const fps = 30;
   const totalFrames = Math.ceil(durationSec * fps);
