@@ -130,14 +130,14 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
         totalEvalTime += (performance.now() - tE1);
         
         const tE3 = performance.now();
-        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'webp', quality: 90 });
         const buffer = Buffer.from(data, 'base64');
         totalScreenshotTime += (performance.now() - tE3);
         
         if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
         
         if (!ffmpegProcess.stdin.write(buffer)) {
-          await new Promise(r => ffmpegProcess.stdin.once('drain', r));
+          await new Promise((r, reject) => { const onDrain = () => { cleanup(); r(); }; const onError = (err) => { cleanup(); reject(err); }; const onClose = () => { cleanup(); reject(new Error('FFmpeg closed before drain')); }; const cleanup = () => { ffmpegProcess.stdin.removeListener('drain', onDrain); ffmpegProcess.stdin.removeListener('error', onError); ffmpegProcess.removeListener('close', onClose); }; ffmpegProcess.stdin.once('drain', onDrain); ffmpegProcess.stdin.once('error', onError); ffmpegProcess.once('close', onClose); });
         }
       }
       
@@ -247,14 +247,14 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
         totalEvalTime += (performance.now() - tE1);
 
         const tE3 = performance.now();
-        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'webp', quality: 90 });
         const buffer = Buffer.from(data, 'base64');
         totalScreenshotTime += (performance.now() - tE3);
         
         if (onProgress && i % 30 === 0) onProgress(i / totalFrames); 
 
         if (!ffmpegProcess.stdin.write(buffer)) {
-          await new Promise(r => ffmpegProcess.stdin.once('drain', r));
+          await new Promise((r, reject) => { const onDrain = () => { cleanup(); r(); }; const onError = (err) => { cleanup(); reject(err); }; const onClose = () => { cleanup(); reject(new Error('FFmpeg closed before drain')); }; const cleanup = () => { ffmpegProcess.stdin.removeListener('drain', onDrain); ffmpegProcess.stdin.removeListener('error', onError); ffmpegProcess.removeListener('close', onClose); }; ffmpegProcess.stdin.once('drain', onDrain); ffmpegProcess.stdin.once('error', onError); ffmpegProcess.once('close', onClose); });
         }
       }
 
@@ -342,7 +342,19 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
       const buffer = await frames[i].promise;
       if (onProgress && i % 30 === 0) onProgress(i / totalFrames);
       if (!ffmpegProcess.stdin.write(buffer)) {
-        await new Promise(r => ffmpegProcess.stdin.once('drain', r));
+        await new Promise((r, reject) => {
+          const onDrain = () => { cleanup(); r(); };
+          const onError = (err) => { cleanup(); reject(err); };
+          const onClose = () => { cleanup(); reject(new Error('FFmpeg closed before drain')); };
+          const cleanup = () => {
+            ffmpegProcess.stdin.removeListener('drain', onDrain);
+            ffmpegProcess.stdin.removeListener('error', onError);
+            ffmpegProcess.removeListener('close', onClose);
+          };
+          ffmpegProcess.stdin.once('drain', onDrain);
+          ffmpegProcess.stdin.once('error', onError);
+          ffmpegProcess.once('close', onClose);
+        });
       }
     }
     ffmpegProcess.stdin.end();
@@ -376,7 +388,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
           await new Promise(resolve => requestAnimationFrame(resolve));
         }, timeSec);
         
-        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'png' });
+        const { data } = await cdpSession.send('Page.captureScreenshot', { format: 'webp', quality: 90 });
         const buffer = Buffer.from(data, 'base64');
         frames[i].resolve(buffer);
       }
