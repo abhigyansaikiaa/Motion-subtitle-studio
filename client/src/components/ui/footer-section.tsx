@@ -2,9 +2,8 @@ import React from 'react';
 
 export function FooterSection() {
   return (
-    <footer className="w-full bg-surface-container-lowest border-b border-border/20 pt-32 pb-12 px-6 relative overflow-hidden">
-      <div className="absolute inset-0 bg-noise opacity-5 pointer-events-none" />
-      <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row justify-between gap-16 relative z-10 border-b-2 border-primary pb-24">
+    <footer className="w-full bg-surface-container-lowest pt-32 pb-12 px-6 relative overflow-hidden">
+      <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row justify-between gap-16 relative z-10 border-b border-border/10 pb-24">
         
         {/* Brand Column */}
         <div className="flex flex-col gap-6 md:w-1/3">

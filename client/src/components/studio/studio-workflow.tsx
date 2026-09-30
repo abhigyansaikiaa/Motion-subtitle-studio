@@ -286,10 +286,7 @@ export function StudioWorkflow() {
         {/* Step 1: Upload */}
         {currentStep === 1 && (
           <div className="flex-1 flex flex-col items-center justify-center relative">
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col justify-center opacity-[0.02] overflow-hidden">
-               <span className="font-editorial text-massive tracking-tighter capitalize leading-[0.8] whitespace-nowrap -ml-10">Select</span>
-               <span className="font-editorial text-massive tracking-tighter capitalize leading-[0.8] whitespace-nowrap ml-20">Media</span>
-            </div>
+            {/* Background elements removed for cleaner professional look */}
 
             <div
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
@@ -332,10 +329,7 @@ export function StudioWorkflow() {
         {/* Step 2: Transcribe */}
         {currentStep === 2 && (
           <div className="flex-1 flex flex-col items-center justify-center relative">
-             <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col justify-center opacity-[0.02] overflow-hidden">
-               <span className="font-editorial text-massive tracking-tighter capitalize leading-[0.8] whitespace-nowrap">Analyze</span>
-               <span className="font-editorial text-massive tracking-tighter capitalize leading-[0.8] whitespace-nowrap ml-32">Audio</span>
-            </div>
+            {/* Background elements removed for cleaner professional look */}
             
             <div className="relative z-10 flex flex-col items-center w-full max-w-lg p-12 border border-border/10 bg-surface-container-lowest">
               {currentProject?.videoUrl && (

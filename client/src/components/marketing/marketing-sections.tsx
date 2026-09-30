@@ -15,36 +15,35 @@ export function FeaturesSection() {
           </h3>
         </div>
 
-        {/* Brutalist Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-0 border-t-2 border-l-2 border-border/20">
+        {/* Geometric Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-1 p-1 bg-border/10 rounded-xl overflow-hidden">
           
-          <div className="md:col-span-2 p-12 lg:p-20 bg-surface-container-low border-r-2 border-b-2 border-border/20 flex flex-col justify-end min-h-[400px] relative overflow-hidden group hover:bg-surface-container transition-colors">
-            <div className="absolute top-10 right-10 opacity-5 group-hover:opacity-20 transition-opacity">
+          <div className="md:col-span-2 p-12 lg:p-20 bg-surface-container-low flex flex-col justify-end min-h-[400px] relative overflow-hidden group hover:bg-surface-container transition-colors rounded-lg">
+            <div className="absolute top-10 right-10 opacity-5 group-hover:opacity-10 transition-opacity">
               <Zap className="w-64 h-64 text-primary" />
             </div>
             <div className="relative z-10 max-w-lg">
-              <h3 className="font-editorial text-5xl font-bold tracking-tighter mb-4 text-on-surface uppercase leading-none">Kinetic<br/>Typography</h3>
+              <h3 className="font-editorial text-4xl lg:text-5xl font-medium tracking-tight mb-4 text-on-surface uppercase leading-none">Kinetic<br/>Typography</h3>
               <p className="text-muted-foreground leading-relaxed font-grotesk text-lg">Words don't just appear. They move, scale, and color-fill in perfect sync with your voice. Built with hardware-accelerated transforms.</p>
             </div>
           </div>
 
-          <div className="p-12 bg-surface-container-low border-r-2 border-b-2 border-border/20 flex flex-col justify-end min-h-[400px] group hover:bg-surface-container transition-colors">
+          <div className="p-12 bg-surface-container-low flex flex-col justify-end min-h-[400px] group hover:bg-surface-container transition-colors rounded-lg">
             <LayoutTemplate className="w-16 h-16 text-primary mb-8 opacity-50 group-hover:opacity-100 transition-opacity" />
-            <h3 className="font-editorial text-4xl font-bold tracking-tighter mb-4 text-on-surface uppercase leading-none">Editorial<br/>Composition</h3>
+            <h3 className="font-editorial text-3xl lg:text-4xl font-medium tracking-tight mb-4 text-on-surface uppercase leading-none">Editorial<br/>Composition</h3>
             <p className="text-muted-foreground leading-relaxed font-grotesk text-sm">Ditch the ugly lower-thirds. Our templates treat your video like a premium magazine spread.</p>
           </div>
 
-          <div className="p-12 bg-surface-container-low border-r-2 border-b-2 border-border/20 flex flex-col justify-end min-h-[400px] group hover:bg-surface-container transition-colors">
+          <div className="p-12 bg-surface-container-low flex flex-col justify-end min-h-[400px] group hover:bg-surface-container transition-colors rounded-lg">
             <Sparkles className="w-16 h-16 text-primary mb-8 opacity-50 group-hover:opacity-100 transition-opacity" />
-            <h3 className="font-editorial text-4xl font-bold tracking-tighter mb-4 text-on-surface uppercase leading-none">Word-Level<br/>Control</h3>
+            <h3 className="font-editorial text-3xl lg:text-4xl font-medium tracking-tight mb-4 text-on-surface uppercase leading-none">Word-Level<br/>Control</h3>
             <p className="text-muted-foreground leading-relaxed font-grotesk text-sm">Make any word a Hero word with a single click. Total control over timing and style.</p>
           </div>
 
-          <div className="md:col-span-2 p-12 lg:p-20 bg-surface-container-low border-r-2 border-b-2 border-border/20 flex flex-col justify-end min-h-[400px] relative overflow-hidden group hover:bg-surface-container transition-colors">
-            <div className="absolute inset-0 bg-noise opacity-10 pointer-events-none" />
+          <div className="md:col-span-2 p-12 lg:p-20 bg-surface-container-low flex flex-col justify-end min-h-[400px] relative overflow-hidden group hover:bg-surface-container transition-colors rounded-lg">
             <Palette className="w-16 h-16 text-primary mb-8 relative z-10 opacity-50 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10 max-w-lg">
-              <h3 className="font-editorial text-5xl font-bold tracking-tighter mb-4 text-on-surface uppercase leading-none">Advanced<br/>Customization</h3>
+              <h3 className="font-editorial text-4xl lg:text-5xl font-medium tracking-tight mb-4 text-on-surface uppercase leading-none">Advanced<br/>Customization</h3>
               <p className="text-muted-foreground leading-relaxed font-grotesk text-lg">Tune typography, layout, color palettes, and animation physics globally or clip-by-clip.</p>
             </div>
           </div>
@@ -57,28 +56,27 @@ export function FeaturesSection() {
 
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-32 px-6 bg-on-surface border-y border-border/30 relative overflow-hidden">
-      <div className="absolute inset-0 bg-noise opacity-5 pointer-events-none" />
+    <section id="how-it-works" className="py-32 px-6 bg-on-surface border-y border-border/10 relative overflow-hidden">
       <div className="max-w-[90rem] mx-auto relative z-10">
-        <div className="text-left mb-24 border-b-2 border-surface-container-lowest/20 pb-8">
-          <h2 className="text-[10px] font-bold tracking-widest text-surface-container-lowest/60 uppercase mb-4">Workflow</h2>
-          <h2 className="font-editorial text-7xl font-bold tracking-tighter text-surface-container-lowest uppercase leading-[0.85]">
-            From raw to rendered <br/><span className="font-light italic text-surface-container-lowest/60">in minutes.</span>
+        <div className="text-left mb-24 border-b border-surface-container-lowest/10 pb-8">
+          <h2 className="text-[10px] font-grotesk tracking-widest text-surface-container-lowest/60 uppercase mb-4">Workflow</h2>
+          <h2 className="font-editorial text-5xl lg:text-7xl font-medium tracking-tight text-surface-container-lowest uppercase leading-[0.9]">
+            From raw to rendered <br/><span className="text-primary italic">in minutes.</span>
           </h2>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-0 border-t-2 border-l-2 border-surface-container-lowest/20">
+        <div className="grid md:grid-cols-4 gap-1 bg-surface-container-lowest/10 p-1 rounded-xl">
           {[
-            { step: '01', title: 'Upload', desc: 'Drop your video. Our AI generates perfect word-level timestamps in seconds.' },
+            { step: '01', title: 'Upload', desc: 'Drop your video. Our engine generates precise word-level timestamps in seconds.' },
             { step: '02', title: 'Choose', desc: 'Select from our premium kinetic typography templates.' },
             { step: '03', title: 'Edit', desc: 'Correct text, set Hero words, and adjust colors in real-time.' },
             { step: '04', title: 'Render', desc: 'Export high-quality MP4 with hard-burned subtitles instantly.' }
           ].map((item, i) => (
-            <div key={i} className="relative z-10 flex flex-col p-12 border-r-2 border-b-2 border-surface-container-lowest/20 hover:bg-surface-container-lowest/5 transition-colors">
-              <div className="text-6xl font-bold font-editorial text-surface-container-lowest/20 mb-8 leading-none">
+            <div key={i} className="relative z-10 flex flex-col p-12 bg-on-surface hover:bg-surface-container-lowest/5 transition-colors rounded-lg">
+              <div className="text-5xl lg:text-6xl font-medium font-editorial text-surface-container-lowest/20 mb-8 leading-none">
                 {item.step}
               </div>
-              <h3 className="font-editorial text-4xl font-bold tracking-tighter mb-4 text-surface-container-lowest uppercase leading-none">{item.title}</h3>
+              <h3 className="font-editorial text-3xl font-medium tracking-tight mb-4 text-surface-container-lowest uppercase leading-none">{item.title}</h3>
               <p className="text-surface-container-lowest/60 text-sm leading-relaxed font-grotesk">{item.desc}</p>
             </div>
           ))}
@@ -104,7 +102,7 @@ export function TemplateShowcase() {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-0 border-t-2 border-l-2 border-border/20">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-1 p-1 bg-border/10 rounded-xl overflow-hidden">
           {TEMPLATES.slice(0, 4).map((t, i) => (
             <motion.div 
               key={t.id} 
@@ -112,7 +110,7 @@ export function TemplateShowcase() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.8, ease: "easeOut" }}
-              className="group relative aspect-[4/5] overflow-hidden bg-surface-container-low border-r-2 border-b-2 border-border/20 flex flex-col items-center justify-center p-8 text-center hover:bg-surface-container transition-colors cursor-pointer"
+              className="group relative aspect-[4/5] overflow-hidden bg-surface-container-low flex flex-col items-center justify-center p-8 text-center hover:bg-surface-container transition-colors cursor-pointer rounded-lg"
             >
               <div 
                 className="text-4xl mb-4 leading-[1.1] break-words max-w-full uppercase"
@@ -126,8 +124,8 @@ export function TemplateShowcase() {
                 THIS IS <br/>
                 <span style={{ color: t.heroColor, fontSize: '1.2em' }}>{t.name}</span>
               </div>
-              <div className="absolute bottom-0 inset-x-0 p-6 bg-surface-container-high/90 border-t-2 border-border/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex flex-col text-left">
-                <div className="font-editorial text-sm uppercase tracking-widest text-primary font-bold mb-2">{t.category || 'TEMPLATE'}</div>
+              <div className="absolute bottom-0 inset-x-0 p-6 bg-surface-container-high/90 border-t border-border/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300 flex flex-col text-left">
+                <div className="font-editorial text-sm uppercase tracking-widest text-primary font-medium mb-2">{t.category || 'TEMPLATE'}</div>
                 <div className="text-sm text-on-surface leading-relaxed font-grotesk">{t.description}</div>
               </div>
             </motion.div>
