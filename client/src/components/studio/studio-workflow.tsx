@@ -107,6 +107,7 @@ export function StudioWorkflow() {
 
       setProcessingMsg('UPLOADING 0%');
       const res = await api.uploadVideo(file, p => { setUploadProgress(p); setProcessingMsg(`UPLOADING ${p}%`); });
+      setProcessingMsg('UPLOADED');
       const projRes = await api.getProject(res.projectId);
       setCurrentProject(projRes.project);
       setStep(2);
@@ -133,15 +134,20 @@ export function StudioWorkflow() {
   const handleTranscribe = async () => {
     if (!currentProject) return;
     try {
-      setIsProcessing(true); setError(null); setProcessingMsg('TRANSCRIBING...');
+      setIsProcessing(true); setError(null); setProcessingMsg('PREPARING AUDIO...');
       await api.transcribe(currentProject.id, transcribeLang);
       const poll = setInterval(async () => {
         try {
           const res = await api.getProject(currentProject.id);
           const status = res.project.status;
+          
+          if (status === 'TRANSCRIBING') {
+            setProcessingMsg('TRANSCRIBING...');
+          }
+          
           if (['TRANSCRIBED', 'READY_TO_EDIT', 'COMPLETED'].includes(status)) {
             clearInterval(poll);
-            setProcessingMsg('BUILDING CAPTIONS...');
+            setProcessingMsg('CAPTIONS READY');
             try {
               const composeRes = await api.compose(currentProject.id, selectedStyleId);
               const segs = composeRes.project?.segments || [];

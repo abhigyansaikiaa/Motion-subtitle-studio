@@ -60,15 +60,18 @@ function formatProjectInfo(p) {
   return result;
 }
 
-async function createProject(userId, filename, aspectRatio = '9:16') {
+async function createProject(userId, filename, aspectRatio = '9:16', forcedVideoId = null) {
   // 1. Create video record first
+  const insertData = {
+    user_id: userId,
+    storage_path: filename,
+    filename: filename
+  };
+  if (forcedVideoId) insertData.id = forcedVideoId;
+
   const { data: video, error: vidError } = await supabase
     .from('videos')
-    .insert({
-      user_id: userId,
-      storage_path: filename,
-      filename: filename
-    })
+    .insert(insertData)
     .select()
     .single();
 

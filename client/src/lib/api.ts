@@ -47,16 +47,23 @@ export const api = {
   deleteProject: (id: string) => fetchApi<{ success: boolean }>('/api/projects/' + id, { method: 'DELETE' }),
 
   // Upload
-  uploadVideo: (file: File, onProgress?: (p: number) => void) => {
-    return new Promise<{ projectId: string, videoId: string }>((resolve, reject) => {
+  uploadVideo: async (file: File, onProgress?: (p: number) => void) => {
+    // 1. Get presigned URL
+    const presignedRes = await fetchApi<{ url: string, key: string, videoUuid: string, safeFilename: string }>('/api/upload/presigned-url', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: file.name, contentType: file.type || 'video/mp4' })
+    });
+
+    // 2. Upload directly to R2 using XMLHttpRequest (for progress)
+    await new Promise<void>((resolve, reject) => {
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', `${API}/api/upload`, true);
-      // 120 s — enough for Render free tier cold start (up to 50 s) + upload
-      xhr.timeout = 120_000;
-      const headers = authHeaders();
-      if (headers.Authorization) {
-        xhr.setRequestHeader('Authorization', headers.Authorization);
-      }
+      xhr.open('PUT', presignedRes.url, true);
+      // Don't set Authorization header for R2, it uses the presigned URL credentials
+      xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
+      
+      // Render free tier doesn't apply to R2 directly, but large files might still take time
+      xhr.timeout = 180_000; 
 
       if (onProgress) {
         xhr.upload.addEventListener('progress', (e) => {
@@ -68,23 +75,30 @@ export const api = {
 
       xhr.onload = () => {
         if (xhr.status >= 200 && xhr.status < 300) {
-          resolve(JSON.parse(xhr.responseText));
+          resolve();
         } else {
-          try {
-            reject(new Error(JSON.parse(xhr.responseText).error || 'Upload failed'));
-          } catch {
-            reject(new Error('Upload failed'));
-          }
+          reject(new Error('Direct upload failed'));
         }
       };
 
-      xhr.onerror = () => reject(new Error('Network error — server may be starting up. Please retry in 30 seconds.'));
-      xhr.ontimeout = () => reject(new Error('Upload timed out — server may be starting up. Please retry.'));
+      xhr.onerror = () => reject(new Error('Network error during upload'));
+      xhr.ontimeout = () => reject(new Error('Upload timed out'));
 
-      const formData = new FormData();
-      formData.append('video', file);
-      xhr.send(formData);
+      xhr.send(file); // Send file directly, not as FormData
     });
+
+    // 3. Finalize upload metadata
+    const finalizeRes = await fetchApi<{ projectId: string, b2Key: string }>('/api/upload/finalize', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        key: presignedRes.key,
+        videoUuid: presignedRes.videoUuid,
+        filename: presignedRes.safeFilename
+      })
+    });
+
+    return { projectId: finalizeRes.projectId, videoId: finalizeRes.b2Key };
   },
 
   // Transcribe

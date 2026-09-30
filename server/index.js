@@ -212,6 +212,47 @@ app.post('/api/upload', authMiddleware, upload.single('video'), async (req, res)
   }
 });
 
+// Step 1a: Direct Upload - Get Presigned URL
+app.post('/api/upload/presigned-url', authMiddleware, async (req, res) => {
+  try {
+    const { filename, contentType } = req.body;
+    if (!filename) return res.status(400).json({ error: 'Filename is required' });
+
+    const videosUsed = req.user.videos_used || 0;
+    if (videosUsed >= 3) {
+      return res.status(403).json({ error: 'Video limit reached (3 videos max per account)' });
+    }
+
+    const { randomUUID } = require('crypto');
+    const videoUuid = randomUUID();
+    const safeFilename = filename.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const key = `uploads/${req.user.id}/${videoUuid}/${safeFilename}`;
+    
+    const url = await storageProvider.getPresignedUploadUrl(key, contentType || 'application/octet-stream', 3600);
+    
+    res.json({ success: true, url, key, videoUuid, safeFilename });
+  } catch (err) {
+    console.error('[API] /api/upload/presigned-url error:', err);
+    res.status(500).json({ error: 'Failed to generate upload URL' });
+  }
+});
+
+// Step 1b: Direct Upload - Finalize
+app.post('/api/upload/finalize', authMiddleware, async (req, res) => {
+  try {
+    const { key, videoUuid, filename, aspectRatio } = req.body;
+    if (!key || !videoUuid || !filename) return res.status(400).json({ error: 'Missing required parameters' });
+    
+    // Create project using the specific videoUuid generated during presigned URL request
+    const project = await createProject(req.user.id, key, aspectRatio || '9:16', videoUuid);
+    
+    res.json({ success: true, projectId: project.id, b2Key: key });
+  } catch (err) {
+    console.error('[API] /api/upload/finalize error:', err);
+    res.status(500).json({ error: 'Failed to finalize upload' });
+  }
+});
+
 // Step 2: Trigger Transcription
 app.post('/api/transcribe', authMiddleware, async (req, res) => {
   try {

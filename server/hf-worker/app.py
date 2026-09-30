@@ -63,9 +63,11 @@ else:
 # ---------------------------------------------------------------------------
 MODEL_READY = False
 model = None
+global_model_load_ms = 0
 
 print("[HF-Worker] Loading faster-whisper tiny model (int8, cpu)...", file=sys.stderr)
 try:
+    t_model_start = time.monotonic()
     model = faster_whisper.WhisperModel(
         "base",
         device="cpu",
@@ -73,8 +75,9 @@ try:
         cpu_threads=2,
         num_workers=1
     )
+    global_model_load_ms = (time.monotonic() - t_model_start) * 1000
     MODEL_READY = True
-    print("[HF-Worker] Model loaded successfully. Worker is ready.", file=sys.stderr)
+    print(f"[HF-Worker] Model loaded successfully in {global_model_load_ms:.0f}ms. Worker is ready.", file=sys.stderr)
 except Exception as _model_err:
     # FIX #1: Do NOT set model = None silently. Log clearly and keep MODEL_READY False
     # so the polling daemon refuses to claim jobs without crashing.
@@ -148,6 +151,17 @@ async def process_job(project: dict):
         )
         return  # Leave the row in QUEUED_RENDER_TRANS so GHA fallback can pick it up.
 
+    t_total_start = time.monotonic()
+    
+    queued_at = project.get("updated_at") or project.get("created_at")
+    wake_time_ms = 0
+    if queued_at:
+        try:
+            q_dt = datetime.fromisoformat(queued_at.replace("Z", "+00:00"))
+            wake_time_ms = (datetime.now(timezone.utc) - q_dt).total_seconds() * 1000
+        except:
+            pass
+
     try:
         # --- Atomic claim (single SQL UPDATE WHERE — safe against concurrent workers) ---
         claim_res = (
@@ -177,7 +191,9 @@ async def process_job(project: dict):
         tmp_audio = f"/tmp/hfw-audio-{project_id}.wav"
 
         print(f"[HF-Worker] Downloading R2 key '{b2_key}' to {tmp_video}...", file=sys.stderr)
+        t_dl_start = time.monotonic()
         s3_client.download_file(R2_BUCKET, b2_key, tmp_video)
+        dl_ms = (time.monotonic() - t_dl_start) * 1000
 
         # --- Extract 16 kHz mono audio (same params as transcription.js) ---
         print(f"[HF-Worker] Extracting audio to {tmp_audio}...", file=sys.stderr)
@@ -233,6 +249,7 @@ async def process_job(project: dict):
         )
 
         # --- Save transcript (upsert into transcripts table) ---
+        t_db_start = time.monotonic()
         tr_res = (
             supabase.table("transcripts")
             .select("id")
@@ -247,6 +264,8 @@ async def process_job(project: dict):
             supabase.table("transcripts").insert(
                 {"project_id": project_id, "words": words_raw}
             ).execute()
+        
+        db_ms = (time.monotonic() - t_db_start) * 1000
 
         # --- Update project status (preserve existing _meta, update language/metrics) ---
         proj_res = (
@@ -274,9 +293,18 @@ async def process_job(project: dict):
             "segments": seg_obj,
             "updated_at": utc_now(),
         }).eq("id", project_id).execute()
-
         print(f"[HF-Worker] Project {project_id} → TRANSCRIBED ✓", file=sys.stderr)
+        
+        t_total_ms = (time.monotonic() - t_total_start) * 1000
 
+        print(f"[TRANSCRIBE] wake: {wake_time_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] worker ready: {global_model_load_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] download: {dl_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] audio extraction: {audio_ext_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] model load: 0ms (reused)", file=sys.stderr)
+        print(f"[TRANSCRIBE] inference: {whisper_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] Supabase save: {db_ms:.0f}ms", file=sys.stderr)
+        print(f"[TRANSCRIBE] TOTAL: {t_total_ms:.0f}ms", file=sys.stderr)
     except Exception as exc:
         print(f"[HF-Worker] ERROR processing {project_id}: {exc}", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)

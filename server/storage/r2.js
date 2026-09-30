@@ -80,6 +80,15 @@ async function getPresignedUrl(remoteKey, expiresInSeconds = 3600, filename = nu
   return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
 }
 
+async function getPresignedUploadUrl(remoteKey, contentType, expiresInSeconds = 3600) {
+  const command = new PutObjectCommand({
+    Bucket: bucketName,
+    Key: remoteKey,
+    ContentType: contentType
+  });
+  return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
+}
+
 async function getStream(remoteKey, range = undefined) {
   const params = {
     Bucket: bucketName,
@@ -111,6 +120,7 @@ module.exports = {
   uploadFile,
   downloadFile,
   getPresignedUrl,
+  getPresignedUploadUrl,
   getStream,
   deleteFile
 };
