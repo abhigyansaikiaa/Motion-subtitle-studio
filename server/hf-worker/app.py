@@ -271,8 +271,10 @@ async def process_job(project: dict):
         traceback.print_exc(file=sys.stderr)
         try:
             # Mark FAILED so GHA fallback can pick it up.
+            err_str = str(exc)
             supabase.table("projects").update({
                 "status": "FAILED",
+                "segments": {"_meta": {"error": err_str}},
                 "updated_at": utc_now(),
             }).eq("id", project_id).execute()
         except Exception as supabase_err:
