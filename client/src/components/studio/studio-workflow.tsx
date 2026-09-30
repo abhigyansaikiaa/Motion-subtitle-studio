@@ -169,7 +169,10 @@ export function StudioWorkflow() {
             setError(res.project.error || 'Transcription failed');
             setIsProcessing(false); setProcessingMsg('');
           }
-        } catch { clearInterval(poll); setError('Status check failed'); setIsProcessing(false); setProcessingMsg(''); }
+        } catch (e) { 
+          console.warn('Status check failed, retrying...', e); 
+          // Do not clear interval on transient network errors
+        }
       }, 2000);
     } catch (err: any) {
       setError(err.message); setIsProcessing(false); setProcessingMsg('');
@@ -195,7 +198,10 @@ export function StudioWorkflow() {
             setError(jobRes.job.message || 'Render failed');
             setStep(5); setIsProcessing(false); setProcessingMsg('');
           }
-        } catch { /* polling errors non-fatal */ }
+        } catch (e) { 
+          console.warn('Render status check failed, retrying...', e);
+          // Do not clear interval on transient network errors
+        }
       }, 3000);
     } catch (err: any) {
       setError(err.message); setStep(5); setIsProcessing(false); setProcessingMsg('');
