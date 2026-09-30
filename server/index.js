@@ -235,9 +235,9 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     const videoPath = path.join(uploadDir, inputFilename);
     const language = req.body.language || null;
 
-    // Delegate transcription to the HF Python Worker polling for QUEUED_TRANSCRIPTION
-    await updateProjectStatus(project.id, 'QUEUED_TRANSCRIPTION', { language });
-    res.json({ status: 'QUEUED_TRANSCRIPTION', projectId: project.id });
+    // Delegate transcription to the HF Python Worker polling for QUEUED_RENDER_TRANS
+    await updateProjectStatus(project.id, 'QUEUED_RENDER_TRANS', { language });
+    res.json({ status: 'QUEUED_RENDER_TRANS', projectId: project.id });
 
     // Wake up the HF Space if a URL is provided
     const hfWorkerUrl = process.env.HF_TRANSCRIPTION_WORKER_URL;

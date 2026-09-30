@@ -135,7 +135,7 @@ async def process_job(project: dict):
             "Check startup logs for initialization error.",
             file=sys.stderr,
         )
-        return  # Leave the row in QUEUED_TRANSCRIPTION so GHA fallback can pick it up.
+        return  # Leave the row in QUEUED_RENDER_TRANS so GHA fallback can pick it up.
 
     try:
         # --- Atomic claim (single SQL UPDATE WHERE — safe against concurrent workers) ---
@@ -143,7 +143,7 @@ async def process_job(project: dict):
             supabase.table("projects")
             .update({"status": "TRANSCRIBING", "updated_at": utc_now()})
             .eq("id", project_id)
-            .eq("status", "QUEUED_TRANSCRIPTION")
+            .eq("status", "QUEUED_RENDER_TRANS")
             .execute()
         )
 
@@ -315,7 +315,7 @@ async def polling_daemon():
             res = (
                 supabase.table("projects")
                 .select("*, videos!projects_video_id_fkey(storage_path)")
-                .eq("status", "QUEUED_TRANSCRIPTION")
+                .eq("status", "QUEUED_RENDER_TRANS")
                 .execute()
             )
             if res.data:
