@@ -4,50 +4,53 @@ import { getTemplate } from '../../lib/templates';
 import { RefreshCw } from 'lucide-react';
 
 const FONT_OPTIONS = [
-  { value: "'Plus Jakarta Sans', sans-serif", label: "Plus Jakarta Sans (Modern)" },
-  { value: "'Newsreader', serif", label: "Newsreader (Editorial)" },
-  { value: "'Inter', sans-serif", label: "Inter (Clean)" },
-  { value: "'Outfit', sans-serif", label: "Outfit (Geometric)" },
+  { value: "'Plus Jakarta Sans', sans-serif", label: "Plus Jakarta Sans" },
+  { value: "'Newsreader', serif", label: "Newsreader" },
+  { value: "'Inter', sans-serif", label: "Inter" },
+  { value: "'Outfit', sans-serif", label: "Outfit" },
   { value: "system-ui, sans-serif", label: "System Default" },
 ];
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="mb-4 pb-2 border-b border-border/50">
-      <h4 className="text-xs font-bold tracking-[0.1em] text-muted-foreground uppercase">{label}</h4>
+    <div className="mb-6 pb-2 border-b-2 border-border/20">
+      <h4 className="font-editorial text-2xl font-bold tracking-tighter text-on-surface uppercase leading-none">{label}</h4>
     </div>
   );
 }
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <label className="block text-xs font-medium text-foreground mb-1.5">{children}</label>;
+  return <label className="block text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-2">{children}</label>;
 }
 
 function Select({ value, onChange, children }: any) {
   return (
-    <select
-      value={value}
-      onChange={e => onChange(e.target.value)}
-      className="w-full bg-surface border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary transition-colors appearance-none"
-    >
-      {children}
-    </select>
+    <div className="relative">
+      <select
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        className="w-full bg-surface-container-low border border-border/20 p-4 font-grotesk text-sm font-medium text-on-surface outline-none focus:border-primary transition-colors appearance-none cursor-pointer rounded-none"
+      >
+        {children}
+      </select>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-[10px]">▼</div>
+    </div>
   );
 }
 
 function Slider({ label, min, max, step, value, onChange, display }: any) {
   return (
-    <div>
-      <div className="flex justify-between items-center mb-1.5">
-        <label className="text-xs font-medium text-foreground">{label}</label>
-        <span className="text-xs font-mono text-muted-foreground">{display}</span>
+    <div className="py-2">
+      <div className="flex justify-between items-end mb-3">
+        <label className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">{label}</label>
+        <span className="font-editorial text-xl font-bold text-on-surface leading-none">{display}</span>
       </div>
       <input
         type="range"
         min={min} max={max} step={step}
         value={value}
         onChange={e => onChange(Number(e.target.value))}
-        className="w-full accent-primary h-1 bg-border rounded-full appearance-none outline-none"
+        className="w-full h-1 bg-border/20 appearance-none outline-none cursor-pointer hover:bg-primary transition-colors"
       />
     </div>
   );
@@ -55,15 +58,15 @@ function Slider({ label, min, max, step, value, onChange, display }: any) {
 
 function ColorRow({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm font-medium text-foreground">{label}</span>
-      <div className="flex items-center gap-2">
-        <span className="text-xs font-mono text-muted-foreground">{value}</span>
+    <div className="flex items-center justify-between p-4 border border-border/20 bg-surface-container-low">
+      <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">{label}</span>
+      <div className="flex items-center gap-3">
+        <span className="font-editorial text-xl font-bold text-on-surface leading-none">{value}</span>
         <input
           type="color"
           value={value}
           onChange={e => onChange(e.target.value)}
-          className="w-9 h-9 rounded-full cursor-pointer bg-transparent border border-border p-0.5 overflow-hidden"
+          className="w-8 h-8 cursor-pointer bg-transparent border-0 p-0 overflow-hidden"
         />
       </div>
     </div>
@@ -72,15 +75,15 @@ function ColorRow({ label, value, onChange }: { label: string; value: string; on
 
 function SegmentButtons<T extends string>({ options, value, onChange }: { options: { value: T; label: string }[]; value: T; onChange: (v: T) => void }) {
   return (
-    <div className="flex rounded-lg overflow-hidden border border-border bg-surface">
+    <div className="flex border border-border/20 bg-surface-container-low">
       {options.map(opt => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`flex-1 p-2 text-xs font-medium transition-all ${
+          className={`flex-1 p-3 text-[10px] font-bold tracking-widest uppercase transition-all border-r border-border/10 last:border-0 ${
             value === opt.value
-              ? 'bg-primary text-on-primary font-bold shadow-sm'
-              : 'text-foreground hover:bg-surface-container-high'
+              ? 'bg-on-surface text-surface-container-lowest'
+              : 'text-muted-foreground hover:bg-surface-container hover:text-on-surface'
           }`}
         >
           {opt.label}
@@ -416,12 +419,12 @@ export function DepthPanel() {
 export function ResetControlsButton() {
   const setCustomOverrides = useAppStore(state => state.setCustomOverrides);
   return (
-    <div className="p-6 border-t border-border">
+    <div className="p-6 border-t border-border/20 bg-surface-container-low">
       <button
         onClick={() => setCustomOverrides({})}
-        className="w-full flex items-center justify-center gap-2 py-2.5 text-sm font-medium text-muted-foreground hover:text-foreground bg-surface-container hover:bg-surface-container-high rounded-full transition-all"
+        className="w-full flex items-center justify-center gap-2 py-4 font-bold text-xs uppercase tracking-widest text-muted-foreground hover:text-on-surface hover:bg-surface-container border border-border/20 transition-all"
       >
-        <RefreshCw className="w-3.5 h-3.5" />
+        <RefreshCw className="w-4 h-4" />
         Reset to Template
       </button>
     </div>

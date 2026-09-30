@@ -70,26 +70,28 @@
     --default-mono-font-variation-settings: var(
       --font-mono--font-variation-settings
     );
-    --radius: 0.125rem;
-    --color-surface-container-high: #292a2e;
-    --color-on-surface: #e3e2e7;
-    --color-surface-container-lowest: #0d0e12;
-    --color-secondary: #cac6be;
-    --color-on-primary: #4d2600;
-    --color-primary: #ffb77d;
-    --color-surface-container-low: #1a1b20;
-    --color-primary-fixed: #ffdcc3;
-    --color-surface: #121317;
-    --color-surface-container: #1f1f24;
-    --color-surface-container-highest: #343439;
+    --radius: 0;
+    --color-surface-container-high: #1a1a1c;
+    --color-on-surface: #f4f4f0;
+    --color-surface-container-lowest: #000000;
+    --color-secondary: #888888;
+    --color-on-primary: #000000;
+    --color-primary: #e63900; /* Editorial stark red accent */
+    --color-surface-container-low: #0a0a0c;
+    --color-primary-fixed: #ff5500;
+    --color-surface: #050505;
+    --color-surface-container: #111112;
+    --color-surface-container-highest: #222224;
     --spacing-space-sm: 0.5rem;
-    --radius-full: 0.75rem;
+    --radius-full: 9999px;
     --font-label-md: 'Plus Jakarta Sans', sans-serif;
-    --font-headline-md: 'Newsreader', sans-serif;
+    --font-headline-md: 'Newsreader', serif;
     --font-body-lg: 'Plus Jakarta Sans', sans-serif;
     --font-body-md: 'Plus Jakarta Sans', sans-serif;
-    --font-headline-lg: 'Newsreader', sans-serif;
-    --font-headline-sm: 'Newsreader', sans-serif;
+    --font-headline-lg: 'Newsreader', serif;
+    --font-headline-sm: 'Newsreader', serif;
+    --font-editorial: 'Newsreader', serif;
+    --font-grotesk: 'Plus Jakarta Sans', sans-serif;
   }
 }
 @layer base {
@@ -1777,3 +1779,30 @@
     }
   }
 }
+
+ @ l a y e r   u t i l i t i e s   { 
+     . f o n t - e d i t o r i a l   { 
+         f o n t - f a m i l y :   v a r ( - - f o n t - e d i t o r i a l ) ; 
+     } 
+     . f o n t - g r o t e s k   { 
+         f o n t - f a m i l y :   v a r ( - - f o n t - g r o t e s k ) ; 
+     } 
+     . b g - n o i s e   { 
+         b a c k g r o u n d - i m a g e :   u r l ( " d a t a : i m a g e / s v g + x m l , % 3 C s v g   v i e w B o x = % 2 2 0   0   2 0 0   2 0 0 % 2 2   x m l n s = % 2 2 h t t p : / / w w w . w 3 . o r g / 2 0 0 0 / s v g % 2 2 % 3 E % 3 C f i l t e r   i d = % 2 2 n o i s e F i l t e r % 2 2 % 3 E % 3 C f e T u r b u l e n c e   t y p e = % 2 2 f r a c t a l N o i s e % 2 2   b a s e F r e q u e n c y = % 2 2 0 . 6 5 % 2 2   n u m O c t a v e s = % 2 2 3 % 2 2   s t i t c h T i l e s = % 2 2 s t i t c h % 2 2 / % 3 E % 3 C / f i l t e r % 3 E % 3 C r e c t   w i d t h = % 2 2 1 0 0 % 2 5 % 2 2   h e i g h t = % 2 2 1 0 0 % 2 5 % 2 2   f i l t e r = % 2 2 u r l ( % 2 3 n o i s e F i l t e r ) % 2 2   o p a c i t y = % 2 2 0 . 0 8 % 2 2 / % 3 E % 3 C / s v g % 3 E " ) ; 
+     } 
+     . t e x t - h u g e   { 
+         f o n t - s i z e :   c l a m p ( 3 r e m ,   1 0 v w ,   8 r e m ) ; 
+         l i n e - h e i g h t :   0 . 9 ; 
+         l e t t e r - s p a c i n g :   - 0 . 0 4 e m ; 
+     } 
+     . t e x t - m a s s i v e   { 
+         f o n t - s i z e :   c l a m p ( 5 r e m ,   1 5 v w ,   1 2 r e m ) ; 
+         l i n e - h e i g h t :   0 . 8 ; 
+         l e t t e r - s p a c i n g :   - 0 . 0 5 e m ; 
+     } 
+     . t a c t i l e - b o r d e r   { 
+         b o r d e r :   1 p x   s o l i d   r g b a ( 2 5 5 ,   2 5 5 ,   2 5 5 ,   0 . 1 ) ; 
+         b o x - s h a d o w :   0   4 p x   2 4 p x   - 4 p x   r g b a ( 0 , 0 , 0 , 0 . 5 ) ,   i n s e t   0   1 p x   0   r g b a ( 2 5 5 , 2 5 5 , 2 5 5 , 0 . 0 5 ) ; 
+     } 
+ }  
+ 

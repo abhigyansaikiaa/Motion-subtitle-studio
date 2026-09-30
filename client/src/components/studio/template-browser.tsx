@@ -47,25 +47,25 @@ export function TemplateBrowser() {
     <div className="flex flex-col h-full overflow-hidden">
 
       {/* Search + category filter */}
-      <div className="px-4 pt-4 pb-3 space-y-3 flex-shrink-0">
+      <div className="px-6 pt-6 pb-4 flex-shrink-0 bg-surface-container-low border-b border-border/20">
         <input
           type="text"
-          placeholder="Search templates or fonts"
+          placeholder="SEARCH TEMPLATES"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground/50 outline-none focus:border-foreground/30 transition-colors"
+          className="w-full bg-transparent border-b-2 border-border/20 pb-2 mb-4 font-editorial font-bold text-xl text-on-surface placeholder:text-muted-foreground/30 outline-none focus:border-primary transition-colors uppercase tracking-widest"
         />
         {/* Category pills */}
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-2 flex-wrap">
           {ALL_CATS.map(cat => (
             <button
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={cn(
-                'px-3 py-1 rounded-full text-[11px] font-semibold tracking-wide transition-all border',
+                'px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all border',
                 activeCategory === cat
-                  ? 'bg-foreground text-background border-foreground'
-                  : 'text-muted-foreground border-border hover:border-foreground/30 hover:text-foreground'
+                  ? 'bg-on-surface text-surface-container-lowest border-on-surface'
+                  : 'text-muted-foreground border-border/20 hover:border-primary hover:text-primary'
               )}
             >
               {cat}
@@ -75,7 +75,7 @@ export function TemplateBrowser() {
       </div>
 
       {/* Template cards */}
-      <div className="flex-1 overflow-y-auto px-4 pb-4 space-y-3">
+      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
         {displayed.map(t => {
           const isSelected = selectedStyleId === t.id;
           const cat = categoryOf(t);
@@ -85,18 +85,18 @@ export function TemplateBrowser() {
               data-testid={`template-card-${t.id}`}
               onClick={() => setSelectedStyleId(t.id)}
               className={cn(
-                'relative w-full rounded-xl overflow-hidden text-left transition-all group border',
+                'relative w-full overflow-hidden text-left transition-all group border-2',
                 isSelected
-                  ? 'border-foreground/60 shadow-[0_0_0_2px_rgba(255,255,255,0.15)]'
-                  : 'border-border hover:border-foreground/25'
+                  ? 'border-primary'
+                  : 'border-border/20 hover:border-on-surface/40'
               )}
             >
               {/* Preview card — styled "screen" */}
               <div
-                className="w-full flex flex-col items-center justify-center py-6 px-4 select-none"
+                className="w-full flex flex-col items-center justify-center py-8 px-4 select-none relative"
                 style={{
-                  background: 'linear-gradient(160deg, #0d0d14 0%, #0a0a10 100%)',
-                  minHeight: '108px',
+                  background: '#050505',
+                  minHeight: '120px',
                 }}
               >
                 {/* Category badge(s) top right */}

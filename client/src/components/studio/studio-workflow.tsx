@@ -213,102 +213,291 @@ export function StudioWorkflow() {
     : undefined;
 
   // ─── RENDER ───────────────────────────────────────────────────────────────
+  // ─── RENDER ───────────────────────────────────────────────────────────────
   return (
-    <div className="flex-1 flex flex-col min-h-0 bg-background text-foreground overflow-hidden">
-
-      {/* ══════════════════════════════════════════════════════════════════════
-          TOP NAV BAR
-          ════════════════════════════════════════════════════════════════════ */}
-      <header className="h-14 flex-shrink-0 border-b border-border bg-card z-20 flex items-center justify-between px-5">
-        {/* Left: Brand + Steps */}
-        <div className="flex items-center gap-6">
-          <span
-            className="text-[11px] font-bold tracking-[0.18em] uppercase text-foreground/70 select-none"
-            style={{ fontFamily: '"Geist", sans-serif' }}
-          >
-            MOTION SUBTITLE
-          </span>
-          <div className="w-px h-5 bg-border" />
-          <StepBar current={currentStep} />
+    <div className="flex-1 flex min-h-0 bg-transparent text-on-surface overflow-hidden z-10 relative">
+      {/* ERROR TOAST */}
+      {error && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-red-950/90 text-red-200 px-4 py-2.5 rounded-xl border border-red-500/40 shadow-xl max-w-sm text-sm">
+          <AlertCircle className="w-4 h-4 flex-shrink-0" />
+          <span className="flex-1">{error}</span>
+          <button onClick={() => setError(null)} className="text-red-300 hover:text-white text-xs underline">×</button>
         </div>
+      )}
 
-        {/* Right: Context-sensitive actions */}
-        <div className="flex items-center gap-2">
-          {inStudio && currentStep < 6 && (
-            <>
-              {/* Reset */}
-              <button
-                onClick={() => { setStep(1); setCurrentProject(null as any); setEditorSegments([]); }}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-muted-foreground border border-border hover:text-foreground hover:border-foreground/30 transition-all"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                Reset
-              </button>
-              {/* Render & Export CTA */}
-              <div className="flex items-center gap-0 bg-foreground text-background rounded-full pl-2 pr-1 py-1">
-                <select
-                  value={resolution}
-                  onChange={(e) => setResolution(e.target.value)}
-                  className="bg-transparent text-sm font-medium outline-none cursor-pointer hover:opacity-80 py-1 pl-2 pr-6 appearance-none"
-                  style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23000000%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 0.5em top 50%', backgroundSize: '0.65em auto' }}
-                >
-                  <option value="original">Original</option>
-                  <option value="1080p">1080p</option>
-                  <option value="720p">720p</option>
-                </select>
-                <div className="w-px h-4 bg-background/20 ml-1 mr-1" />
+      {/* ── LEFT COLUMN: ASYMMETRIC NAV ── */}
+      {inStudio && (
+        <aside className="w-[80px] lg:w-[260px] flex-shrink-0 flex flex-col border-r border-border/10 bg-surface-container-lowest/80 backdrop-blur-2xl relative z-20 overflow-hidden">
+          <div className="p-4 lg:p-8 flex flex-col gap-8 h-full">
+            <div className="flex flex-col gap-2">
+              <span className="font-editorial font-bold text-2xl lg:text-4xl tracking-tighter leading-none uppercase text-on-surface break-words">MOTION<br/><span className="text-primary">SUBTITLE</span></span>
+            </div>
+            
+            <nav className="flex-1 flex flex-col gap-4 lg:gap-6 overflow-y-auto custom-scrollbar pt-4">
+              {[
+                { id: 'templates', label: 'Templates' },
+                { id: 'clips', label: 'Clips' },
+                { id: 'typography', label: 'Typography' },
+                { id: 'animation', label: 'Animation' },
+                { id: 'color', label: 'Color' },
+                { id: 'layout', label: 'Layout' },
+                { id: 'numbers', label: 'Numbers' },
+                { id: 'depth', label: 'Depth' }
+              ].map((tool, i) => (
                 <button
-                  onClick={handleRender}
-                  disabled={isProcessing || editorSegments.length === 0}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold hover:bg-background/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+                  key={tool.id}
+                  onClick={() => setActiveTool(tool.id as ToolId)}
+                  className={`flex flex-col items-start gap-1 transition-all group ${activeTool === tool.id ? 'opacity-100' : 'opacity-30 hover:opacity-80'}`}
                 >
-                  <Download className="w-4 h-4" />
-                  Export
+                  <span className={`text-[10px] font-mono transition-colors ${activeTool === tool.id ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}>0{i+1}</span>
+                  <span className={`font-editorial font-bold text-lg lg:text-4xl tracking-tighter uppercase leading-[0.8] text-left ${activeTool === tool.id ? 'text-on-surface' : 'text-muted-foreground group-hover:text-on-surface'}`}>{tool.label}</span>
                 </button>
-              </div>
-            </>
-          )}
-          {currentStep === 7 && currentProject && (
-            <button
-              onClick={async () => {
-                try {
-                  await api.downloadVideo(currentProject.downloadUrl || '', currentProject.filename || 'download.mp4');
-                } catch (err: any) {
-                  console.error(err);
-                  // Optionally show an error toast here since jobError doesn't exist on AppState
-                  alert('Download failed: ' + err.message);
-                }
-              }}
-              className="flex items-center gap-2 px-5 py-2 rounded-full text-sm font-semibold bg-foreground text-background hover:opacity-85 transition-all"
+              ))}
+            </nav>
+
+            <div className="flex flex-col gap-4 mt-auto">
+              <div className="w-full h-px bg-border/10" />
+              {inStudio && currentStep < 6 && (
+                <div className="flex flex-col lg:flex-row gap-2">
+                  <button
+                    onClick={() => { setStep(1); setCurrentProject(null as any); setEditorSegments([]); }}
+                    className="flex items-center justify-center gap-1.5 p-2 lg:px-3 lg:py-2 text-xs font-medium text-muted-foreground hover:text-on-surface transition-all"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    <span className="hidden lg:inline">Reset</span>
+                  </button>
+                  <button
+                    onClick={handleRender}
+                    disabled={isProcessing || editorSegments.length === 0}
+                    className="flex-1 flex items-center justify-center gap-2 px-3 py-3 bg-primary text-on-primary font-bold text-xs lg:text-sm uppercase tracking-widest hover:bg-primary-fixed transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                  >
+                    <Download className="w-4 h-4" />
+                    <span className="hidden lg:inline">Export</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </aside>
+      )}
+
+      {/* ── CENTER COLUMN: STAGE ── */}
+      <main className="flex-1 min-w-0 flex flex-col relative overflow-hidden bg-transparent p-4 lg:p-8">
+        
+        {/* Step 1: Upload */}
+        {currentStep === 1 && (
+          <div className="flex-1 flex flex-col items-center justify-center relative">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col justify-center opacity-[0.03] overflow-hidden">
+               <span className="font-editorial text-massive uppercase leading-[0.7] whitespace-nowrap -ml-10">DESIGN</span>
+               <span className="font-editorial text-massive uppercase leading-[0.7] whitespace-nowrap ml-20">YOUR</span>
+               <span className="font-editorial text-massive uppercase leading-[0.7] whitespace-nowrap -ml-5">WORDS</span>
+            </div>
+
+            <div
+              onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              className={`relative z-10 flex flex-col items-center w-full max-w-2xl p-16 tactile-border bg-surface-container-low backdrop-blur-md transition-all duration-500 ${isDragging ? 'scale-[1.02] bg-surface-container' : 'hover:bg-surface-container'}`}
             >
-              <Download className="w-4 h-4" />
-              Download Video
-            </button>
-          )}
-        </div>
-      </header>
+              <h3 className="font-editorial text-5xl font-bold uppercase tracking-tighter mb-4 text-on-surface">Upload</h3>
+              <p className="text-muted-foreground text-center text-sm mb-12 max-w-sm font-grotesk">
+                Begin the process. Drag & drop or click to browse. MP4, MOV, WebM.
+              </p>
 
-      {/* ══════════════════════════════════════════════════════════════════════
-          MAIN BODY
-          ════════════════════════════════════════════════════════════════════ */}
-      <div className="flex-1 flex overflow-hidden min-h-0">
+              <input
+                type="file" accept="video/*"
+                className="hidden" ref={fileInputRef}
+                onChange={e => { const f = e.target.files?.[0]; if (f) processFile(f); }}
+                disabled={isProcessing}
+              />
 
-        {/* ── LEFT COLUMN: CONTEXTUAL TOOLS ── */}
+              {isProcessing ? (
+                <div className="w-full flex flex-col items-center gap-4">
+                  <ShiningText text={processingMsg || 'UPLOADING...'} className="font-editorial text-2xl font-bold uppercase tracking-widest text-primary" />
+                  <div className="w-full h-px bg-border/20 overflow-hidden relative">
+                    <div className="absolute top-0 left-0 h-full bg-primary transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
+                  </div>
+                  <span className="font-mono text-xs text-muted-foreground">{uploadProgress}%</span>
+                </div>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="px-10 py-4 font-bold text-sm bg-on-surface text-surface-container-lowest uppercase tracking-widest hover:bg-primary transition-colors hover:text-on-primary"
+                >
+                  Select File
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Transcribe */}
+        {currentStep === 2 && (
+          <div className="flex-1 flex flex-col items-center justify-center relative">
+             <div className="absolute top-0 left-0 w-full h-full pointer-events-none flex flex-col justify-center opacity-[0.03] overflow-hidden">
+               <span className="font-editorial text-massive uppercase leading-[0.7] whitespace-nowrap">LISTEN</span>
+               <span className="font-editorial text-massive uppercase leading-[0.7] whitespace-nowrap ml-32">CLOSELY</span>
+            </div>
+            
+            <div className="relative z-10 flex flex-col items-center w-full max-w-lg p-12 tactile-border bg-surface-container-low backdrop-blur-md">
+              {currentProject?.videoUrl && (
+                <div className="w-full mb-8 overflow-hidden bg-black tactile-border">
+                  <video
+                    src={`${BACKEND}${currentProject.videoUrl}?token=${token}`}
+                    className="w-full h-full object-contain opacity-70"
+                    style={{ maxHeight: '200px' }}
+                    muted playsInline
+                  />
+                </div>
+              )}
+
+              <h3 className="font-editorial text-4xl font-bold uppercase tracking-tighter mb-2 text-on-surface">Transcribe</h3>
+              <p className="text-muted-foreground text-center text-xs mb-8 uppercase tracking-widest">
+                Select Language Context
+              </p>
+
+              <select
+                value={transcribeLang}
+                onChange={e => setTranscribeLang(e.target.value)}
+                disabled={isProcessing}
+                className="w-full p-4 mb-8 bg-surface-container font-grotesk text-sm text-on-surface border border-border/20 outline-none focus:border-primary transition-colors appearance-none text-center uppercase tracking-widest cursor-pointer"
+              >
+                <option value="auto">Auto-Detect</option>
+                <option value="en">English</option>
+                <option value="hi">Hindi</option>
+                <option value="hi-Latn">Hinglish</option>
+                <option value="es">Spanish</option>
+              </select>
+
+              {isProcessing ? (
+                <div className="flex flex-col items-center gap-3">
+                  <ShiningText text={processingMsg || 'TRANSCRIBING...'} className="font-editorial text-xl font-bold uppercase tracking-widest text-primary" />
+                </div>
+              ) : (
+                <button
+                  onClick={handleTranscribe}
+                  className="w-full px-8 py-4 font-bold text-sm bg-on-surface text-surface-container-lowest uppercase tracking-widest hover:bg-primary transition-colors hover:text-on-primary"
+                >
+                  Generate Captions
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Steps 3–7: Stage */}
         {inStudio && (
-          <aside
-            className="w-[320px] flex-shrink-0 flex flex-col border-r border-border overflow-hidden bg-surface"
-          >
-            {activeTool === 'clips' && (
-              <div className="flex-shrink-0 px-5 pt-5 pb-3 border-b border-border">
-                <p className="text-[10px] font-bold tracking-[0.18em] text-muted-foreground uppercase mb-1">
-                  Clips List
-                </p>
-                <p className="text-[11px] text-muted-foreground/60 leading-snug">
-                  Click any word to select. Hover to spotlight, hide, or change case.
-                </p>
+          <div className="flex-1 min-h-0 flex flex-col relative z-10">
+            {/* Video Canvas Container */}
+            <div className="flex-1 min-h-0 flex items-center justify-center p-4">
+              <div
+                className="relative flex-shrink-0 tactile-border"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  background: '#050505',
+                }}
+              >
+                <CompositedPreview />
+
+                {/* Overlays */}
+                {currentStep === 6 && (
+                  <div className="absolute inset-0 flex flex-col items-center justify-center z-50 bg-black/90 backdrop-blur-xl gap-8">
+                    <ShiningText text="RENDERING" className="font-editorial text-5xl font-bold uppercase tracking-tighter text-primary" />
+                    <RenderSnakeGame />
+                  </div>
+                )}
+                {isProcessing && currentStep === 3 && (
+                  <div className="absolute inset-0 flex items-center justify-center z-40 bg-black/60 backdrop-blur-md">
+                    <ShiningText text={processingMsg || 'APPLYING...'} className="font-editorial text-3xl font-bold uppercase tracking-widest text-on-surface" />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Player Controls */}
+            {currentStep !== 6 && currentStep !== 7 && (
+              <div className="flex-shrink-0 h-16 mt-4 tactile-border flex items-center gap-6 px-6 mx-auto w-full max-w-3xl bg-surface-container-lowest/80 backdrop-blur-md">
+                <button
+                  onClick={() => setIsPlaying(!isPlaying)}
+                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-on-surface text-surface-container-lowest hover:bg-primary hover:text-on-primary transition-colors"
+                >
+                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-1" />}
+                </button>
+
+                <span className="text-xs font-mono text-muted-foreground w-12 text-right">{fmt(currentTime)}</span>
+
+                <div
+                  ref={seekBarRef}
+                  className="flex-1 relative h-px bg-border/20 cursor-pointer group flex items-center"
+                  onClick={handleSeek}
+                >
+                  <div
+                    className="absolute top-1/2 left-0 h-0.5 bg-primary -translate-y-1/2 transition-all"
+                    style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
+                  />
+                  <div
+                    className="absolute top-1/2 w-4 h-4 rounded-full bg-primary border-2 border-surface-container-lowest opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2 cursor-grab active:cursor-grabbing"
+                    style={{ left: `${(currentTime / (duration || 1)) * 100}%`, transform: 'translate(-50%, -50%)' }}
+                  />
+                </div>
+
+                <span className="text-xs font-mono text-muted-foreground w-12">{fmt(duration)}</span>
               </div>
             )}
-            <div className="flex-1 overflow-y-auto">
+            
+            {/* Step 7 Download */}
+            {currentStep === 7 && currentProject && (
+                <div className="flex-shrink-0 mt-4 flex items-center justify-between p-6 tactile-border mx-auto w-full max-w-3xl bg-surface-container-lowest/80 backdrop-blur-md">
+                  <div>
+                    <h4 className="font-editorial text-2xl font-bold uppercase tracking-tighter text-on-surface">Render Complete</h4>
+                  </div>
+                  <div className="flex gap-4">
+                    <button
+                      onClick={() => { useAppStore.getState().setStep(3); useAppStore.getState().setIsPlaying(false); }}
+                      className="px-6 py-3 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-on-surface transition-colors"
+                    >
+                      Edit Again
+                    </button>
+                    <button
+                      onClick={async () => {
+                        try {
+                          await api.downloadVideo(currentProject.downloadUrl || '', currentProject.filename || 'download.mp4');
+                        } catch (err: any) {
+                          alert('Download failed: ' + err.message);
+                        }
+                      }}
+                      className="px-6 py-3 bg-primary text-on-primary text-xs font-bold uppercase tracking-widest hover:bg-primary-fixed transition-colors"
+                    >
+                      Download MP4
+                    </button>
+                  </div>
+                </div>
+            )}
+          </div>
+        )}
+      </main>
+
+      {/* ── RIGHT COLUMN: CONTEXTUAL CONTROLS ── */}
+      {inStudio && activeTool && (
+        <aside className="w-[320px] lg:w-[420px] flex-shrink-0 flex flex-col border-l border-border/10 bg-surface-container-lowest/95 backdrop-blur-3xl relative z-20 shadow-[-10px_0_30px_rgba(0,0,0,0.5)]">
+          <div className="p-6 lg:p-8 border-b border-border/10 flex justify-between items-end bg-surface-container-lowest relative overflow-hidden">
+             {/* Large background text hint */}
+             <div className="absolute -right-4 -bottom-4 opacity-[0.02] pointer-events-none">
+                <span className="font-editorial text-massive leading-none">{activeTool.slice(0,2)}</span>
+             </div>
+             
+             <h2 className="font-editorial font-bold text-4xl lg:text-5xl tracking-tighter text-on-surface uppercase leading-none relative z-10">{activeTool}</h2>
+          </div>
+          <div className="flex-1 overflow-y-auto custom-scrollbar p-0">
+              {activeTool === 'clips' && (
+                <div className="p-6 border-b border-border/10 bg-surface-container-low">
+                  <p className="font-editorial text-xl font-bold uppercase tracking-tighter text-on-surface mb-2">Editor</p>
+                  <p className="text-xs text-muted-foreground/60 leading-relaxed font-grotesk">
+                    Click any word to select. Hover to spotlight, hide, or change case.
+                  </p>
+                </div>
+              )}
               {activeTool === 'clips' && <WordEditor />}
               {activeTool === 'templates' && <TemplateBrowser />}
               {activeTool === 'typography' && <TypographyPanel />}
@@ -317,257 +506,10 @@ export function StudioWorkflow() {
               {activeTool === 'animation' && <AnimationPanel />}
               {activeTool === 'numbers' && <NumbersPanel />}
               {activeTool === 'depth' && <DepthPanel />}
-            </div>
-            {activeTool !== 'clips' && activeTool !== 'templates' && <ResetControlsButton />}
-          </aside>
-        )}
-
-        {/* ── CENTER COLUMN: STAGE ── */}
-        <main className="flex-1 min-w-0 flex flex-col bg-background relative overflow-hidden">
-
-          {/* Error toast */}
-          {error && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-red-950/90 text-red-200 px-4 py-2.5 rounded-xl border border-red-500/40 shadow-xl max-w-sm text-sm">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              <span className="flex-1">{error}</span>
-              <button onClick={() => setError(null)} className="text-red-300 hover:text-white text-xs underline">×</button>
-            </div>
-          )}
-
-          {/* ── STEP 1: UPLOAD ── */}
-          {currentStep === 1 && (
-            <div className="flex-1 flex items-center justify-center p-10">
-              <div
-                onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
-                onDragLeave={() => setIsDragging(false)}
-                onDrop={handleDrop}
-                className={`relative flex flex-col items-center w-full max-w-lg p-12 rounded-2xl border-2 border-dashed transition-all duration-300 ${isDragging
-                    ? 'border-foreground/40 bg-foreground/5 scale-[1.01]'
-                    : 'border-border bg-card/50 hover:border-foreground/20 hover:bg-card/80'
-                  }`}
-              >
-                {/* Background texture */}
-                <div className="absolute inset-0 rounded-2xl overflow-hidden opacity-30 pointer-events-none" style={{ backgroundImage: 'radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.04) 0%, transparent 70%)' }} />
-
-                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all ${isDragging ? 'bg-foreground/15 scale-110' : 'bg-card border border-border'}`}>
-                  <Upload className={`w-7 h-7 transition-colors ${isDragging ? 'text-foreground' : 'text-muted-foreground'}`} />
-                </div>
-
-                <h3 className="text-xl font-bold text-foreground mb-2">Upload Your Video</h3>
-                <p className="text-muted-foreground text-center text-sm leading-relaxed mb-8 max-w-xs">
-                  Drag & drop or click to browse.<br />
-                  MP4, MOV, WebM · up to 200 MB
-                </p>
-
-                <input
-                  type="file" accept="video/*"
-                  className="hidden" ref={fileInputRef}
-                  onChange={e => { const f = e.target.files?.[0]; if (f) processFile(f); }}
-                  disabled={isProcessing}
-                />
-
-                {isProcessing ? (
-                  <div className="w-full flex flex-col items-center gap-3">
-                    <ShiningText text={processingMsg || 'UPLOADING...'} className="text-sm font-semibold text-foreground" />
-                    <div className="w-full h-1 bg-border rounded-full overflow-hidden">
-                      <div className="h-full bg-foreground transition-all duration-300" style={{ width: `${uploadProgress}%` }} />
-                    </div>
-                    <span className="text-xs text-muted-foreground font-mono">{uploadProgress}%</span>
-                  </div>
-                ) : (
-                  <button
-                    id="select-file-btn"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="px-8 py-3 rounded-full font-semibold text-sm bg-foreground text-background hover:opacity-80 transition-all"
-                  >
-                    Select File
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ── STEP 2: TRANSCRIBE ── */}
-          {currentStep === 2 && (
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="flex flex-col items-center w-full max-w-sm">
-
-                {/* Video thumbnail */}
-                {currentProject?.videoUrl && (
-                  <div className="w-full mb-6 rounded-2xl overflow-hidden bg-black border border-border shadow-2xl" style={{ maxHeight: '220px' }}>
-                    <video
-                      src={`${BACKEND}${currentProject.videoUrl}?token=${token}`}
-                      className="w-full h-full object-contain"
-                      style={{ maxHeight: '220px' }}
-                      muted playsInline
-                    />
-                  </div>
-                )}
-
-                <h3 className="text-xl font-bold text-foreground mb-1">Generate Captions</h3>
-                <p className="text-muted-foreground text-center text-sm mb-6 leading-relaxed">
-                  Choose the spoken language for accurate word-level transcription.
-                </p>
-
-                <div className="w-full mb-4">
-                  <label className="block text-xs font-semibold tracking-widest text-muted-foreground uppercase mb-2">Language</label>
-                  <select
-                    value={transcribeLang}
-                    onChange={e => setTranscribeLang(e.target.value)}
-                    disabled={isProcessing}
-                    className="w-full rounded-xl p-3 text-foreground bg-card border border-border outline-none text-sm focus:border-foreground/40 transition-colors"
-                  >
-                    <option value="auto">Auto-Detect</option>
-                    <option value="en">English</option>
-                    <option value="hi">Hindi</option>
-                    <option value="hi-Latn">Hinglish</option>
-                    <option value="es">Spanish</option>
-                    <option value="fr">French</option>
-                    <option value="de">German</option>
-                    <option value="ja">Japanese</option>
-                    <option value="zh">Chinese</option>
-                  </select>
-                </div>
-
-                {isProcessing ? (
-                  <div className="flex flex-col items-center gap-2 mt-2">
-                    <ShiningText text={processingMsg || 'TRANSCRIBING...'} className="text-sm font-semibold text-foreground" />
-                    <p className="text-xs text-muted-foreground">This may take 30–60 seconds</p>
-                  </div>
-                ) : (
-                  <button
-                    onClick={handleTranscribe}
-                    className="w-full px-8 py-3 rounded-full font-semibold text-sm bg-foreground text-background hover:opacity-80 transition-all"
-                  >
-                    Generate Captions
-                  </button>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* ── STEPS 3–7: VIDEO STAGE ── */}
-          {inStudio && (
-            <div className="flex-1 min-h-0 flex flex-col p-6">
-
-              {/* Video Canvas Container */}
-              <div className="flex-1 min-h-0 flex items-center justify-center">
-                <div
-                  className="relative rounded-2xl overflow-hidden flex-shrink-0 shadow-2xl"
-                  style={{
-                    width: '100%',
-                    height: '100%',
-                    background: '#000',
-                    boxShadow: '0 0 0 1px rgba(255,255,255,0.06), 0 24px 64px rgba(0,0,0,0.2)',
-                  }}
-                >
-                  <CompositedPreview />
-
-                  {/* Rendering overlay — snake game to pass the time */}
-                  {currentStep === 6 && (
-                    <div
-                      className="absolute inset-0 flex flex-col items-center justify-center z-50 gap-5"
-                      style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(20px)' }}
-                    >
-                      <div className="flex flex-col items-center gap-1">
-                        <ShiningText text="RENDERING VIDEO..." className="text-xl font-bold text-white" />
-                        <p className="text-white/35 text-xs">Play while you wait ↓</p>
-                      </div>
-                      <RenderSnakeGame />
-                    </div>
-                  )}
-
-                  {/* Processing overlay */}
-                  {isProcessing && currentStep === 3 && (
-                    <div className="absolute inset-0 flex items-center justify-center z-40" style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(8px)' }}>
-                      <ShiningText text={processingMsg || 'APPLYING...'} className="text-xl font-bold text-white" />
-                    </div>
-                  )}
-
-                  {/* No captions placeholder */}
-                  {currentStep === 3 && editorSegments.length === 0 && !isProcessing && (
-                    <div className="absolute inset-0 flex items-end justify-center pb-16 pointer-events-none">
-                      <div className="text-white/40 text-sm px-4 py-2 rounded-full border border-white/10" style={{ background: 'rgba(0,0,0,0.6)' }}>
-                        Caption preview will appear here
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Player Controls - Floating style for minimal UI */}
-              {currentStep !== 6 && currentStep !== 7 && (
-                <div
-                  className="flex-shrink-0 h-14 mt-4 rounded-2xl border border-border flex items-center gap-4 px-5 mx-auto w-full max-w-2xl bg-surface shadow-sm"
-                >
-                  <button
-                    onClick={() => setIsPlaying(!isPlaying)}
-                    className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 bg-primary text-on-primary hover:opacity-90 transition-all shadow-sm"
-                  >
-                    {isPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 ml-0.5" />}
-                  </button>
-
-                  <span className="text-xs font-mono text-muted-foreground w-10 text-right flex-shrink-0">{fmt(currentTime)}</span>
-
-                  <div
-                    ref={seekBarRef}
-                    className="flex-1 relative h-1.5 bg-border rounded-full cursor-pointer group"
-                    onClick={handleSeek}
-                  >
-                    <div
-                      className="absolute top-0 left-0 h-full bg-primary rounded-full"
-                      style={{ width: `${(currentTime / (duration || 1)) * 100}%` }}
-                    />
-                    <div
-                      className="absolute top-1/2 w-3.5 h-3.5 rounded-full bg-white shadow-md opacity-0 group-hover:opacity-100 transition-opacity -translate-y-1/2"
-                      style={{ left: `${(currentTime / (duration || 1)) * 100}%`, transform: 'translate(-50%, -50%)' }}
-                    />
-                  </div>
-
-                  <span className="text-xs font-mono text-muted-foreground w-10 flex-shrink-0">{fmt(duration)}</span>
-
-                </div>
-              )}
-
-              {/* Step 7: Download banner */}
-              {currentStep === 7 && currentProject && (
-                <div className="flex-shrink-0 mt-4 flex items-center justify-center gap-4 p-5 rounded-2xl border border-border bg-surface shadow-sm">
-                  <div>
-                    <div className="font-semibold text-foreground text-sm">✓ Render Complete</div>
-                    <div className="text-muted-foreground text-xs mt-0.5">High-quality MP4 ready</div>
-                  </div>
-                  <button
-                    onClick={() => { useAppStore.getState().setStep(3); useAppStore.getState().setIsPlaying(false); }}
-                    className="flex items-center gap-1.5 px-4 py-2.5 rounded-full text-sm border border-border text-muted-foreground hover:text-foreground hover:border-foreground/30 transition-all bg-background"
-                  >
-                    <RefreshCw className="w-4 h-4" />
-                    Edit Again
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-        </main>
-
-        {/* ── RIGHT COLUMN: DESIGN WHEEL ── */}
-        {inStudio && currentStep !== 6 && currentStep !== 7 && (
-          <aside
-            className="w-[380px] flex-shrink-0 flex flex-col bg-background relative"
-          >
-            <div className="absolute top-6 right-6 z-10 flex gap-2">
-              {/* Optional top right actions could go here */}
-            </div>
-
-            <DesignWheel activeTool={activeTool} onSelectTool={setActiveTool} />
-
-            <div className="absolute bottom-8 left-0 w-full px-8 text-center pointer-events-none">
-              <p className="text-[11px] text-muted-foreground/60 leading-relaxed max-w-[240px] mx-auto">
-                Rotate the wheel to switch between tools.
-              </p>
-            </div>
-          </aside>
-        )}
-      </div>
+          </div>
+          {activeTool !== 'clips' && activeTool !== 'templates' && <ResetControlsButton />}
+        </aside>
+      )}
     </div>
   );
 }
