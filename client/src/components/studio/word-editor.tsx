@@ -80,7 +80,7 @@ function WordChip({
         type="text"
         value={word.text}
         onChange={e => handleTextChange(e.target.value)}
-        onFocus={() => setCurrentTime(word.start)}
+        onFocus={() => { setCurrentTime(word.start); useAppStore.getState().setSeekRequest(word.start); }}
         className={cn(
           'bg-transparent outline-none text-[13px] font-grotesk tracking-wide border-b px-0.5 py-0 transition-all min-w-[20px]',
           isActive        ? 'text-primary border-primary'
@@ -212,7 +212,7 @@ export function WordEditor() {
                   ? 'border-foreground/30 bg-foreground/5'
                   : 'border-border bg-card/30 hover:border-border/80'
               )}
-              onClick={() => setCurrentTime((seg.start + seg.end) / 2)}
+              onClick={() => { const t = (seg.start + seg.end) / 2; setCurrentTime(t); useAppStore.getState().setSeekRequest(t); }}
             >
               {/* Clip header */}
               <div className="flex items-center justify-between mb-2.5">

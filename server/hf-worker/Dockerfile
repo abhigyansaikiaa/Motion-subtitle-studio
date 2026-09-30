@@ -21,8 +21,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Image size overhead: ~75 MB (tiny model quantised weights).
 RUN python -c "\
 from faster_whisper import WhisperModel; \
-print('Downloading faster-whisper tiny (int8) weights...'); \
-WhisperModel('tiny', device='cpu', compute_type='int8'); \
+print('Downloading faster-whisper base (int8) weights...'); \
+WhisperModel('base', device='cpu', compute_type='int8'); \
 print('Model weights cached successfully.') \
 "
 

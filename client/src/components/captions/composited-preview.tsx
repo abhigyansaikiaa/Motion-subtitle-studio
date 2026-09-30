@@ -147,14 +147,16 @@ export function CompositedPreview() {
     return videoRef.current?.currentTime ?? 0;
   }, []);
 
-  // Handle seeking from scrubber (external changes to store's currentTime)
+  const seekRequest = useAppStore(state => state.seekRequest);
+  const setSeekRequest = useAppStore(state => state.setSeekRequest);
+
+  // Handle seeking ONLY from explicit seek requests, avoiding feedback loops
   useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
-    if (Math.abs(video.currentTime - currentTime) > 0.3) {
-      video.currentTime = currentTime;
-    }
-  }, [currentTime]);
+    if (!video || seekRequest === null) return;
+    video.currentTime = seekRequest;
+    setSeekRequest(null);
+  }, [seekRequest, setSeekRequest]);
 
   // Sync store time periodically for UI (scrubber), but NOT for captions
   useEffect(() => {

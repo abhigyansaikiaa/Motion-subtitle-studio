@@ -8,7 +8,7 @@ def main():
     print("[DAEMON] Initializing faster-whisper tiny model (int8)...", file=sys.stderr)
     try:
         model = faster_whisper.WhisperModel(
-            "tiny",
+            "base",
             device="cpu",
             compute_type="int8",
             cpu_threads=4,
@@ -39,10 +39,10 @@ def main():
 
             transcribe_args = {
                 "word_timestamps": True,
-                "beam_size": 1,
+                "beam_size": 5,
                 "vad_filter": True,
-                "vad_parameters": {"min_silence_duration_ms": 500},
-                "condition_on_previous_text": False,
+                "vad_parameters": {"min_silence_duration_ms": 2000},
+                "condition_on_previous_text": True,
             }
             
             if language and language.lower() != "auto":

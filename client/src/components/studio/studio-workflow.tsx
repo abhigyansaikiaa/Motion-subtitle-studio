@@ -150,7 +150,7 @@ export function StudioWorkflow() {
               if (segs.length > 0) {
                 const t = (segs[0].start + segs[0].end) / 2;
                 setCurrentTime(t);
-                if (videoRef.current) videoRef.current.currentTime = t;
+                useAppStore.getState().setSeekRequest(t);
               }
               setStep(3);
             } catch (err: any) {
@@ -201,7 +201,9 @@ export function StudioWorkflow() {
     if (!seekBarRef.current) return;
     const rect = seekBarRef.current.getBoundingClientRect();
     const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-    setCurrentTime(pct * duration);
+    const targetTime = pct * duration;
+    setCurrentTime(targetTime);
+    useAppStore.getState().setSeekRequest(targetTime);
   }, [duration, setCurrentTime]);
 
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;

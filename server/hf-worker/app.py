@@ -67,11 +67,11 @@ model = None
 print("[HF-Worker] Loading faster-whisper tiny model (int8, cpu)...", file=sys.stderr)
 try:
     model = faster_whisper.WhisperModel(
-        "tiny",
+        "base",
         device="cpu",
         compute_type="int8",
-        cpu_threads=4,
-        num_workers=2
+        cpu_threads=2,
+        num_workers=1
     )
     MODEL_READY = True
     print("[HF-Worker] Model loaded successfully. Worker is ready.", file=sys.stderr)
@@ -207,10 +207,10 @@ async def process_job(project: dict):
 
         transcribe_args = {
             "word_timestamps": True,
-            "beam_size": 1,
+            "beam_size": 5,
             "vad_filter": True,
-            "vad_parameters": {"min_silence_duration_ms": 500},
-            "condition_on_previous_text": False,
+            "vad_parameters": {"min_silence_duration_ms": 2000},
+            "condition_on_previous_text": True,
         }
         if language and language.lower() != "auto":
             transcribe_args["language"] = language

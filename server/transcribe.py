@@ -17,7 +17,7 @@ def main():
 
         input_path = args.input_path
         language = args.language
-        model_size = "tiny"
+        model_size = "base"
 
         print(f"[TRANSCRIBE-WORKER] Loading faster-whisper model '{model_size}'...", file=sys.stderr)
         
@@ -42,14 +42,10 @@ def main():
 
         transcribe_args = {
             "word_timestamps": True,
-            # beam_size=1 (greedy) is ~2x faster than the default beam_size=5
-            # with negligible quality loss for caption-quality output.
-            "beam_size": 1,
-            # Skip silent sections — major win for videos with pauses/music.
+            "beam_size": 5,
             "vad_filter": True,
-            "vad_parameters": {"min_silence_duration_ms": 500},
-            # Disable context conditioning — avoids slow re-feeding of history.
-            "condition_on_previous_text": False,
+            "vad_parameters": {"min_silence_duration_ms": 2000},
+            "condition_on_previous_text": True,
         }
         if language and language.lower() != "auto":
             transcribe_args["language"] = language

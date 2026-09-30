@@ -36,6 +36,8 @@ interface AppState {
   setCurrentTime: (time: number) => void;
   setDuration: (duration: number) => void;
   setIsPlaying: (playing: boolean) => void;
+  seekRequest: number | null;
+  setSeekRequest: (time: number | null) => void;
   
   // Derived state helper
   getActiveTemplate: () => TemplateDefinition;
@@ -91,6 +93,8 @@ export const useAppStore = create<AppState>((set, get) => ({
   setCurrentTime: (currentTime) => set({ currentTime }),
   setDuration: (duration) => set({ duration }),
   setIsPlaying: (isPlaying) => set({ isPlaying }),
+  seekRequest: null,
+  setSeekRequest: (time) => set({ seekRequest: time }),
   
   getActiveTemplate: () => {
     const baseTemplate = getTemplate(get().selectedStyleId);
