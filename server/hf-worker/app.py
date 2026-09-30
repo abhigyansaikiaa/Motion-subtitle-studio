@@ -5,6 +5,17 @@ import boto3
 import asyncio
 import traceback
 import subprocess
+
+# PyAV >= 12.0.0 removed the metadata_errors argument from av.open()
+# faster-whisper < 1.1.0 passes metadata_errors="ignore" unconditionally.
+# We patch av.open to ignore it.
+import av
+original_av_open = av.open
+def patched_av_open(*args, **kwargs):
+    kwargs.pop("metadata_errors", None)
+    return original_av_open(*args, **kwargs)
+av.open = patched_av_open
+
 import faster_whisper
 from datetime import datetime, timezone
 from fastapi import FastAPI
@@ -117,7 +128,7 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v4_pinned"}
+    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v5_patched"}
 
 
 # ---------------------------------------------------------------------------
