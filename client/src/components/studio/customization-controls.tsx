@@ -13,27 +13,27 @@ const FONT_OPTIONS = [
 
 function SectionHeader({ label }: { label: string }) {
   return (
-    <div className="mb-6 pb-2 border-b-2 border-border/20">
-      <h4 className="font-editorial text-2xl font-bold tracking-tighter text-on-surface uppercase leading-none">{label}</h4>
+    <div className="mb-8 pb-3 border-b border-border/10">
+      <h4 className="font-editorial text-xl lg:text-3xl font-medium tracking-tight text-on-surface capitalize leading-none">{label}</h4>
     </div>
   );
 }
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <label className="block text-[10px] font-bold tracking-widest text-muted-foreground uppercase mb-2">{children}</label>;
+  return <label className="block text-[10px] font-grotesk font-medium tracking-widest text-muted-foreground uppercase mb-3">{children}</label>;
 }
 
 function Select({ value, onChange, children }: any) {
   return (
-    <div className="relative">
+    <div className="relative group">
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-surface-container-low border border-border/20 p-4 font-grotesk text-sm font-medium text-on-surface outline-none focus:border-primary transition-colors appearance-none cursor-pointer rounded-none"
+        className="w-full bg-surface-container-low border border-border/10 p-4 font-grotesk text-sm font-medium text-on-surface outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer rounded-md shadow-sm"
       >
         {children}
       </select>
-      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-[10px]">▼</div>
+      <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-muted-foreground text-[10px] group-hover:text-primary transition-colors">▼</div>
     </div>
   );
 }
@@ -41,33 +41,42 @@ function Select({ value, onChange, children }: any) {
 function Slider({ label, min, max, step, value, onChange, display }: any) {
   return (
     <div className="py-2">
-      <div className="flex justify-between items-end mb-3">
-        <label className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">{label}</label>
-        <span className="font-editorial text-xl font-bold text-on-surface leading-none">{display}</span>
+      <div className="flex justify-between items-end mb-4">
+        <label className="text-[10px] font-grotesk font-medium tracking-widest text-muted-foreground uppercase">{label}</label>
+        <span className="font-grotesk text-sm font-bold tracking-wide text-on-surface leading-none">{display}</span>
       </div>
-      <input
-        type="range"
-        min={min} max={max} step={step}
-        value={value}
-        onChange={e => onChange(Number(e.target.value))}
-        className="w-full h-1 bg-border/20 appearance-none outline-none cursor-pointer hover:bg-primary transition-colors"
-      />
+      <div className="relative h-1 bg-border/10 rounded-full cursor-pointer flex items-center group">
+        <div className="absolute left-0 h-full bg-primary/20 rounded-full group-hover:bg-primary transition-colors" style={{ width: `${((value - min) / (max - min)) * 100}%` }} />
+        <input
+          type="range"
+          min={min} max={max} step={step}
+          value={value}
+          onChange={e => onChange(Number(e.target.value))}
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+        />
+        <div 
+          className="absolute w-3 h-3 bg-primary rounded-full shadow-md -translate-x-1/2 pointer-events-none transition-transform group-hover:scale-125"
+          style={{ left: `${((value - min) / (max - min)) * 100}%` }}
+        />
+      </div>
     </div>
   );
 }
 
 function ColorRow({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="flex items-center justify-between p-4 border border-border/20 bg-surface-container-low">
-      <span className="text-[10px] font-bold tracking-widest text-muted-foreground uppercase">{label}</span>
+    <div className="flex items-center justify-between p-4 border border-border/10 bg-surface-container-low rounded-md shadow-sm transition-colors hover:border-border/30">
+      <span className="text-[10px] font-grotesk font-medium tracking-widest text-muted-foreground uppercase">{label}</span>
       <div className="flex items-center gap-3">
-        <span className="font-editorial text-xl font-bold text-on-surface leading-none">{value}</span>
-        <input
-          type="color"
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          className="w-8 h-8 cursor-pointer bg-transparent border-0 p-0 overflow-hidden"
-        />
+        <span className="font-grotesk text-sm font-medium text-on-surface leading-none tracking-widest uppercase">{value}</span>
+        <div className="relative w-6 h-6 rounded-full overflow-hidden shadow-inner border border-border/20">
+          <input
+            type="color"
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            className="absolute -top-2 -left-2 w-10 h-10 cursor-pointer p-0 m-0 border-none"
+          />
+        </div>
       </div>
     </div>
   );
@@ -75,14 +84,14 @@ function ColorRow({ label, value, onChange }: { label: string; value: string; on
 
 function SegmentButtons<T extends string>({ options, value, onChange }: { options: { value: T; label: string }[]; value: T; onChange: (v: T) => void }) {
   return (
-    <div className="flex border border-border/20 bg-surface-container-low">
+    <div className="flex border border-border/10 bg-surface-container-low rounded-md overflow-hidden shadow-sm p-1 gap-1">
       {options.map(opt => (
         <button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`flex-1 p-3 text-[10px] font-bold tracking-widest uppercase transition-all border-r border-border/10 last:border-0 ${
+          className={`flex-1 p-2 text-[10px] font-grotesk font-medium tracking-widest uppercase transition-all rounded-sm ${
             value === opt.value
-              ? 'bg-on-surface text-surface-container-lowest'
+              ? 'bg-on-surface text-surface-container-lowest shadow-sm'
               : 'text-muted-foreground hover:bg-surface-container hover:text-on-surface'
           }`}
         >

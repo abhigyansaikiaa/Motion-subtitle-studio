@@ -6,6 +6,7 @@ import { RenderView } from './components/studio/render-view';
 import { useAppStore } from './lib/store';
 import { api } from './lib/api';
 import { supabase } from './lib/supabase';
+import { SmoothScroller } from './components/ui/smooth-scroller';
 
 function App() {
   const [route, setRoute] = useState(window.location.hash || '#/');
@@ -53,28 +54,29 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Studio route — requires authentication
-  if (route.startsWith('#/studio')) {
-    if (!token) {
-      // No token: redirect to login
-      window.location.hash = '#/auth?mode=login';
-      return null;
+  const renderRoute = () => {
+    if (route.startsWith('#/studio')) {
+      if (!token) {
+        window.location.hash = '#/auth?mode=login';
+        return null;
+      }
+      return <StudioPage />;
     }
-    return <StudioPage />;
-  }
+    if (route.startsWith('#/auth')) {
+      return <AuthPage />;
+    }
+    if (route.startsWith('#/render')) {
+      return <RenderView />;
+    }
+    return <HomePage />;
+  };
 
-  // Auth route
-  if (route.startsWith('#/auth')) {
-    return <AuthPage />;
-  }
-
-  // Headless Render route
-  if (route.startsWith('#/render')) {
-    return <RenderView />;
-  }
-
-  // Fallback to Home
-  return <HomePage />;
+  return (
+    <>
+      <SmoothScroller />
+      {renderRoute()}
+    </>
+  );
 }
 
 export default App;

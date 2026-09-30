@@ -82,30 +82,29 @@ function WordChip({
         onChange={e => handleTextChange(e.target.value)}
         onFocus={() => setCurrentTime(word.start)}
         className={cn(
-          'bg-transparent outline-none text-[13px] font-medium border-b-2 px-0.5 py-0 transition-all min-w-[20px]',
-          isActive        ? 'text-foreground border-foreground'
-            : isHero      ? 'text-foreground border-foreground/60'
-            : isAccent    ? 'text-foreground/70 border-foreground/40'
-            : 'text-foreground/60 border-transparent hover:border-border'
+          'bg-transparent outline-none text-[13px] font-grotesk tracking-wide border-b px-0.5 py-0 transition-all min-w-[20px]',
+          isActive        ? 'text-primary border-primary'
+            : isHero      ? 'text-on-surface border-on-surface/50'
+            : isAccent    ? 'text-on-surface/80 border-on-surface/30'
+            : 'text-muted-foreground border-transparent hover:border-border/30'
         )}
         style={{
           width: `${Math.max(2, word.text.length)}ch`,
-          // Styling indicator for hero via subtle underline color
           borderColor: isHero ? 'rgba(255,255,255,0.7)' : isAccent ? 'rgba(255,255,255,0.35)' : undefined,
         }}
       />
 
       {/* Hover tooltip actions */}
-      <span className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover:flex items-center gap-1 bg-card border border-border rounded-lg shadow-xl px-1.5 py-1 z-30">
+      <span className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover:flex items-center gap-1 bg-surface-container-low border border-border/10 rounded-md shadow-lg shadow-black/30 p-1 z-30 transition-all duration-300">
         
         {/* Timing Inputs */}
-        <div className="flex items-center gap-0.5 bg-foreground/5 rounded px-1 text-[10px] text-muted-foreground mr-1">
+        <div className="flex items-center gap-0.5 bg-surface-container/50 rounded px-1.5 text-[10px] font-grotesk text-muted-foreground mr-1">
           <input
             type="number"
             step="0.01"
             value={word.start}
             onChange={e => handleTimeChange('start', e.target.value)}
-            className="w-10 bg-transparent text-center outline-none hover:text-foreground focus:text-foreground"
+            className="w-10 bg-transparent text-center outline-none hover:text-primary focus:text-primary transition-colors"
           />
           <span>-</span>
           <input
@@ -113,7 +112,7 @@ function WordChip({
             step="0.01"
             value={word.end}
             onChange={e => handleTimeChange('end', e.target.value)}
-            className="w-10 bg-transparent text-center outline-none hover:text-foreground focus:text-foreground"
+            className="w-10 bg-transparent text-center outline-none hover:text-primary focus:text-primary transition-colors"
           />
         </div>
 
@@ -121,8 +120,8 @@ function WordChip({
           title={isHero ? 'Remove Hero' : 'Set as Hero'}
           onClick={cycleEmphasis}
           className={cn(
-            'p-1.5 rounded transition-colors',
-            isHero ? 'text-foreground bg-foreground/10' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
+            'p-1.5 rounded-sm transition-colors',
+            isHero ? 'text-surface-container-lowest bg-on-surface' : 'text-muted-foreground hover:text-on-surface hover:bg-surface-container'
           )}
         >
           <Sparkles className="w-3 h-3" />
@@ -141,23 +140,23 @@ function WordChip({
             );
           }}
           className={cn(
-            'p-1.5 rounded transition-colors',
-            isAccent ? 'text-foreground bg-foreground/10' : 'text-muted-foreground hover:text-foreground hover:bg-foreground/5'
+            'p-1.5 rounded-sm transition-colors',
+            isAccent ? 'text-surface-container-lowest bg-on-surface/80' : 'text-muted-foreground hover:text-on-surface hover:bg-surface-container'
           )}
         >
           <Zap className="w-3 h-3" />
         </button>
-        <div className="w-px h-3 bg-border mx-0.5" />
-        <div className="flex items-center gap-0.5 bg-foreground/5 rounded px-1">
-          <button title="Decrease Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.max(0.5, current - 0.1) } : w) })); }} className="p-1 text-xs text-muted-foreground hover:text-foreground">A-</button>
-          <span className="text-[9px] font-mono text-muted-foreground min-w-[2ch] text-center">{word.scale ? word.scale.toFixed(1) : "1.0"}</span>
-          <button title="Increase Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.min(3.0, current + 0.1) } : w) })); }} className="p-1 text-xs text-muted-foreground hover:text-foreground">A+</button>
+        <div className="w-px h-3 bg-border/20 mx-1" />
+        <div className="flex items-center gap-0.5 bg-surface-container/50 rounded-sm px-1">
+          <button title="Decrease Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.max(0.5, current - 0.1) } : w) })); }} className="p-1 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A-</button>
+          <span className="text-[9px] font-grotesk text-muted-foreground min-w-[2ch] text-center">{word.scale ? word.scale.toFixed(1) : "1.0"}</span>
+          <button title="Increase Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.min(3.0, current + 0.1) } : w) })); }} className="p-1 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A+</button>
         </div>
-        <div className="w-px h-3 bg-border mx-0.5" />
+        <div className="w-px h-3 bg-border/20 mx-1" />
         <button
           title="Split segment before word"
           onClick={handleSplitBefore}
-          className="p-1.5 rounded transition-colors text-muted-foreground hover:text-foreground hover:bg-foreground/5"
+          className="p-1.5 rounded-sm transition-colors text-muted-foreground hover:text-on-surface hover:bg-surface-container"
         >
           <Scissors className="w-3 h-3" />
         </button>
