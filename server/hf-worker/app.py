@@ -281,6 +281,8 @@ async def process_job(project: dict):
         if not seg_obj.get("_meta"):
             seg_obj["_meta"] = {}
 
+        t_total_ms = (time.monotonic() - t_total_start) * 1000
+
         seg_obj["_meta"]["language"] = info.language
         seg_obj["_meta"]["metrics"] = {
             "hf_worker": True,
@@ -299,8 +301,6 @@ async def process_job(project: dict):
             "updated_at": utc_now(),
         }).eq("id", project_id).execute()
         print(f"[HF-Worker] Project {project_id} → TRANSCRIBED ✓", file=sys.stderr)
-        
-        t_total_ms = (time.monotonic() - t_total_start) * 1000
 
         print(f"[TRANSCRIBE] wake: {wake_time_ms:.0f}ms", file=sys.stderr)
         print(f"[TRANSCRIBE] worker ready: {global_model_load_ms:.0f}ms", file=sys.stderr)
