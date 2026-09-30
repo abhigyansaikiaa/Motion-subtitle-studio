@@ -1,3 +1,4 @@
 # Transcription-only dependencies (faster-whisper + its deps)
 faster-whisper==1.1.1
 requests>=2.31.0
+av<12.0.0

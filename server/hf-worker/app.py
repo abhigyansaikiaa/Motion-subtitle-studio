@@ -117,7 +117,7 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v3_pinned"}
+    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v4_pinned"}
 
 
 # ---------------------------------------------------------------------------
