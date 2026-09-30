@@ -284,8 +284,13 @@ async def process_job(project: dict):
         seg_obj["_meta"]["language"] = info.language
         seg_obj["_meta"]["metrics"] = {
             "hf_worker": True,
+            "wakeTime": round(wake_time_ms),
+            "modelLoadTime": round(global_model_load_ms),
+            "dlTime": round(dl_ms),
             "audioExtTime": round(audio_ext_ms),
             "whisperTime": round(whisper_ms),
+            "dbSaveTime": round(db_ms),
+            "totalTime": round(t_total_ms),
         }
 
         supabase.table("projects").update({

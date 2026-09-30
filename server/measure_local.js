@@ -33,18 +33,33 @@ async function measureLive() {
   console.log(`[1] Job Created (Uploading to Live API...)`);
   const t0 = Date.now();
   
-  const formData = new FormData();
-  const fileBlob = new Blob([fs.readFileSync(dummyFile)], { type: 'video/mp4' });
-  formData.append('video', fileBlob, 'dummy_with_audio.mp4');
-
-  const uploadRes = await fetch(`${API_URL}/api/upload`, {
+  const presignedRes = await fetch(`${API_URL}/api/upload/presigned-url`, {
     method: 'POST',
-    headers: { 'Authorization': `Bearer ${token}` },
-    body: formData
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: 'test_video_with_audio.mp4', contentType: 'video/mp4' })
   });
-
-  if (!uploadRes.ok) throw new Error(`Upload failed: ${await uploadRes.text()}`);
-  const uploadData = await uploadRes.json();
+  if (!presignedRes.ok) throw new Error(`Presigned URL failed: ${await presignedRes.text()}`);
+  const presignedData = await presignedRes.ok ? await presignedRes.json() : {};
+  
+  const uploadRes = await fetch(presignedData.url, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'video/mp4' },
+    body: fs.readFileSync(dummyFile)
+  });
+  if (!uploadRes.ok) throw new Error(`Direct upload failed: ${await uploadRes.text()}`);
+  
+  const finalizeRes = await fetch(`${API_URL}/api/upload/finalize`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      key: presignedData.key,
+      videoUuid: presignedData.videoUuid,
+      filename: presignedData.safeFilename
+    })
+  });
+  if (!finalizeRes.ok) throw new Error(`Finalize failed: ${await finalizeRes.text()}`);
+  
+  const uploadData = await finalizeRes.json();
   const projectId = uploadData.projectId;
   console.log(`Upload successful. Project ID: ${projectId}. Took ${Date.now() - t0}ms`);
 
