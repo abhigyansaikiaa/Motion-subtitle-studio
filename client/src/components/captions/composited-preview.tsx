@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useAppStore } from '../../lib/store';
 import { getTemplate } from '../../lib/templates';
 import { useSegmentation } from './segmentation-engine';
@@ -58,7 +58,7 @@ interface VideoRect {
 
 const NULL_RECT: VideoRect = { left: 0, top: 0, width: 0, height: 0, scale: 1, nativeW: 0, nativeH: 0 };
 
-const MemoizedVideo = React.memo(({ videoUrl, onLoadedMetadata, onEnded, videoRef }: any) => {
+const MemoizedVideo = React.memo(({ videoUrl, onLoadedMetadata, onEnded, onPlay, onPause, onWaiting, onPlaying, onCanPlay, onError, videoRef }: any) => {
   return (
     <video
       ref={videoRef}
@@ -66,7 +66,14 @@ const MemoizedVideo = React.memo(({ videoUrl, onLoadedMetadata, onEnded, videoRe
       className="absolute inset-0 w-full h-full object-contain"
       onLoadedMetadata={onLoadedMetadata}
       onEnded={onEnded}
+      onPlay={onPlay}
+      onPause={onPause}
+      onWaiting={onWaiting}
+      onPlaying={onPlaying}
+      onCanPlay={onCanPlay}
+      onError={onError}
       playsInline
+      preload="auto"
       crossOrigin="anonymous"
     />
   );
@@ -78,9 +85,21 @@ export function CompositedPreview() {
   const token = useAppStore(state => state.token) || localStorage.getItem('rt_token');
   const backendUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
   const rawVideoUrl = currentProject?.videoUrl;
-  const videoUrl = rawVideoUrl
-    ? (rawVideoUrl.startsWith('http') ? rawVideoUrl : `${backendUrl}${rawVideoUrl}?token=${token}`)
-    : undefined;
+  // Build the playable URL ONCE per video. The auth token is captured at that
+  // moment on purpose: Supabase rotates tokens (TOKEN_REFRESHED fires on an
+  // interval and whenever the tab regains focus). Rebuilding this URL on every
+  // token change would swap the <video> src mid-playback — the element reloads
+  // and the video "pauses itself". If the baked-in token ever goes stale the
+  // error handler below rebuilds the URL once with the fresh token.
+  const tokenUsedInUrl = useRef<string | null>(null);
+  const [urlBuster, setUrlBuster] = useState(0);
+  const videoUrl = useMemo(() => {
+    if (!rawVideoUrl) return undefined;
+    const tok = token || (typeof localStorage !== 'undefined' ? localStorage.getItem('rt_token') : null);
+    tokenUsedInUrl.current = tok;
+    return rawVideoUrl.startsWith('http') ? rawVideoUrl : `${backendUrl}${rawVideoUrl}?token=${tok}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawVideoUrl, urlBuster]);
 
   const isPlaying = useAppStore(state => state.isPlaying);
   const currentTime = useAppStore(state => state.currentTime);
@@ -88,6 +107,7 @@ export function CompositedPreview() {
   const setDuration = useAppStore(state => state.setDuration);
   const selectedStyleId = useAppStore(state => state.selectedStyleId);
   const customOverrides = useAppStore(state => state.customOverrides);
+  const setIsPlaying = useAppStore(state => state.setIsPlaying);
 
   const captionDepth = customOverrides.captionDepth || getTemplate(selectedStyleId).captionDepth;
 
@@ -143,17 +163,67 @@ export function CompositedPreview() {
 
   const results = useSegmentation(videoRef.current, depthEnabled);
 
-  const setIsPlaying = useAppStore(state => state.setIsPlaying);
+  // ── Playback truthfulness ──────────────────────────────────────────────
+  // The store holds the user's INTENT (playing/paused). The <video> element
+  // is the ground truth of what is actually happening. We sync both ways:
+  //   store → element : the effect below calls play()/pause()
+  //   element → store : native onPlay/onPause events update the store, so a
+  //                     pause the browser initiates itself (interruption,
+  //                     source reload, media-key, etc.) is reflected in the UI
+  //                     instead of leaving the button stuck on "playing".
+  // A `waiting`/`playing` pair drives a buffering spinner so slow networks
+  // read as "loading", not as a mysterious auto-pause.
+  const [isBuffering, setIsBuffering] = useState(false);
+  const playRequestRef = useRef(0);
 
   // Video playback sync
   useEffect(() => {
-    if (!videoRef.current) return;
+    const video = videoRef.current;
+    if (!video) return;
     if (isPlaying) {
-      videoRef.current.play().catch(console.error);
+      const id = ++playRequestRef.current;
+      const p = video.play();
+      if (p && typeof (p as Promise<void>).then === 'function') {
+        (p as Promise<void>)
+          .then(() => {
+            // A pause requested after this play() must win the race.
+            if (playRequestRef.current !== id) video.pause();
+          })
+          .catch(() => {
+            // play() rejected (interrupted / not allowed) — the element is
+            // paused, so tell the store the truth instead of showing "playing".
+            if (playRequestRef.current === id) setIsPlaying(false);
+          });
+      }
     } else {
-      videoRef.current.pause();
+      playRequestRef.current++;
+      video.pause();
     }
-  }, [isPlaying]);
+  }, [isPlaying, videoUrl, setIsPlaying]);
+
+  // Native element events → store (element is ground truth)
+  const handleNativePlay = useCallback(() => {
+    setIsPlaying(true);
+    setIsBuffering(false);
+  }, [setIsPlaying]);
+  const handleNativePause = useCallback(() => {
+    setIsPlaying(false);
+    setIsBuffering(false);
+  }, [setIsPlaying]);
+  const handleNativeWaiting = useCallback(() => setIsBuffering(true), []);
+  const handleNativePlaying = useCallback(() => setIsBuffering(false), []);
+  const handleNativeCanPlay = useCallback(() => setIsBuffering(false), []);
+  const handleNativeError = useCallback(() => {
+    setIsBuffering(false);
+    // If the auth token rotated since the URL was baked, media range requests
+    // can start failing — rebuild the URL once with the fresh token.
+    const fresh = useAppStore.getState().token
+      || (typeof localStorage !== 'undefined' ? localStorage.getItem('rt_token') : null);
+    if (fresh && fresh !== tokenUsedInUrl.current) {
+      tokenUsedInUrl.current = fresh;
+      setUrlBuster(b => b + 1);
+    }
+  }, []);
 
   const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
@@ -233,7 +303,20 @@ export function CompositedPreview() {
         videoUrl={videoUrl}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
+        onPlay={handleNativePlay}
+        onPause={handleNativePause}
+        onWaiting={handleNativeWaiting}
+        onPlaying={handleNativePlaying}
+        onCanPlay={handleNativeCanPlay}
+        onError={handleNativeError}
       />
+
+      {/* Buffering indicator — slow networks read as "loading", never as a phantom pause */}
+      {isBuffering && (
+        <div className="absolute inset-0 z-20 flex items-center justify-center pointer-events-none">
+          <div className="w-12 h-12 rounded-full border-2 border-white/20 border-t-white animate-spin" />
+        </div>
+      )}
 
       {/*
        * VideoCompositionFrame

@@ -100,8 +100,11 @@ export interface TemplateDefinition {
   // Motion / Animation
   entranceAnimation: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left' | 'word-rise' | 'scale-fade';
   heroEntranceAnimation?: 'fade' | 'fade-up' | 'fade-down' | 'pop' | 'scale' | 'slide-up' | 'slide-down' | 'slide-left' | 'slide-right' | 'reveal' | 'bounce' | 'blur-in' | 'elastic' | 'none' | 'rise' | 'soft-reveal' | 'focus-in' | 'pop-in' | 'punch-in' | 'zoom-in' | 'stagger' | 'cascade' | 'split-reveal' | 'flip-in' | 'elastic-rise' | 'snap-in' | 'spring-up' | 'stretch-in' | 'glitch' | 'motion-blur' | 'shutter' | 'mask-reveal' | 'collision-left' | 'collision-right' | 'spin-in' | 'slide-from-right' | 'slide-from-bottom' | 'slide-right-to-left' | 'slide-from-top' | 'slide-from-left' | 'word-rise' | 'scale-fade';
-  wordActivation: 'color-fill' | 'scale-up' | 'highlight' | 'none';
+  wordActivation: 'color-fill' | 'scale-up' | 'highlight' | 'pop' | 'none';
   animationSpeed: number; // 0.5 = fast, 1.0 = normal, 2.0 = slow
+  // Peak scale for the 'pop' activation (transient 1.0 → activeScale → 1.0
+  // punch on the spoken word). Defaults to 1.12; capped at 1.15 for safety.
+  activeScale?: number;
   
   // Compositing / Depth / Position
   captionDepth: 'front' | 'behind-subject' | 'mixed';

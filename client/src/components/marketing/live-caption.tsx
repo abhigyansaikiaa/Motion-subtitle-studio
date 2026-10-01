@@ -33,7 +33,12 @@ export function LiveCaptionPreview({
     return () => clearInterval(id);
   }, [words.length, wordMs]);
 
-  const heroScale = Math.min(t.heroScale || 1.25, maxHeroScale);
+  const isPop = t.wordActivation === 'pop';
+  // For 'pop' templates the punch peaks at activeScale (capped 1.15); for
+  // 'scale-up' templates the hero scale is the held emphasis size.
+  const heroScale = isPop
+    ? Math.min(t.activeScale ?? 1.12, 1.15)
+    : Math.min(t.heroScale || 1.25, maxHeroScale);
   const heroFamily = t.heroFontFamily || t.fontFamily;
   const heroWeight = t.heroFontWeight ?? t.fontWeight;
   const heroStyle = t.heroFontStyle || t.fontStyle;
@@ -57,7 +62,7 @@ export function LiveCaptionPreview({
     >
       {words.map((w, i) => {
         const isActive = i === active;
-        const scaleActive = t.wordActivation === 'scale-up';
+        const scaleActive = t.wordActivation === 'scale-up' || isPop;
         // Compensate the pop scale with side margins so the enlarged hero word
         // pushes its neighbours aside instead of mashing into their glyphs.
         const pushEm =

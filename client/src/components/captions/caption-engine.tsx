@@ -122,6 +122,26 @@ export const AnimatedWord = ({
       finalScaleY *= 1.08;
     }
 
+    // 'pop' — the viral transient punch (videocaption.ai / Submagic / Hormozi
+    // feel, sourced): the spoken word punches 1.0 → activeScale → 1.0 over
+    // ~140ms with an ease-out-back overshoot, capped at 1.15×, while taking
+    // the accent color. Unlike 'scale-up' it does NOT stay enlarged — the
+    // punch is momentary, which is what makes it feel snappy, not floaty.
+    if (!forceColor && isActive && templateConfig.wordActivation === 'pop') {
+      const peak = Math.min(templateConfig.activeScale ?? 1.12, 1.15);
+      const punchDur = 0.14 * speed;
+      const at = clamp((t - word.start) / punchDur, 0, 1);
+      // sin envelope: 0 → 1 → 0 across the punch window, shaped by easeOutBack
+      // on the way up for a snappy overshoot.
+      const up = easeOutBack(clamp(at * 1.6, 0, 1));
+      const envelope = at < 0.625 ? up : Math.max(0, 1 - (at - 0.625) / 0.375);
+      const punch = 1 + (peak - 1) * envelope;
+      finalScaleX *= punch;
+      finalScaleY *= punch;
+      color = !isHero ? (templateConfig.accentColor || '#ffffff') : color;
+      opacity = Math.max(opacity, eased);
+    }
+
     return {
       opacity,
       color,

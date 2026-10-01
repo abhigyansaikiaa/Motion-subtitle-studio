@@ -291,20 +291,20 @@ export function StudioWorkflow() {
 
       {/* ── LEFT COLUMN: ASYMMETRIC NAV ── */}
       {inStudio && (
-        <aside className="w-16 lg:w-[260px] flex-shrink-0 flex flex-col border-r border-border/10 bg-surface-container-lowest relative z-20 overflow-hidden">
-          <div className="p-4 lg:p-10 flex flex-col gap-8 lg:gap-12 h-full">
+        <aside className="w-[76px] lg:w-[260px] flex-shrink-0 flex flex-col border-r border-border/10 bg-surface-container-lowest relative z-20 overflow-hidden">
+          <div className="p-3 lg:p-10 flex flex-col gap-6 lg:gap-12 h-full">
             <div className="flex flex-col gap-2">
               {/* Compact mark on mobile, full wordmark on desktop */}
               <span className="lg:hidden font-editorial font-extrabold text-xl tracking-tight leading-none text-on-surface text-center">M<span className="text-primary-fixed">—</span>S</span>
               <span className="hidden lg:block font-editorial font-medium text-2xl lg:text-3xl tracking-tight leading-none text-on-surface">Motion<br/><span className="text-primary-fixed">Subtitle</span></span>
             </div>
             
-            <nav className="flex-1 flex flex-col gap-4 lg:gap-8 overflow-y-auto custom-scrollbar pt-4" data-lenis-prevent="true">
+            <nav className="flex-1 flex flex-col gap-1 lg:gap-8 overflow-y-auto custom-scrollbar pt-2" data-lenis-prevent="true">
               {[
                 { id: 'templates', label: 'Templates' },
                 { id: 'clips', label: 'Clips' },
-                { id: 'typography', label: 'Typography' },
-                { id: 'animation', label: 'Animation' },
+                { id: 'typography', label: 'Type' },
+                { id: 'animation', label: 'Motion' },
                 { id: 'color', label: 'Color' },
                 { id: 'layout', label: 'Layout' },
                 { id: 'numbers', label: 'Numbers' },
@@ -314,9 +314,10 @@ export function StudioWorkflow() {
                   key={tool.id}
                   onClick={() => { setActiveTool(tool.id as ToolId); setSheetOpen(true); }}
                   aria-label={tool.label}
-                  className={`flex flex-col items-center lg:items-start gap-2 py-1 transition-all duration-500 group ${activeTool === tool.id ? 'opacity-100 lg:translate-x-2' : 'opacity-40 hover:opacity-100'}`}
+                  className={`flex flex-col items-center lg:items-start gap-1 lg:gap-2 py-2.5 px-1 min-h-[52px] justify-center transition-all duration-500 group rounded-md ${activeTool === tool.id ? 'opacity-100 lg:translate-x-2 bg-foreground/5' : 'opacity-50 hover:opacity-100'}`}
                 >
                   <span className={`text-[10px] font-grotesk tracking-widest transition-colors uppercase ${activeTool === tool.id ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}>0{i+1}</span>
+                  <span className="lg:hidden text-[9px] font-grotesk font-medium uppercase tracking-wide text-muted-foreground leading-none">{tool.label}</span>
                   <span className={`hidden lg:block font-grotesk font-medium text-sm lg:text-xl tracking-tight text-left ${activeTool === tool.id ? 'text-on-surface' : 'text-muted-foreground group-hover:text-on-surface'}`}>{tool.label}</span>
                 </button>
               ))}
@@ -480,20 +481,20 @@ export function StudioWorkflow() {
 
             {/* Player Controls */}
             {currentStep !== 6 && currentStep !== 7 && (
-              <div className="flex-shrink-0 h-16 mt-2 border border-border/10 flex items-center gap-3 px-4 sm:gap-6 sm:px-6 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg shadow-black/20">
+              <div className="flex-shrink-0 min-h-[76px] mt-2 border border-border/10 flex items-center gap-3 px-4 sm:gap-5 sm:px-6 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg shadow-black/20 py-2">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
                   aria-label={isPlaying ? 'Pause' : 'Play'}
-                  className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-on-surface text-surface-container-lowest hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors"
+                  className="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 bg-on-surface text-surface-container-lowest hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors"
                 >
-                  {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-1" />}
+                  {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
                 </button>
 
-                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-10 sm:w-12 text-right tabular-nums">{fmt(currentTime)}</span>
+                <span className="text-xs font-grotesk tracking-widest text-muted-foreground w-12 text-right tabular-nums">{fmt(currentTime)}</span>
 
                 <div
                   ref={seekBarRef}
-                  className="flex-1 relative h-8 cursor-pointer group flex items-center touch-none"
+                  className="flex-1 relative h-11 cursor-pointer group flex items-center touch-none"
                   onClick={handleSeek}
                   onTouchStart={handleTouchSeek}
                   onTouchMove={handleTouchSeek}
@@ -509,7 +510,7 @@ export function StudioWorkflow() {
                   />
                 </div>
 
-                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-10 sm:w-12 tabular-nums">{fmt(duration)}</span>
+                <span className="text-xs font-grotesk tracking-widest text-muted-foreground w-12 tabular-nums">{fmt(duration)}</span>
               </div>
             )}
             

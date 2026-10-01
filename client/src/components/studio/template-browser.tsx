@@ -3,6 +3,7 @@ import { TEMPLATES } from '../../lib/templates';
 import { useAppStore } from '../../lib/store';
 import { cn } from '../../lib/utils';
 import { Check, Flame } from 'lucide-react';
+import { LiveCaptionPreview } from '../marketing/live-caption';
 
 // Map layoutType → category label
 function categoryOf(t: { layoutType: string; category?: string }): string {
@@ -56,7 +57,7 @@ export function TemplateBrowser() {
           placeholder="SEARCH TEMPLATES"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}
-          className="w-full bg-transparent border-b-2 border-border/20 pb-2 mb-4 font-editorial font-bold text-xl text-on-surface placeholder:text-muted-foreground/30 outline-none focus:border-primary transition-colors uppercase tracking-widest"
+          className="w-full bg-transparent border-b-2 border-border/20 pb-2 mb-4 font-editorial font-bold text-base text-on-surface placeholder:text-muted-foreground/30 outline-none focus:border-primary transition-colors uppercase tracking-widest"
         />
         {/* Category pills */}
         <div className="flex gap-2 flex-wrap">
@@ -65,7 +66,7 @@ export function TemplateBrowser() {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={cn(
-                'px-4 py-2 text-[10px] font-bold tracking-widest uppercase transition-all border',
+                'px-4 py-2.5 text-[11px] font-bold tracking-widest uppercase transition-all border min-h-[40px]',
                 activeCategory === cat
                   ? 'bg-on-surface text-surface-container-lowest border-on-surface'
                   : 'text-muted-foreground border-border/20 hover:border-primary hover:text-primary'
@@ -93,76 +94,40 @@ export function TemplateBrowser() {
                   ? 'border-primary'
                   : 'border-border/20 hover:border-on-surface/40'
               )}
+              style={{ contentVisibility: 'auto', containIntrinsicSize: 'auto 220px' }}
             >
-              {/* Preview card — styled "screen" */}
+              {/* Preview card — LIVE animated preview driven by the real TemplateDefinition */}
               <div
-                className="w-full flex flex-col items-center justify-center py-8 px-4 select-none relative"
+                className="w-full flex items-center justify-center py-10 px-4 select-none relative overflow-hidden"
                 style={{
                   background: '#050505',
-                  minHeight: '120px',
+                  minHeight: '132px',
                 }}
               >
                 {/* Category badge(s) top right */}
-                <div className="absolute top-2 right-2 flex gap-1">
-                  <span className="text-[9px] font-bold tracking-[0.12em] px-2 py-0.5 rounded-full border border-white/10 text-white/40 uppercase">
+                <div className="absolute top-2 right-2 flex gap-1 z-10">
+                  <span className="text-[9px] font-bold tracking-[0.12em] px-2 py-0.5 rounded-full border border-white/10 text-white/40 uppercase bg-black/60">
                     {cat}
                   </span>
                 </div>
 
-                {/* Caption preview: editorial layout */}
-                {t.layoutType === 'editorial' ? (
-                  <div
-                    className="flex flex-col items-center gap-0.5"
-                    style={{ fontFamily: t.fontFamily, fontStyle: t.fontStyle }}
-                  >
-                    {/* Supporting text */}
-                    <span style={{ fontSize: '11px', color: t.baseColor, fontWeight: t.fontWeight, opacity: 0.85 }}>
-                      this is
-                    </span>
-                    {/* Hero word */}
-                    <span style={{
-                      fontSize: `${11 * (t.heroScale ?? 2.0)}px`,
-                      color: t.heroColor,
-                      fontFamily: t.heroFontFamily ?? t.fontFamily,
-                      fontWeight: t.heroFontWeight ?? t.fontWeight,
-                      fontStyle: t.heroFontStyle ?? t.fontStyle,
-                      lineHeight: 1.0,
-                    }}>
-                      {t.name}
-                    </span>
-                    <span style={{ fontSize: '11px', color: t.baseColor, fontWeight: t.fontWeight, opacity: 0.85 }}>
-                      template
-                    </span>
-                  </div>
-                ) : (
-                  /* Standard inline preview */
-                  <div
-                    className="leading-tight break-words max-w-full text-center"
-                    style={{
-                      fontFamily: t.fontFamily,
-                      fontWeight: t.fontWeight,
-                      fontStyle: t.fontStyle,
-                      textTransform: t.textTransform as any,
-                      fontSize: '13px',
-                      lineHeight: 1.2,
-                    }}
-                  >
-                    <span style={{ color: t.baseColor }}>Captions </span>
-                    <span style={{ color: t.heroColor, fontSize: `${13 * Math.min(t.heroScale, 1.5)}px` }}>
-                      that slap
-                    </span>
-                  </div>
-                )}
+                <LiveCaptionPreview
+                  template={t}
+                  words={['MAKE', 'EVERY', 'WORD', 'MOVE']}
+                  wordMs={650}
+                  maxHeroScale={1.4}
+                  className="text-[15px] max-w-full"
+                />
               </div>
 
               {/* Card footer */}
-              <div className="px-3 py-2.5 flex items-center justify-between" style={{ background: 'rgba(18,18,26,0.98)' }}>
-                <div>
+              <div className="px-4 py-3 flex items-center justify-between" style={{ background: 'rgba(18,18,26,0.98)' }}>
+                <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[13px] font-semibold text-foreground">{t.name}</span>
-                    {t.id === 'editorial' && <Flame className="w-3 h-3 text-orange-400" />}
+                    <span className="text-sm font-semibold text-foreground truncate">{t.name}</span>
+                    {t.id === 'editorial' && <Flame className="w-3 h-3 text-orange-400 flex-shrink-0" />}
                   </div>
-                  <p className="text-[11px] text-muted-foreground/60 mt-0.5 line-clamp-1 leading-snug">{t.description}</p>
+                  <p className="text-xs text-muted-foreground/70 mt-0.5 line-clamp-1 leading-snug">{t.description}</p>
                 </div>
                 {isSelected && (
                   <div className="w-6 h-6 rounded-full bg-foreground flex items-center justify-center flex-shrink-0 ml-2">
