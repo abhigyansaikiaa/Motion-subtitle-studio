@@ -1,1 +1,105 @@
-aW1wb3J0IFJlYWN0IGZyb20gJ3JlYWN0JzsKaW1wb3J0IHsgQXJyb3dVcFJpZ2h0IH0gZnJvbSAnbHVjaWRlLXJlYWN0JzsKCmNvbnN0IENPTFM6IHsgaGVhZDogc3RyaW5nOyBsaW5rczogeyBsYWJlbDogc3RyaW5nOyBocmVmOiBzdHJpbmcgfVtdIH1bXSA9IFsKICB7CiAgICBoZWFkOiAnUHJvZHVjdCcsCiAgICBsaW5rczogWwogICAgICB7IGxhYmVsOiAnU3R1ZGlvJywgaHJlZjogJyMvc3R1ZGlvJyB9LAogICAgICB7IGxhYmVsOiAnU3R5bGVzJywgaHJlZjogJyN0ZW1wbGF0ZXMnIH0sCiAgICAgIHsgbGFiZWw6ICdFZGl0b3InLCBocmVmOiAnI2VkaXRvcicgfSwKICAgICAgeyBsYWJlbDogJ1ByaWNpbmcnLCBocmVmOiAnI3ByaWNpbmcnIH0sCiAgICBdLAogIH0sCiAgewogICAgaGVhZDogJ1dvcmtmbG93JywKICAgIGxpbmtzOiBbCiAgICAgIHsgbGFiZWw6ICdVcGxvYWQnLCBocmVmOiAnI2hvdy1pdC13b3JrcycgfSwKICAgICAgeyBsYWJlbDogJ1RyYW5zY3JpYmUnLCBocmVmOiAnI2hvdy1pdC13b3JrcycgfSwKICAgICAgeyBsYWJlbDogJ1JlbmRlcicsIGhyZWY6ICcjaG93LWl0LXdvcmtzJyB9LAogICAgXSwKICB9LAogIHsKICAgIGhlYWQ6ICdDb21wYW55JywKICAgIGxpbmtzOiBbCiAgICAgIHsgbGFiZWw6ICdQcmluY2lwbGVzJywgaHJlZjogJyNmZWF0dXJlcycgfSwKICAgICAgeyBsYWJlbDogJ0ZBUScsIGhyZWY6ICcjZmFxJyB9LAogICAgXSwKICB9LApdOwoKZXhwb3J0IGZ1bmN0aW9uIEZvb3RlclNlY3Rpb24oKSB7CiAgcmV0dXJuICgKICAgIDxmb290ZXIgY2xhc3NOYW1lPSJ3LWZ1bGwgYmctYmFja2dyb3VuZCB0ZXh0LWZvcmVncm91bmQgYm9yZGVyLXQgYm9yZGVyLWZvcmVncm91bmQvMTUgb3ZlcmZsb3ctaGlkZGVuIj4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LVsxMDByZW1dIG14LWF1dG8gcHgtNiBtZDpweC0xMCBwdC0yMCBtZDpwdC0yOCI+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgbWQ6Z3JpZC1jb2xzLVsxZnJfMmZyXSBnYXAtMTYgcGItMjAgbWQ6cGItMjgiPgogICAgICAgICAgPGRpdj4KICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMjVlbV0gdXBwZXJjYXNlIHRleHQtZm9yZWdyb3VuZC80NSBtYi02Ij4KICAgICAgICAgICAgICBbIE1vdGlvbiBTdWJ0aXRsZSBTdHVkaW8gXQogICAgICAgICAgICA8L3A+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1mb3JlZ3JvdW5kLzU1IGZvbnQtZ3JvdGVzayBsZWFkaW5nLXJlbGF4ZWQgbWF4LXcteHMiPgogICAgICAgICAgICAgIFRoZSB3b3JkLWxldmVsIGNhcHRpb24gZW5naW5lIGZvciBjcmVhdG9ycyB3aG8gY2FyZSBob3cgZXZlcnkKICAgICAgICAgICAgICBzeWxsYWJsZSBsYW5kcy4KICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8YQogICAgICAgICAgICAgIGhyZWY9IiMvc3R1ZGlvIgogICAgICAgICAgICAgIGNsYXNzTmFtZT0ibXQtOCBpbmxpbmUtZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgZm9udC1ncm90ZXNrIGZvbnQtc2VtaWJvbGQgdGV4dC1zbSB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IGJvcmRlci1iIGJvcmRlci1mb3JlZ3JvdW5kLzQwIHBiLTEgaG92ZXI6Ym9yZGVyLWZvcmVncm91bmQgdHJhbnNpdGlvbi1jb2xvcnMiCiAgICAgICAgICAgID4KICAgICAgICAgICAgICBPcGVuIHRoZSBzdHVkaW8gPEFycm93VXBSaWdodCBjbGFzc05hbWU9InctNCBoLTQiIC8+CiAgICAgICAgICAgIDwvYT4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgZ3JpZC1jb2xzLTIgc206Z3JpZC1jb2xzLTMgZ2FwLTEwIj4KICAgICAgICAgICAge0NPTFMubWFwKGMgPT4gKAogICAgICAgICAgICAgIDxkaXYga2V5PXtjLmhlYWR9PgogICAgICAgICAgICAgICAgPGg0IGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjI1ZW1dIHVwcGVyY2FzZSB0ZXh0LWZvcmVncm91bmQvNDAgbWItNiI+CiAgICAgICAgICAgICAgICAgIHtjLmhlYWR9CiAgICAgICAgICAgICAgICA8L2g0PgogICAgICAgICAgICAgICAgPHVsIGNsYXNzTmFtZT0ic3BhY2UteS00Ij4KICAgICAgICAgICAgICAgICAge2MubGlua3MubWFwKGwgPT4gKAogICAgICAgICAgICAgICAgICAgIDxsaSBrZXk9e2wubGFiZWx9PgogICAgICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICAgICAgaHJlZj17bC5ocmVmfQogICAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImZvbnQtZ3JvdGVzayB0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1mb3JlZ3JvdW5kLzY1IGhvdmVyOnRleHQtZm9yZWdyb3VuZCB0cmFuc2l0aW9uLWNvbG9ycyIKICAgICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgICAge2wubGFiZWx9CiAgICAgICAgICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgICAgICAgPC9saT4KICAgICAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgICAgICA8L3VsPgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KCiAgICAgIHsvKiBHaWFudCB3b3JkbWFyayDigJQgU1ZHIHRleHRMZW5ndGggZ3VhcmFudGVlcyBpdCBhbHdheXMgZml0cyB0aGUgdmlld3BvcnQgKi99CiAgICAgIDxkaXYgY2xhc3NOYW1lPSJweC0yIHNlbGVjdC1ub25lIHRleHQtZm9yZWdyb3VuZC9bMC45Ml0iIGFyaWEtaGlkZGVuPgogICAgICAgIDxzdmcgdmlld0JveD0iMCAwIDEwMDAgNjIiIGNsYXNzTmFtZT0iYmxvY2sgdy1mdWxsIGgtYXV0byIgcm9sZT0icHJlc2VudGF0aW9uIj4KICAgICAgICAgIDx0ZXh0CiAgICAgICAgICAgIHg9IjUwMCIKICAgICAgICAgICAgeT0iNTEiCiAgICAgICAgICAgIHRleHRBbmNob3I9Im1pZGRsZSIKICAgICAgICAgICAgdGV4dExlbmd0aD0iOTc4IgogICAgICAgICAgICBsZW5ndGhBZGp1c3Q9InNwYWNpbmdBbmRHbHlwaHMiCiAgICAgICAgICAgIGZpbGw9ImN1cnJlbnRDb2xvciIKICAgICAgICAgICAgY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCIKICAgICAgICAgICAgc3R5bGU9e3sgZm9udFNpemU6ICc2NHB4JywgZm9udFdlaWdodDogODAwLCBsZXR0ZXJTcGFjaW5nOiAnLTAuMDJlbScgfX0KICAgICAgICAgID4KICAgICAgICAgICAgTU9USU9OIFNVQlRJVExFCiAgICAgICAgICA8L3RleHQ+CiAgICAgICAgPC9zdmc+CiAgICAgIDwvZGl2PgoKICAgICAgPGRpdiBjbGFzc05hbWU9ImJvcmRlci10IGJvcmRlci1mb3JlZ3JvdW5kLzE1IG10LTYiPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJtYXgtdy1bMTAwcmVtXSBteC1hdXRvIHB4LTYgbWQ6cHgtMTAgcHktNiBmbGV4IGZsZXgtY29sIG1kOmZsZXgtcm93IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gZ2FwLTQiPgogICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTBweF0gdHJhY2tpbmctWzAuMjVlbV0gdXBwZXJjYXNlIHRleHQtZm9yZWdyb3VuZC80MCI+CiAgICAgICAgICAgIMKpIHtuZXcgRGF0ZSgpLmdldEZ1bGxZZWFyKCl9IE1vdGlvbiBTdWJ0aXRsZSBTdHVkaW8KICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtWzEwcHhdIHRyYWNraW5nLVswLjI1ZW1dIHVwcGVyY2FzZSB0ZXh0LWZvcmVncm91bmQvNDAiPgogICAgICAgICAgICBzZXQgaW4gU3luZSAmIEpha2FydGEg4oCUIHJlbmRlcmVkIHdpdGggY2FyZQogICAgICAgICAgPC9zcGFuPgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgIDwvZm9vdGVyPgogICk7Cn0K
+import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
+
+const COLS: { head: string; links: { label: string; href: string }[] }[] = [
+  {
+    head: 'Product',
+    links: [
+      { label: 'Studio', href: '#/studio' },
+      { label: 'Styles', href: '#templates' },
+      { label: 'Editor', href: '#editor' },
+      { label: 'Pricing', href: '#pricing' },
+    ],
+  },
+  {
+    head: 'Workflow',
+    links: [
+      { label: 'Upload', href: '#how-it-works' },
+      { label: 'Transcribe', href: '#how-it-works' },
+      { label: 'Render', href: '#how-it-works' },
+    ],
+  },
+  {
+    head: 'Company',
+    links: [
+      { label: 'Principles', href: '#features' },
+      { label: 'FAQ', href: '#faq' },
+    ],
+  },
+];
+
+export function FooterSection() {
+  return (
+    <footer className="w-full bg-background text-foreground border-t border-foreground/15 overflow-hidden">
+      <div className="max-w-[100rem] mx-auto px-6 md:px-10 pt-20 md:pt-28">
+        <div className="grid md:grid-cols-[1fr_2fr] gap-16 pb-20 md:pb-28">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/45 mb-6">
+              [ Motion Subtitle Studio ]
+            </p>
+            <p className="text-foreground/55 font-grotesk leading-relaxed max-w-xs">
+              The word-level caption engine for creators who care how every
+              syllable lands.
+            </p>
+            <a
+              href="#/studio"
+              className="mt-8 inline-flex items-center gap-2 font-grotesk font-semibold text-sm uppercase tracking-widest border-b border-foreground/40 pb-1 hover:border-foreground transition-colors"
+            >
+              Open the studio <ArrowUpRight className="w-4 h-4" />
+            </a>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-10">
+            {COLS.map(c => (
+              <div key={c.head}>
+                <h4 className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/40 mb-6">
+                  {c.head}
+                </h4>
+                <ul className="space-y-4">
+                  {c.links.map(l => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        className="font-grotesk text-sm uppercase tracking-widest text-foreground/65 hover:text-foreground transition-colors"
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Giant wordmark — SVG textLength guarantees it always fits the viewport */}
+      <div className="px-2 select-none text-foreground/[0.92]" aria-hidden>
+        <svg viewBox="0 0 1000 62" className="block w-full h-auto" role="presentation">
+          <text
+            x="500"
+            y="51"
+            textAnchor="middle"
+            textLength="978"
+            lengthAdjust="spacingAndGlyphs"
+            fill="currentColor"
+            className="font-editorial"
+            style={{ fontSize: '64px', fontWeight: 800, letterSpacing: '-0.02em' }}
+          >
+            MOTION SUBTITLE
+          </text>
+        </svg>
+      </div>
+
+      <div className="border-t border-foreground/15 mt-6">
+        <div className="max-w-[100rem] mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
+            © {new Date().getFullYear()} Motion Subtitle Studio
+          </span>
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
+            set in Syne & Jakarta — rendered with care
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+}

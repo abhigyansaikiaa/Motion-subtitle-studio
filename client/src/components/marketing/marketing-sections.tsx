@@ -1,1 +1,437 @@
-aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgeyBtb3Rpb24gfSBmcm9tICdtb3Rpb24vcmVhY3QnOwppbXBvcnQgeyBURU1QTEFURVMgfSBmcm9tICcuLi8uLi9saWIvdGVtcGxhdGVzJzsKaW1wb3J0IHsgTGl2ZUNhcHRpb25QcmV2aWV3IH0gZnJvbSAnLi9saXZlLWNhcHRpb24nOwppbXBvcnQgeyBBcnJvd1VwUmlnaHQsIENoZWNrIH0gZnJvbSAnbHVjaWRlLXJlYWN0JzsKCi8qIOKUgOKUgOKUgCBTaGFyZWQgc2VjdGlvbiBoZWFkZXI6IG1vbm8gaW5kZXggKyBodWdlIGdyb3Rlc3F1ZSB0aXRsZSDilIDilIDilIAgKi8KZnVuY3Rpb24gU2VjdGlvbkhlYWQoewogIGluZGV4LAogIGtpY2tlciwKICB0aXRsZSwKfTogewogIGluZGV4OiBzdHJpbmc7CiAga2lja2VyOiBzdHJpbmc7CiAgdGl0bGU6IFJlYWN0LlJlYWN0Tm9kZTsKfSkgewogIHJldHVybiAoCiAgICA8ZGl2IGNsYXNzTmFtZT0ibWItMTYgbWQ6bWItMjQiPgogICAgICA8bW90aW9uLmRpdgogICAgICAgIGluaXRpYWw9e3sgb3BhY2l0eTogMCB9fQogICAgICAgIHdoaWxlSW5WaWV3PXt7IG9wYWNpdHk6IDEgfX0KICAgICAgICB2aWV3cG9ydD17eyBvbmNlOiB0cnVlLCBtYXJnaW46ICctODBweCcgfX0KICAgICAgICB0cmFuc2l0aW9uPXt7IGR1cmF0aW9uOiAwLjYgfX0KICAgICAgICBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC00IGJvcmRlci1iIGJvcmRlci1mb3JlZ3JvdW5kLzE1IHBiLTQgbWItMTAiCiAgICAgID4KICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvbnQtbW9ubyB0ZXh0LVsxMXB4XSB0cmFja2luZy1bMC4yNWVtXSB0ZXh0LWZvcmVncm91bmQvNjAgdXBwZXJjYXNlIj4KICAgICAgICAgIHtpbmRleH0KICAgICAgICA8L3NwYW4+CiAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMjVlbV0gdGV4dC1mb3JlZ3JvdW5kLzYwIHVwcGVyY2FzZSI+CiAgICAgICAgICBbIHtraWNrZXJ9IF0KICAgICAgICA8L3NwYW4+CiAgICAgIDwvbW90aW9uLmRpdj4KICAgICAgPG1vdGlvbi5oMgogICAgICAgIGluaXRpYWw9e3sgb3BhY2l0eTogMCwgeTogNDAgfX0KICAgICAgICB3aGlsZUluVmlldz17eyBvcGFjaXR5OiAxLCB5OiAwIH19CiAgICAgICAgdmlld3BvcnQ9e3sgb25jZTogdHJ1ZSwgbWFyZ2luOiAnLTgwcHgnIH19CiAgICAgICAgdHJhbnNpdGlvbj17eyBkdXJhdGlvbjogMC44LCBlYXNlOiBbMC4xNiwgMSwgMC4zLCAxXSB9fQogICAgICAgIGNsYXNzTmFtZT0iZm9udC1lZGl0b3JpYWwgZm9udC1leHRyYWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IGxlYWRpbmctWzAuOV0gdGV4dC1bY2xhbXAoMS40cmVtLDcuMXZ3LDhyZW0pXSIKICAgICAgPgogICAgICAgIHt0aXRsZX0KICAgICAgPC9tb3Rpb24uaDI+CiAgICA8L2Rpdj4KICApOwp9Cgpjb25zdCB3cmFwID0gJ21heC13LVsxMDByZW1dIG14LWF1dG8gcHgtNiBtZDpweC0xMCc7CgovKiDilIDilIDilIAgMDEgwrcgUHJpbmNpcGxlcyDilIDilIDilIAgKi8KY29uc3QgUFJJTkNJUExFUyA9IFsKICB7CiAgICBuOiAnMDEnLAogICAgdGl0bGU6ICdLaW5ldGljIHR5cG9ncmFwaHknLAogICAgYm9keTogJ1dvcmRzIGRvblx1MjAxOXQganVzdCBhcHBlYXIuIFRoZXkgcG9wLCBmaWxsLCBzbGlkZSBhbmQgY29sbGlkZSBpbiBwZXJmZWN0IHN5bmMgd2l0aCB5b3VyIHZvaWNlIOKAlCBoYXJkd2FyZS1hY2NlbGVyYXRlZCB0cmFuc2Zvcm1zLCB6ZXJvIGphbmsuJywKICB9LAogIHsKICAgIG46ICcwMicsCiAgICB0aXRsZTogJ1dvcmQtbGV2ZWwgY29udHJvbCcsCiAgICBib2R5OiAnRXZlcnkgd29yZCBjYXJyaWVzIGl0cyBvd24gdGltZXN0YW1wLiBDb3JyZWN0IHRleHQsIHJldGltZSwgb3IgY3Jvd24gYW55IHdvcmQgdGhlIGhlcm8gd2l0aCBhIHNpbmdsZSBjbGljay4nLAogIH0sCiAgewogICAgbjogJzAzJywKICAgIHRpdGxlOiAnU2V2ZW50eSBzdHlsZXMnLAogICAgYm9keTogJ1ZpcmFsIGNhcHRpb24gcGFja3MsIGVkaXRvcmlhbCBsYXlvdXRzLCBNT0dSVC1ncmFkZSBtb3Rpb24gZ3JhcGhpY3MuIE9uZSBjbGljayB0byByZXNraW4gYW4gZW50aXJlIHZpZGVvLicsCiAgfSwKICB7CiAgICBuOiAnMDQnLAogICAgdGl0bGU6ICdDbG91ZCByZW5kZXInLAogICAgYm9keTogJ1JlYWwtdGltZSBwcmV2aWV3IGluIHRoZSBicm93c2VyLCBicm9hZGNhc3QtcmVhZHkgTVA0IGZyb20gdGhlIHJlbmRlciBmYXJtLiA0SywgaGFyZC1idXJuZWQsIG5vIHdhdGVybWFyayBvbiBQcm8uJywKICB9LApdOwoKZXhwb3J0IGZ1bmN0aW9uIEZlYXR1cmVzU2VjdGlvbigpIHsKICByZXR1cm4gKAogICAgPHNlY3Rpb24gaWQ9ImZlYXR1cmVzIiBjbGFzc05hbWU9InB5LTI4IG1kOnB5LTQwIGJnLWJhY2tncm91bmQgdGV4dC1mb3JlZ3JvdW5kIj4KICAgICAgPGRpdiBjbGFzc05hbWU9e3dyYXB9PgogICAgICAgIDxTZWN0aW9uSGVhZAogICAgICAgICAgaW5kZXg9IjAxIgogICAgICAgICAga2lja2VyPSJwcmluY2lwbGVzIgogICAgICAgICAgdGl0bGU9ezw+RGVzaWduZWQgZm9yIGltcGFjdC48YnIgLz48c3BhbiBjbGFzc05hbWU9InRleHQtc3Ryb2tlIj5CdWlsdCBmb3IgY3JlYXRvcnMuPC9zcGFuPjwvPn0KICAgICAgICAvPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItdCBib3JkZXItZm9yZWdyb3VuZC8xNSI+CiAgICAgICAgICB7UFJJTkNJUExFUy5tYXAoKHAsIGkpID0+ICgKICAgICAgICAgICAgPG1vdGlvbi5kaXYKICAgICAgICAgICAgICBrZXk9e3Aubn0KICAgICAgICAgICAgICBpbml0aWFsPXt7IG9wYWNpdHk6IDAsIHk6IDMwIH19CiAgICAgICAgICAgICAgd2hpbGVJblZpZXc9e3sgb3BhY2l0eTogMSwgeTogMCB9fQogICAgICAgICAgICAgIHZpZXdwb3J0PXt7IG9uY2U6IHRydWUsIG1hcmdpbjogJy02MHB4JyB9fQogICAgICAgICAgICAgIHRyYW5zaXRpb249e3sgZHVyYXRpb246IDAuNywgZGVsYXk6IGkgKiAwLjA2LCBlYXNlOiBbMC4xNiwgMSwgMC4zLCAxXSB9fQogICAgICAgICAgICAgIGNsYXNzTmFtZT0iZ3JvdXAgZ3JpZCBncmlkLWNvbHMtW2F1dG9fMWZyXSBtZDpncmlkLWNvbHMtWzgwcHhfMWZyXzFmcl0gZ2FwLTYgbWQ6Z2FwLTEwIGl0ZW1zLWJhc2VsaW5lIHB5LTEwIG1kOnB5LTE0IGJvcmRlci1iIGJvcmRlci1mb3JlZ3JvdW5kLzE1IGhvdmVyOmJnLWZvcmVncm91bmQvWzAuMDNdIHRyYW5zaXRpb24tY29sb3JzIHB4LTIgbWQ6cHgtNCIKICAgICAgICAgICAgPgogICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtc20gdGV4dC1mb3JlZ3JvdW5kLzQwIGdyb3VwLWhvdmVyOnRleHQtZm9yZWdyb3VuZCB0cmFuc2l0aW9uLWNvbG9ycyI+CiAgICAgICAgICAgICAgICB7cC5ufQogICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IHRleHQtM3hsIG1kOnRleHQtNXhsIGxlYWRpbmctbm9uZSI+CiAgICAgICAgICAgICAgICB7cC50aXRsZX0KICAgICAgICAgICAgICA8L2gzPgogICAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0iY29sLXNwYW4tMiBtZDpjb2wtc3Bhbi0xIHRleHQtZm9yZWdyb3VuZC81NSBsZWFkaW5nLXJlbGF4ZWQgZm9udC1ncm90ZXNrIG1kOm1heC13LW1kIj4KICAgICAgICAgICAgICAgIHtwLmJvZHl9CiAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8L21vdGlvbi5kaXY+CiAgICAgICAgICApKX0KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L3NlY3Rpb24+CiAgKTsKfQoKLyog4pSA4pSA4pSAIDAyIMK3IFdvcmtmbG93IOKUgOKUgOKUgCAqLwpjb25zdCBTVEVQUyA9IFsKICB7IG46ICcwMScsIHRpdGxlOiAnVXBsb2FkJywgYm9keTogJ0Ryb3AgeW91ciBmb290YWdlLiBEaXJlY3QtdG8tY2xvdWQgdXBsb2FkLCBubyBjb21wcmVzc2lvbiBxdWV1ZXMuJyB9LAogIHsgbjogJzAyJywgdGl0bGU6ICdUcmFuc2NyaWJlJywgYm9keTogJ1dvcmQtbGV2ZWwgdGltZXN0YW1wcyBnZW5lcmF0ZWQgd2l0aCBzcGVha2VyLWdyYWRlIGFjY3VyYWN5LicgfSwKICB7IG46ICcwMycsIHRpdGxlOiAnU3R5bGUnLCBib2R5OiAnUGljayBhIHRlbXBsYXRlLCBjcm93biBoZXJvIHdvcmRzLCB0dW5lIGNvbG9ycyBsaXZlLicgfSwKICB7IG46ICcwNCcsIHRpdGxlOiAnUmVuZGVyJywgYm9keTogJ0V4cG9ydCBhIGhhcmQtYnVybmVkIE1QNCBzdHJhaWdodCB0byB5b3VyIGRvd25sb2Fkcy4nIH0sCl07CgpleHBvcnQgZnVuY3Rpb24gSG93SXRXb3Jrc1NlY3Rpb24oKSB7CiAgcmV0dXJuICgKICAgIDxzZWN0aW9uIGlkPSJob3ctaXQtd29ya3MiIGNsYXNzTmFtZT0icHktMjggbWQ6cHktNDAgYmctZm9yZWdyb3VuZCB0ZXh0LWJhY2tncm91bmQiPgogICAgICA8ZGl2IGNsYXNzTmFtZT17d3JhcH0+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9Im1iLTE2IG1kOm1iLTI0Ij4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCBib3JkZXItYiBib3JkZXItYmFja2dyb3VuZC8yMCBwYi00IG1iLTEwIj4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMjVlbV0gdGV4dC1iYWNrZ3JvdW5kLzYwIHVwcGVyY2FzZSI+MDI8L3NwYW4+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjI1ZW1dIHRleHQtYmFja2dyb3VuZC82MCB1cHBlcmNhc2UiPlsgd29ya2Zsb3cgXTwvc3Bhbj4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGgyIGNsYXNzTmFtZT0iZm9udC1lZGl0b3JpYWwgZm9udC1leHRyYWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IGxlYWRpbmctWzAuOV0gdGV4dC1bY2xhbXAoMS40cmVtLDcuMXZ3LDhyZW0pXSI+CiAgICAgICAgICAgIFJhdyB0byByZW5kZXJlZDxiciAvPmluIG1pbnV0ZXMuCiAgICAgICAgICA8L2gyPgogICAgICAgIDwvZGl2PgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy00IGJvcmRlci10IGJvcmRlci1sIGJvcmRlci1iYWNrZ3JvdW5kLzIwIj4KICAgICAgICAgIHtTVEVQUy5tYXAoKHMsIGkpID0+ICgKICAgICAgICAgICAgPG1vdGlvbi5kaXYKICAgICAgICAgICAgICBrZXk9e3Mubn0KICAgICAgICAgICAgICBpbml0aWFsPXt7IG9wYWNpdHk6IDAsIHk6IDMwIH19CiAgICAgICAgICAgICAgd2hpbGVJblZpZXc9e3sgb3BhY2l0eTogMSwgeTogMCB9fQogICAgICAgICAgICAgIHZpZXdwb3J0PXt7IG9uY2U6IHRydWUsIG1hcmdpbjogJy02MHB4JyB9fQogICAgICAgICAgICAgIHRyYW5zaXRpb249e3sgZHVyYXRpb246IDAuNywgZGVsYXk6IGkgKiAwLjA4LCBlYXNlOiBbMC4xNiwgMSwgMC4zLCAxXSB9fQogICAgICAgICAgICAgIGNsYXNzTmFtZT0icC04IG1kOnAtMTAgYm9yZGVyLXIgYm9yZGVyLWIgYm9yZGVyLWJhY2tncm91bmQvMjAgZ3JvdXAgaG92ZXI6YmctYmFja2dyb3VuZCBob3Zlcjp0ZXh0LWZvcmVncm91bmQgdHJhbnNpdGlvbi1jb2xvcnMgZHVyYXRpb24tMzAwIgogICAgICAgICAgICA+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvbnQtZWRpdG9yaWFsIGZvbnQtZXh0cmFib2xkIHRleHQtNnhsIG1kOnRleHQtN3hsIGxlYWRpbmctbm9uZSB0ZXh0LWJhY2tncm91bmQvMTUgZ3JvdXAtaG92ZXI6dGV4dC1mb3JlZ3JvdW5kLzE1IHRyYW5zaXRpb24tY29sb3JzIG1iLTgiPgogICAgICAgICAgICAgICAge3Mubn0KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IHRleHQtMnhsIG1iLTQiPntzLnRpdGxlfTwvaDM+CiAgICAgICAgICAgICAgPHAgY2xhc3NOYW1lPSJ0ZXh0LXNtIGxlYWRpbmctcmVsYXhlZCBvcGFjaXR5LTYwIGZvbnQtZ3JvdGVzayI+e3MuYm9keX08L3A+CiAgICAgICAgICAgIDwvbW90aW9uLmRpdj4KICAgICAgICAgICkpfQogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgIDwvc2VjdGlvbj4KICApOwp9CgovKiDilIDilIDilIAgMDMgwrcgVGVtcGxhdGUgaW5kZXgg4oCUIGFsbCAyNiB2aXJhbCBzdHlsZXMsIGxpdmUg4pSA4pSA4pSAICovCmV4cG9ydCBmdW5jdGlvbiBUZW1wbGF0ZVNob3djYXNlKCkgewogIGNvbnN0IHZpcmFsID0gVEVNUExBVEVTLmZpbHRlcih0ID0+IHQuY2F0ZWdvcnkgPT09ICdWaXJhbCcpOwogIHJldHVybiAoCiAgICA8c2VjdGlvbiBpZD0idGVtcGxhdGVzIiBjbGFzc05hbWU9InB5LTI4IG1kOnB5LTQwIGJnLWJhY2tncm91bmQgdGV4dC1mb3JlZ3JvdW5kIj4KICAgICAgPGRpdiBjbGFzc05hbWU9e3dyYXB9PgogICAgICAgIDxTZWN0aW9uSGVhZAogICAgICAgICAgaW5kZXg9IjAzIgogICAgICAgICAga2lja2VyPSJzdHlsZSBpbmRleCIKICAgICAgICAgIHRpdGxlPXs8PlR3ZW50eS1zaXggd2F5czxiciAvPnRvIDxzcGFuIGNsYXNzTmFtZT0idGV4dC1zdHJva2UiPmdvIHZpcmFsLjwvc3Bhbj48Lz59CiAgICAgICAgLz4KICAgICAgICA8bW90aW9uLnAKICAgICAgICAgIGluaXRpYWw9e3sgb3BhY2l0eTogMCB9fQogICAgICAgICAgd2hpbGVJblZpZXc9e3sgb3BhY2l0eTogMSB9fQogICAgICAgICAgdmlld3BvcnQ9e3sgb25jZTogdHJ1ZSB9fQogICAgICAgICAgdHJhbnNpdGlvbj17eyBkdXJhdGlvbjogMC43IH19CiAgICAgICAgICBjbGFzc05hbWU9InRleHQtZm9yZWdyb3VuZC81NSBmb250LWdyb3Rlc2sgdGV4dC1sZyBtYXgtdy0yeGwgLW10LTEwIG1kOi1tdC0xNCBtYi0xNiBtZDptYi0yMCBsZWFkaW5nLXJlbGF4ZWQiCiAgICAgICAgPgogICAgICAgICAgRXZlcnkgc3R5bGUgYmVsb3cgaXMgbGl2ZSDigJQgcmVhbCB0ZW1wbGF0ZXMsIHJlYWwgbW90aW9uLCBydW5uaW5nIHJpZ2h0IG5vdy4KICAgICAgICAgIFdoYXQgeW91IHNlZSBpcyBleGFjdGx5IHdoYXQgeW91ciBjYXB0aW9ucyB3aWxsIGRvLgogICAgICAgIDwvbW90aW9uLnA+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJncmlkIGdyaWQtY29scy0xIHNtOmdyaWQtY29scy0yIGxnOmdyaWQtY29scy0zIGJvcmRlci10IGJvcmRlci1sIGJvcmRlci1mb3JlZ3JvdW5kLzE1Ij4KICAgICAgICAgIHt2aXJhbC5tYXAoKHQsIGkpID0+ICgKICAgICAgICAgICAgPG1vdGlvbi5hCiAgICAgICAgICAgICAga2V5PXt0LmlkfQogICAgICAgICAgICAgIGhyZWY9IiMvc3R1ZGlvIgogICAgICAgICAgICAgIGluaXRpYWw9e3sgb3BhY2l0eTogMCwgeTogMjQgfX0KICAgICAgICAgICAgICB3aGlsZUluVmlldz17eyBvcGFjaXR5OiAxLCB5OiAwIH19CiAgICAgICAgICAgICAgdmlld3BvcnQ9e3sgb25jZTogdHJ1ZSwgbWFyZ2luOiAnLTQwcHgnIH19CiAgICAgICAgICAgICAgdHJhbnNpdGlvbj17eyBkdXJhdGlvbjogMC42LCBkZWxheTogKGkgJSAzKSAqIDAuMDcsIGVhc2U6IFswLjE2LCAxLCAwLjMsIDFdIH19CiAgICAgICAgICAgICAgY2xhc3NOYW1lPSJncm91cCByZWxhdGl2ZSBib3JkZXItciBib3JkZXItYiBib3JkZXItZm9yZWdyb3VuZC8xNSBiZy1ibGFjayBob3ZlcjpiZy1bIzBkMGQwZF0gdHJhbnNpdGlvbi1jb2xvcnMiCiAgICAgICAgICAgID4KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iYXNwZWN0LVsxNi8xMF0gZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIgcHgtOCBvdmVyZmxvdy1oaWRkZW4iPgogICAgICAgICAgICAgICAgPExpdmVDYXB0aW9uUHJldmlldyB0ZW1wbGF0ZT17dH0gbWF4SGVyb1NjYWxlPXsxLjR9IHdvcmRNcz17NjUwfSBjbGFzc05hbWU9InRleHQteGwgbWQ6dGV4dC0yeGwiIC8+CiAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBweC02IHB5LTQgYm9yZGVyLXQgYm9yZGVyLWZvcmVncm91bmQvMTUiPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtYmFzZWxpbmUgZ2FwLTQiPgogICAgICAgICAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImZvbnQtbW9ubyB0ZXh0LVsxMXB4XSB0ZXh0LWZvcmVncm91bmQvNDAiPgogICAgICAgICAgICAgICAgICAgIHtTdHJpbmcoaSArIDEpLnBhZFN0YXJ0KDIsICcwJyl9CiAgICAgICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IHRleHQtbGciPgogICAgICAgICAgICAgICAgICAgIHt0Lm5hbWV9CiAgICAgICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICAgICAgPEFycm93VXBSaWdodCBjbGFzc05hbWU9InctNCBoLTQgdGV4dC1mb3JlZ3JvdW5kLzMwIGdyb3VwLWhvdmVyOnRleHQtZm9yZWdyb3VuZCBncm91cC1ob3Zlcjp0cmFuc2xhdGUteC0wLjUgZ3JvdXAtaG92ZXI6LXRyYW5zbGF0ZS15LTAuNSB0cmFuc2l0aW9uLWFsbCIgLz4KICAgICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgICAgPC9tb3Rpb24uYT4KICAgICAgICAgICkpfQogICAgICAgIDwvZGl2PgoKICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ibXQtMTIgZmxleCBmbGV4LWNvbCBtZDpmbGV4LXJvdyBpdGVtcy1zdGFydCBtZDppdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIGdhcC02Ij4KICAgICAgICAgIDxwIGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjI1ZW1dIHVwcGVyY2FzZSB0ZXh0LWZvcmVncm91bmQvNDUiPgogICAgICAgICAgICArIDQ0IG1vcmUgc3R5bGVzIGluc2lkZSB0aGUgc3R1ZGlvIOKAlCBlZGl0b3JpYWwsIE1PR1JULCBjaW5lbWF0aWMKICAgICAgICAgIDwvcD4KICAgICAgICAgIDxhCiAgICAgICAgICAgIGhyZWY9IiMvc3R1ZGlvIgogICAgICAgICAgICBjbGFzc05hbWU9ImlubGluZS1mbGV4IGl0ZW1zLWNlbnRlciBnYXAtMyBiZy1mb3JlZ3JvdW5kIHRleHQtYmFja2dyb3VuZCBmb250LWdyb3Rlc2sgZm9udC1zZW1pYm9sZCB0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgcHgtOCBweS00IGhvdmVyOmJnLWZvcmVncm91bmQvODUgdHJhbnNpdGlvbi1jb2xvcnMiCiAgICAgICAgICA+CiAgICAgICAgICAgIE9wZW4gdGhlIHN0dWRpbyA8QXJyb3dVcFJpZ2h0IGNsYXNzTmFtZT0idy00IGgtNCIgLz4KICAgICAgICAgIDwvYT4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L3NlY3Rpb24+CiAgKTsKfQoKLyog4pSA4pSA4pSAIDA0IMK3IEVkaXRvciDigJQgaW50ZXJhY3RpdmUgaGVyby13b3JkIGRlbW8gKHdhcyBudWxsKSDilIDilIDilIAgKi8KY29uc3QgREVNT19XT1JEUyA9IFsnQ0xJQ0snLCAnQU5ZJywgJ1dPUkQnLCAnVE8nLCAnTUFLRScsICdJVCcsICdUSEUnLCAnSEVSTyddOwoKZXhwb3J0IGZ1bmN0aW9uIEVkaXRvclNob3djYXNlKCkgewogIGNvbnN0IFtoZXJvLCBzZXRIZXJvXSA9IHVzZVN0YXRlKDQpOwogIHJldHVybiAoCiAgICA8c2VjdGlvbiBpZD0iZWRpdG9yIiBjbGFzc05hbWU9InB5LTI4IG1kOnB5LTQwIGJnLWJhY2tncm91bmQgdGV4dC1mb3JlZ3JvdW5kIGJvcmRlci10IGJvcmRlci1mb3JlZ3JvdW5kLzE1Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9e3dyYXB9PgogICAgICAgIDxTZWN0aW9uSGVhZAogICAgICAgICAgaW5kZXg9IjA0IgogICAgICAgICAga2lja2VyPSJ0aGUgZWRpdG9yIgogICAgICAgICAgdGl0bGU9ezw+RGlyZWN0IHRoZTxiciAvPmF0dGVudGlvbi48Lz59CiAgICAgICAgLz4KICAgICAgICA8ZGl2IGNsYXNzTmFtZT0iZ3JpZCBsZzpncmlkLWNvbHMtMiBnYXAtMTIgbGc6Z2FwLTIwIGl0ZW1zLWNlbnRlciI+CiAgICAgICAgICA8bW90aW9uLmRpdgogICAgICAgICAgICBpbml0aWFsPXt7IG9wYWNpdHk6IDAsIHk6IDQwIH19CiAgICAgICAgICAgIHdoaWxlSW5WaWV3PXt7IG9wYWNpdHk6IDEsIHk6IDAgfX0KICAgICAgICAgICAgdmlld3BvcnQ9e3sgb25jZTogdHJ1ZSwgbWFyZ2luOiAnLTgwcHgnIH19CiAgICAgICAgICAgIHRyYW5zaXRpb249e3sgZHVyYXRpb246IDAuOCwgZWFzZTogWzAuMTYsIDEsIDAuMywgMV0gfX0KICAgICAgICAgICAgY2xhc3NOYW1lPSJiZy1ibGFjayBib3JkZXIgYm9yZGVyLWZvcmVncm91bmQvMTUgcC0xMCBtZDpwLTE2IG1pbi1oLVszMjBweF0gZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1jZW50ZXIiCiAgICAgICAgICA+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGZsZXgtd3JhcCBqdXN0aWZ5LWNlbnRlciBnYXAteC00IGdhcC15LTMiPgogICAgICAgICAgICAgIHtERU1PX1dPUkRTLm1hcCgodywgaSkgPT4gKAogICAgICAgICAgICAgICAgPG1vdGlvbi5idXR0b24KICAgICAgICAgICAgICAgICAga2V5PXt3fQogICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRIZXJvKGkpfQogICAgICAgICAgICAgICAgICBhbmltYXRlPXsKICAgICAgICAgICAgICAgICAgICBpID09PSBoZXJvCiAgICAgICAgICAgICAgICAgICAgICA/IHsKICAgICAgICAgICAgICAgICAgICAgICAgICBzY2FsZTogMS45LAogICAgICAgICAgICAgICAgICAgICAgICAgIGNvbG9yOiAnI0U4RDVCMCcsCiAgICAgICAgICAgICAgICAgICAgICAgICAgb3BhY2l0eTogMSwKICAgICAgICAgICAgICAgICAgICAgICAgICAvLyBQdXNoIG5laWdoYm91cnMgYXNpZGUgc28gdGhlIDEuOXggaGVybyB3b3JkIG5ldmVyIGVhdHMgdGhlaXIgZ2x5cGhzLgogICAgICAgICAgICAgICAgICAgICAgICAgIG1hcmdpbkxlZnQ6IGAkeygwLjMyICogdy5sZW5ndGgpLnRvRml4ZWQoMil9ZW1gLAogICAgICAgICAgICAgICAgICAgICAgICAgIG1hcmdpblJpZ2h0OiBgJHsoMC4zMiAqIHcubGVuZ3RoKS50b0ZpeGVkKDIpfWVtYCwKICAgICAgICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICAgICAgOiB7IHNjYWxlOiAxLCBjb2xvcjogJyNFRkVGRUYnLCBvcGFjaXR5OiAwLjM1LCBtYXJnaW5MZWZ0OiAnMGVtJywgbWFyZ2luUmlnaHQ6ICcwZW0nIH0KICAgICAgICAgICAgICAgICAgfQogICAgICAgICAgICAgICAgICB0cmFuc2l0aW9uPXt7IHR5cGU6ICdzcHJpbmcnLCBzdGlmZm5lc3M6IDMyMCwgZGFtcGluZzogMjIgfX0KICAgICAgICAgICAgICAgICAgd2hpbGVIb3Zlcj17aSA9PT0gaGVybyA/IHVuZGVmaW5lZCA6IHsgb3BhY2l0eTogMC44LCBzY2FsZTogMS4wOCB9fQogICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImZvbnQtZWRpdG9yaWFsIGZvbnQtZXh0cmFib2xkIHVwcGVyY2FzZSB0cmFja2luZy10aWdodCB0ZXh0LTJ4bCBtZDp0ZXh0LTN4bCBjdXJzb3ItcG9pbnRlciBvcmlnaW4tY2VudGVyIgogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICB7d30KICAgICAgICAgICAgICAgIDwvbW90aW9uLmJ1dHRvbj4KICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICA8L21vdGlvbi5kaXY+CiAgICAgICAgICA8ZGl2PgogICAgICAgICAgICA8cCBjbGFzc05hbWU9ImZvbnQtbW9ubyB0ZXh0LVsxMXB4XSB0cmFja2luZy1bMC4yNWVtXSB1cHBlcmNhc2UgdGV4dC1mb3JlZ3JvdW5kLzQ1IG1iLTYiPgogICAgICAgICAgICAgIHRyeSBpdCDigJQgdGhpcyBkZW1vIGlzIGxpdmUKICAgICAgICAgICAgPC9wPgogICAgICAgICAgICA8aDMgY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCBmb250LWJvbGQgdXBwZXJjYXNlIHRyYWNraW5nLXRpZ2h0IHRleHQtM3hsIG1kOnRleHQtNHhsIGxlYWRpbmctdGlnaHQgbWItNiI+CiAgICAgICAgICAgICAgSGVybyB3b3JkcyBjYXJyeTxiciAvPnRoZSBwdW5jaGxpbmUuCiAgICAgICAgICAgIDwvaDM+CiAgICAgICAgICAgIDxwIGNsYXNzTmFtZT0idGV4dC1mb3JlZ3JvdW5kLzU1IGZvbnQtZ3JvdGVzayB0ZXh0LWxnIGxlYWRpbmctcmVsYXhlZCBtYXgtdy1tZCI+CiAgICAgICAgICAgICAgT25lIGNsaWNrIHByb21vdGVzIGFueSB3b3JkIHRvIGhlcm8gc3RhdHVzIOKAlCBiaWdnZXIsIGJvbGRlciwgaW1wb3NzaWJsZQogICAgICAgICAgICAgIHRvIG1pc3MuIFRoZSByaHl0aG0gb2YgeW91ciBlZGl0IGZvbGxvd3MgdGhlIHJoeXRobSBvZiB5b3VyIHZvaWNlLgogICAgICAgICAgICA8L3A+CiAgICAgICAgICA8L2Rpdj4KICAgICAgICA8L2Rpdj4KICAgICAgPC9kaXY+CiAgICA8L3NlY3Rpb24+CiAgKTsKfQoKLyog4pSA4pSA4pSAIDA1IMK3IFdvcmQtbGV2ZWwgdGltaW5nICh3YXMgbnVsbCkg4pSA4pSA4pSAICovCmNvbnN0IFNBTVBMRV9USU1FTElORSA9IFsKICB7IGlkOiAndzAnLCB3b3JkOiAnTUFLRScsIHN0YXJ0OiAnMDA6MDAuMTIwJywgZW5kOiAnMDA6MDAuMzgwJyB9LAogIHsgaWQ6ICd3MScsIHdvcmQ6ICdFVkVSWScsIHN0YXJ0OiAnMDA6MDAuNDAwJywgZW5kOiAnMDA6MDAuNjYwJyB9LAogIHsgaWQ6ICd3MicsIHdvcmQ6ICdXT1JEJywgc3RhcnQ6ICcwMDowMC42ODAnLCBlbmQ6ICcwMDowMC45NDAnIH0sCiAgeyBpZDogJ3czJywgd29yZDogJ01PVkUnLCBzdGFydDogJzAwOjAwLjk2MCcsIGVuZDogJzAwOjAxLjI0MCcgfSwKICB7IGlkOiAndzQnLCB3b3JkOiAnV0lUSCcsIHN0YXJ0OiAnMDA6MDEuMjYwJywgZW5kOiAnMDA6MDEuNDQwJyB9LAogIHsgaWQ6ICd3NScsIHdvcmQ6ICdUSEUnLCBzdGFydDogJzAwOjAxLjQ2MCcsIGVuZDogJzAwOjAxLjYwMCcgfSwKICB7IGlkOiAndzYnLCB3b3JkOiAnU1RPUlknLCBzdGFydDogJzAwOjAxLjYyMCcsIGVuZDogJzAwOjAyLjAyMCcgfSwKXTsKCmV4cG9ydCBmdW5jdGlvbiBXb3JkTGV2ZWxTZWN0aW9uKCkgewogIHJldHVybiAoCiAgICA8c2VjdGlvbiBjbGFzc05hbWU9InB5LTI4IG1kOnB5LTQwIGJnLWJhY2tncm91bmQgdGV4dC1mb3JlZ3JvdW5kIGJvcmRlci10IGJvcmRlci1mb3JlZ3JvdW5kLzE1Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9e3dyYXB9PgogICAgICAgIDxTZWN0aW9uSGVhZAogICAgICAgICAgaW5kZXg9IjA1IgogICAgICAgICAga2lja2VyPSJwcmVjaXNpb24iCiAgICAgICAgICB0aXRsZT17PD5UaW1lZCB0byB0aGU8YnIgLz48c3BhbiBjbGFzc05hbWU9InRleHQtc3Ryb2tlIj5taWxsaXNlY29uZC48L3NwYW4+PC8+fQogICAgICAgIC8+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgbGc6Z3JpZC1jb2xzLTIgZ2FwLTEyIGxnOmdhcC0yMCI+CiAgICAgICAgICA8cCBjbGFzc05hbWU9InRleHQtZm9yZWdyb3VuZC81NSBmb250LWdyb3Rlc2sgdGV4dC1sZyBsZWFkaW5nLXJlbGF4ZWQgbWF4LXctbWQiPgogICAgICAgICAgICBUcmFuc2NyaXB0aW9uIHJldHVybnMgZXZlcnkgd29yZCB3aXRoIGl0cyBvd24gaW4vb3V0IHBvaW50IOKAlCBub3QKICAgICAgICAgICAgYmxvY2sgc3VidGl0bGVzLCBidXQgYSB0cnVlIHRpbWVsaW5lIHlvdSBjYW4gbnVkZ2UsIHJldGltZSBhbmQKICAgICAgICAgICAgcmVzdHlsZSB3b3JkIGJ5IHdvcmQuCiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iYmxvY2sgbXQtNiBmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMjVlbV0gdXBwZXJjYXNlIHRleHQtZm9yZWdyb3VuZC80MCI+CiAgICAgICAgICAgICAgc2FtcGxlIHRpbWVsaW5lIOKAlCB5b3VyIHdvcmRzIHdpbGwgZGlmZmVyCiAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgIDwvcD4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItdCBib3JkZXItZm9yZWdyb3VuZC8xNSI+CiAgICAgICAgICAgIHtTQU1QTEVfVElNRUxJTkUubWFwKChyLCBpKSA9PiAoCiAgICAgICAgICAgICAgPG1vdGlvbi5kaXYKICAgICAgICAgICAgICAgIGtleT17ci5pZH0KICAgICAgICAgICAgICAgIGluaXRpYWw9e3sgb3BhY2l0eTogMCwgeDogLTIwIH19CiAgICAgICAgICAgICAgICB3aGlsZUluVmlldz17eyBvcGFjaXR5OiAxLCB4OiAwIH19CiAgICAgICAgICAgICAgICB2aWV3cG9ydD17eyBvbmNlOiB0cnVlLCBtYXJnaW46ICctNDBweCcgfX0KICAgICAgICAgICAgICAgIHRyYW5zaXRpb249e3sgZHVyYXRpb246IDAuNSwgZGVsYXk6IGkgKiAwLjA1IH19CiAgICAgICAgICAgICAgICBjbGFzc05hbWU9Imdyb3VwIGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiBweS00IGJvcmRlci1iIGJvcmRlci1mb3JlZ3JvdW5kLzE1IGZvbnQtbW9ubyB0ZXh0LXNtIGhvdmVyOmJnLWZvcmVncm91bmQvWzAuMDRdIHB4LTIgdHJhbnNpdGlvbi1jb2xvcnMiCiAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZsZXggaXRlbXMtY2VudGVyIGdhcC02Ij4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWZvcmVncm91bmQvMzUgdy04Ij57ci5pZH08L3NwYW4+CiAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1lZGl0b3JpYWwgZm9udC1ib2xkIHVwcGVyY2FzZSB0cmFja2luZy13aWRlIHRleHQtYmFzZSBncm91cC1ob3Zlcjp0ZXh0LVsjRThENUIwXSB0cmFuc2l0aW9uLWNvbG9ycyI+CiAgICAgICAgICAgICAgICAgICAge3Iud29yZH0KICAgICAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0idGV4dC1mb3JlZ3JvdW5kLzUwIHRleHQteHMgbWQ6dGV4dC1zbSB0YWJ1bGFyLW51bXMiPgogICAgICAgICAgICAgICAgICB7ci5zdGFydH0gPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWZvcmVncm91bmQvMzAiPuKGkjwvc3Bhbj4ge3IuZW5kfQogICAgICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgICAgPC9tb3Rpb24uZGl2PgogICAgICAgICAgICApKX0KICAgICAgICAgIDwvZGl2PgogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KICAgIDwvc2VjdGlvbj4KICApOwp9CgovKiDilIDilIDilIAgMDYgwrcgUHJpY2luZyDilIDilIDilIAgKi8KZXhwb3J0IGZ1bmN0aW9uIFByaWNpbmdTZWN0aW9uKCkgewogIHJldHVybiAoCiAgICA8c2VjdGlvbiBpZD0icHJpY2luZyIgY2xhc3NOYW1lPSJweS0yOCBtZDpweS00MCBiZy1iYWNrZ3JvdW5kIHRleHQtZm9yZWdyb3VuZCBib3JkZXItdCBib3JkZXItZm9yZWdyb3VuZC8xNSI+CiAgICAgIDxkaXYgY2xhc3NOYW1lPXt3cmFwfT4KICAgICAgICA8U2VjdGlvbkhlYWQKICAgICAgICAgIGluZGV4PSIwNiIKICAgICAgICAgIGtpY2tlcj0icHJpY2luZyIKICAgICAgICAgIHRpdGxlPXs8PlN0YXJ0IGZyZWUuPGJyIC8+PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXN0cm9rZSI+U2NhbGUgd2hlbiByZWFkeS48L3NwYW4+PC8+fQogICAgICAgIC8+CiAgICAgICAgPGRpdiBjbGFzc05hbWU9ImdyaWQgbWQ6Z3JpZC1jb2xzLTIgYm9yZGVyLXQgYm9yZGVyLWwgYm9yZGVyLWZvcmVncm91bmQvMTUgbWF4LXctNXhsIj4KICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJwLTEwIG1kOnAtMTQgYm9yZGVyLXIgYm9yZGVyLWIgYm9yZGVyLWZvcmVncm91bmQvMTUgZmxleCBmbGV4LWNvbCI+CiAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjI1ZW1dIHVwcGVyY2FzZSB0ZXh0LWZvcmVncm91bmQvNDUgbWItOCI+Q3JlYXRvcjwvc3Bhbj4KICAgICAgICAgICAgPGRpdiBjbGFzc05hbWU9ImZvbnQtZWRpdG9yaWFsIGZvbnQtZXh0cmFib2xkIHRleHQtN3hsIHRyYWNraW5nLXRpZ2h0IG1iLTEwIj4KICAgICAgICAgICAgICAkMDxzcGFuIGNsYXNzTmFtZT0idGV4dC14bCBmb250LWdyb3Rlc2sgZm9udC1ub3JtYWwgdGV4dC1mb3JlZ3JvdW5kLzQ1Ij4vbW88L3NwYW4+CiAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8dWwgY2xhc3NOYW1lPSJzcGFjZS15LTUgbWItMTIgZmxleC0xIGZvbnQtZ3JvdGVzayI+CiAgICAgICAgICAgICAge1snMTAgbWlucyBvZiBnZW5lcmF0aW9uJywgJzcyMHAgZXhwb3J0JywgJ0NvcmUgdGVtcGxhdGVzJ10ubWFwKGYgPT4gKAogICAgICAgICAgICAgICAgPGxpIGtleT17Zn0gY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtNCB0ZXh0LWZvcmVncm91bmQvNjUiPgogICAgICAgICAgICAgICAgICA8Q2hlY2sgY2xhc3NOYW1lPSJ3LTQgaC00IHNocmluay0wIiAvPiB7Zn0KICAgICAgICAgICAgICAgIDwvbGk+CiAgICAgICAgICAgICAgKSl9CiAgICAgICAgICAgIDwvdWw+CiAgICAgICAgICAgIDxhIGhyZWY9IiMvYXV0aD9tb2RlPXNpZ251cCIgY2xhc3NOYW1lPSJibG9jayB0ZXh0LWNlbnRlciBweS01IGJvcmRlciBib3JkZXItZm9yZWdyb3VuZC8yNSBmb250LWdyb3Rlc2sgZm9udC1zZW1pYm9sZCB0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgaG92ZXI6Ym9yZGVyLWZvcmVncm91bmQgaG92ZXI6YmctZm9yZWdyb3VuZC81IHRyYW5zaXRpb24tY29sb3JzIj4KICAgICAgICAgICAgICBTdGFydCBmcmVlCiAgICAgICAgICAgIDwvYT4KICAgICAgICAgIDwvZGl2PgogICAgICAgICAgPGRpdiBjbGFzc05hbWU9InAtMTAgbWQ6cC0xNCBib3JkZXItciBib3JkZXItYiBib3JkZXItZm9yZWdyb3VuZC8xNSBiZy1mb3JlZ3JvdW5kIHRleHQtYmFja2dyb3VuZCBmbGV4IGZsZXgtY29sIj4KICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMjVlbV0gdXBwZXJjYXNlIHRleHQtYmFja2dyb3VuZC81NSBtYi04Ij5Qcm88L3NwYW4+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmb250LWVkaXRvcmlhbCBmb250LWV4dHJhYm9sZCB0ZXh0LTd4bCB0cmFja2luZy10aWdodCBtYi0xMCI+CiAgICAgICAgICAgICAgJDE1PHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LXhsIGZvbnQtZ3JvdGVzayBmb250LW5vcm1hbCB0ZXh0LWJhY2tncm91bmQvNTUiPi9tbzwvc3Bhbj4KICAgICAgICAgICAgPC9kaXY+CiAgICAgICAgICAgIDx1bCBjbGFzc05hbWU9InNwYWNlLXktNSBtYi0xMiBmbGV4LTEgZm9udC1ncm90ZXNrIj4KICAgICAgICAgICAgICB7WycxMjAgbWlucyBvZiBnZW5lcmF0aW9uJywgJzRLIGV4cG9ydCcsICdBbGwgNzAgdGVtcGxhdGVzJywgJ05vIHdhdGVybWFyayddLm1hcChmID0+ICgKICAgICAgICAgICAgICAgIDxsaSBrZXk9e2Z9IGNsYXNzTmFtZT0iZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTQgdGV4dC1iYWNrZ3JvdW5kLzc1Ij4KICAgICAgICAgICAgICAgICAgPENoZWNrIGNsYXNzTmFtZT0idy00IGgtNCBzaHJpbmstMCIgLz4ge2Z9CiAgICAgICAgICAgICAgICA8L2xpPgogICAgICAgICAgICAgICkpfQogICAgICAgICAgICA8L3VsPgogICAgICAgICAgICA8YSBocmVmPSIjL2F1dGg/bW9kZT1zaWdudXAiIGNsYXNzTmFtZT0iYmxvY2sgdGV4dC1jZW50ZXIgcHktNSBiZy1iYWNrZ3JvdW5kIHRleHQtZm9yZWdyb3VuZCBmb250LWdyb3Rlc2sgZm9udC1zZW1pYm9sZCB0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgaG92ZXI6YmctYmFja2dyb3VuZC84NSB0cmFuc2l0aW9uLWNvbG9ycyI+CiAgICAgICAgICAgICAgVXBncmFkZSB0byBQcm8KICAgICAgICAgICAgPC9hPgogICAgICAgICAgPC9kaXY+CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9zZWN0aW9uPgogICk7Cn0KCi8qIOKUgOKUgOKUgCAwNyDCtyBGQVEg4pSA4pSA4pSAICovCmNvbnN0IEZBUVMgPSBbCiAgeyBxOiAnV2hhdCB2aWRlbyBmb3JtYXRzIGRvIHlvdSBzdXBwb3J0PycsIGE6ICdNUDQsIE1PViBhbmQgV2ViTSDigJQgdXAgdG8gMjAwTUIgcGVyIHVwbG9hZC4nIH0sCiAgeyBxOiAnV2hpY2ggbGFuZ3VhZ2VzIGNhbiB5b3UgdHJhbnNjcmliZT8nLCBhOiAnT3ZlciA5MCwgaW5jbHVkaW5nIEVuZ2xpc2gsIEhpbmRpLCBIaW5nbGlzaCwgU3BhbmlzaCwgRnJlbmNoIGFuZCBKYXBhbmVzZSDigJQgd2l0aCBhdXRvLWRldGVjdGlvbi4nIH0sCiAgeyBxOiAnQ2FuIEkgdXNlIG15IG93biBmb250cz8nLCBhOiAnQ3VzdG9tIGZvbnQgdXBsb2FkIGlzIGF2YWlsYWJsZSBvbiBQcm8uIENyZWF0b3IgaW5jbHVkZXMgYSBjdXJhdGVkIHNldCBvZiBwcmVtaXVtIHR5cGVmYWNlcy4nIH0sCiAgeyBxOiAnRG8gSSBrZWVwIHRoZSByaWdodHMgdG8gbXkgZXhwb3J0cz8nLCBhOiAnWWVzLiBFdmVyeXRoaW5nIHlvdSByZW5kZXIgaXMgeW91cnMsIGZvcmV2ZXIg4oCUIGluY2x1ZGluZyBvbiB0aGUgZnJlZSBwbGFuLicgfSwKXTsKCmV4cG9ydCBmdW5jdGlvbiBGQVFTZWN0aW9uKCkgewogIGNvbnN0IFtvcGVuLCBzZXRPcGVuXSA9IHVzZVN0YXRlPG51bWJlciB8IG51bGw+KDApOwogIHJldHVybiAoCiAgICA8c2VjdGlvbiBpZD0iZmFxIiBjbGFzc05hbWU9InB5LTI4IG1kOnB5LTQwIGJnLWJhY2tncm91bmQgdGV4dC1mb3JlZ3JvdW5kIGJvcmRlci10IGJvcmRlci1mb3JlZ3JvdW5kLzE1Ij4KICAgICAgPGRpdiBjbGFzc05hbWU9e3dyYXB9PgogICAgICAgIDxTZWN0aW9uSGVhZCBpbmRleD0iMDciIGtpY2tlcj0iZmFxIiB0aXRsZT17PD5RdWVzdGlvbnMsPGJyIC8+YW5zd2VyZWQuPC8+fSAvPgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJib3JkZXItdCBib3JkZXItZm9yZWdyb3VuZC8xNSBtYXgtdy00eGwiPgogICAgICAgICAge0ZBUVMubWFwKChmLCBpKSA9PiB7CiAgICAgICAgICAgIGNvbnN0IGlzT3BlbiA9IG9wZW4gPT09IGk7CiAgICAgICAgICAgIHJldHVybiAoCiAgICAgICAgICAgICAgPGRpdiBrZXk9e2l9IGNsYXNzTmFtZT0iYm9yZGVyLWIgYm9yZGVyLWZvcmVncm91bmQvMTUiPgogICAgICAgICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRPcGVuKGlzT3BlbiA/IG51bGwgOiBpKX0KICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJ3LWZ1bGwgZmxleCBpdGVtcy1jZW50ZXIganVzdGlmeS1iZXR3ZWVuIHB5LTggdGV4dC1sZWZ0IGdyb3VwIHB4LTIiCiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIDxzcGFuIGNsYXNzTmFtZT0iZm9udC1lZGl0b3JpYWwgZm9udC1ib2xkIHVwcGVyY2FzZSB0cmFja2luZy10aWdodCB0ZXh0LXhsIG1kOnRleHQtMnhsIGdyb3VwLWhvdmVyOnRyYW5zbGF0ZS14LTEgdHJhbnNpdGlvbi10cmFuc2Zvcm0iPgogICAgICAgICAgICAgICAgICAgIHtmLnF9CiAgICAgICAgICAgICAgICAgIDwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPXtgZm9udC1tb25vIHRleHQtMnhsIHRleHQtZm9yZWdyb3VuZC81MCB0cmFuc2l0aW9uLXRyYW5zZm9ybSBkdXJhdGlvbi0zMDAgJHtpc09wZW4gPyAncm90YXRlLTQ1JyA6ICcnfWB9PgogICAgICAgICAgICAgICAgICAgICsKICAgICAgICAgICAgICAgICAgPC9zcGFuPgogICAgICAgICAgICAgICAgPC9idXR0b24+CiAgICAgICAgICAgICAgICA8bW90aW9uLmRpdgogICAgICAgICAgICAgICAgICBpbml0aWFsPXtmYWxzZX0KICAgICAgICAgICAgICAgICAgYW5pbWF0ZT17eyBoZWlnaHQ6IGlzT3BlbiA/ICdhdXRvJyA6IDAsIG9wYWNpdHk6IGlzT3BlbiA/IDEgOiAwIH19CiAgICAgICAgICAgICAgICAgIHRyYW5zaXRpb249e3sgZHVyYXRpb246IDAuMzUsIGVhc2U6IFswLjE2LCAxLCAwLjMsIDFdIH19CiAgICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0ib3ZlcmZsb3ctaGlkZGVuIgogICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICA8cCBjbGFzc05hbWU9InBiLTggcHgtMiB0ZXh0LWZvcmVncm91bmQvNTUgZm9udC1ncm90ZXNrIHRleHQtbGcgbGVhZGluZy1yZWxheGVkIG1heC13LTJ4bCI+CiAgICAgICAgICAgICAgICAgICAge2YuYX0KICAgICAgICAgICAgICAgICAgPC9wPgogICAgICAgICAgICAgICAgPC9tb3Rpb24uZGl2PgogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICApOwogICAgICAgICAgfSl9CiAgICAgICAgPC9kaXY+CiAgICAgIDwvZGl2PgogICAgPC9zZWN0aW9uPgogICk7Cn0K
+import React, { useState } from 'react';
+import { motion } from 'motion/react';
+import { TEMPLATES } from '../../lib/templates';
+import { LiveCaptionPreview } from './live-caption';
+import { ArrowUpRight, Check } from 'lucide-react';
+
+/* ─── Shared section header: mono index + huge grotesque title ─── */
+function SectionHead({
+  index,
+  kicker,
+  title,
+}: {
+  index: string;
+  kicker: string;
+  title: React.ReactNode;
+}) {
+  return (
+    <div className="mb-16 md:mb-24">
+      <motion.div
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.6 }}
+        className="flex items-center gap-4 border-b border-foreground/15 pb-4 mb-10"
+      >
+        <span className="font-mono text-[11px] tracking-[0.25em] text-foreground/60 uppercase">
+          {index}
+        </span>
+        <span className="font-mono text-[11px] tracking-[0.25em] text-foreground/60 uppercase">
+          [ {kicker} ]
+        </span>
+      </motion.div>
+      <motion.h2
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+        className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-[clamp(1.4rem,7.1vw,8rem)]"
+      >
+        {title}
+      </motion.h2>
+    </div>
+  );
+}
+
+const wrap = 'max-w-[100rem] mx-auto px-6 md:px-10';
+
+/* ─── 01 · Principles ─── */
+const PRINCIPLES = [
+  {
+    n: '01',
+    title: 'Kinetic typography',
+    body: 'Words don\u2019t just appear. They pop, fill, slide and collide in perfect sync with your voice — hardware-accelerated transforms, zero jank.',
+  },
+  {
+    n: '02',
+    title: 'Word-level control',
+    body: 'Every word carries its own timestamp. Correct text, retime, or crown any word the hero with a single click.',
+  },
+  {
+    n: '03',
+    title: 'Seventy styles',
+    body: 'Viral caption packs, editorial layouts, MOGRT-grade motion graphics. One click to reskin an entire video.',
+  },
+  {
+    n: '04',
+    title: 'Cloud render',
+    body: 'Real-time preview in the browser, broadcast-ready MP4 from the render farm. 4K, hard-burned, no watermark on Pro.',
+  },
+];
+
+export function FeaturesSection() {
+  return (
+    <section id="features" className="py-28 md:py-40 bg-background text-foreground">
+      <div className={wrap}>
+        <SectionHead
+          index="01"
+          kicker="principles"
+          title={<>Designed for impact.<br /><span className="text-stroke">Built for creators.</span></>}
+        />
+        <div className="border-t border-foreground/15">
+          {PRINCIPLES.map((p, i) => (
+            <motion.div
+              key={p.n}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+              className="group grid grid-cols-[auto_1fr] md:grid-cols-[80px_1fr_1fr] gap-6 md:gap-10 items-baseline py-10 md:py-14 border-b border-foreground/15 hover:bg-foreground/[0.03] transition-colors px-2 md:px-4"
+            >
+              <span className="font-mono text-sm text-foreground/40 group-hover:text-foreground transition-colors">
+                {p.n}
+              </span>
+              <h3 className="font-editorial font-bold uppercase tracking-tight text-3xl md:text-5xl leading-none">
+                {p.title}
+              </h3>
+              <p className="col-span-2 md:col-span-1 text-foreground/55 leading-relaxed font-grotesk md:max-w-md">
+                {p.body}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 02 · Workflow ─── */
+const STEPS = [
+  { n: '01', title: 'Upload', body: 'Drop your footage. Direct-to-cloud upload, no compression queues.' },
+  { n: '02', title: 'Transcribe', body: 'Word-level timestamps generated with speaker-grade accuracy.' },
+  { n: '03', title: 'Style', body: 'Pick a template, crown hero words, tune colors live.' },
+  { n: '04', title: 'Render', body: 'Export a hard-burned MP4 straight to your downloads.' },
+];
+
+export function HowItWorksSection() {
+  return (
+    <section id="how-it-works" className="py-28 md:py-40 bg-foreground text-background">
+      <div className={wrap}>
+        <div className="mb-16 md:mb-24">
+          <div className="flex items-center gap-4 border-b border-background/20 pb-4 mb-10">
+            <span className="font-mono text-[11px] tracking-[0.25em] text-background/60 uppercase">02</span>
+            <span className="font-mono text-[11px] tracking-[0.25em] text-background/60 uppercase">[ workflow ]</span>
+          </div>
+          <h2 className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-[clamp(1.4rem,7.1vw,8rem)]">
+            Raw to rendered<br />in minutes.
+          </h2>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-background/20">
+          {STEPS.map((s, i) => (
+            <motion.div
+              key={s.n}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+              className="p-8 md:p-10 border-r border-b border-background/20 group hover:bg-background hover:text-foreground transition-colors duration-300"
+            >
+              <div className="font-editorial font-extrabold text-6xl md:text-7xl leading-none text-background/15 group-hover:text-foreground/15 transition-colors mb-8">
+                {s.n}
+              </div>
+              <h3 className="font-editorial font-bold uppercase tracking-tight text-2xl mb-4">{s.title}</h3>
+              <p className="text-sm leading-relaxed opacity-60 font-grotesk">{s.body}</p>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 03 · Template index — all 26 viral styles, live ─── */
+export function TemplateShowcase() {
+  const viral = TEMPLATES.filter(t => t.category === 'Viral');
+  return (
+    <section id="templates" className="py-28 md:py-40 bg-background text-foreground">
+      <div className={wrap}>
+        <SectionHead
+          index="03"
+          kicker="style index"
+          title={<>Twenty-six ways<br />to <span className="text-stroke">go viral.</span></>}
+        />
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7 }}
+          className="text-foreground/55 font-grotesk text-lg max-w-2xl -mt-10 md:-mt-14 mb-16 md:mb-20 leading-relaxed"
+        >
+          Every style below is live — real templates, real motion, running right now.
+          What you see is exactly what your captions will do.
+        </motion.p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 border-t border-l border-foreground/15">
+          {viral.map((t, i) => (
+            <motion.a
+              key={t.id}
+              href="#/studio"
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-40px' }}
+              transition={{ duration: 0.6, delay: (i % 3) * 0.07, ease: [0.16, 1, 0.3, 1] }}
+              className="group relative border-r border-b border-foreground/15 bg-black hover:bg-[#0d0d0d] transition-colors"
+            >
+              <div className="aspect-[16/10] flex items-center justify-center px-8 overflow-hidden">
+                <LiveCaptionPreview template={t} maxHeroScale={1.4} wordMs={650} className="text-xl md:text-2xl" />
+              </div>
+              <div className="flex items-center justify-between px-6 py-4 border-t border-foreground/15">
+                <div className="flex items-baseline gap-4">
+                  <span className="font-mono text-[11px] text-foreground/40">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span className="font-editorial font-bold uppercase tracking-tight text-lg">
+                    {t.name}
+                  </span>
+                </div>
+                <ArrowUpRight className="w-4 h-4 text-foreground/30 group-hover:text-foreground group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+              </div>
+            </motion.a>
+          ))}
+        </div>
+
+        <div className="mt-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/45">
+            + 44 more styles inside the studio — editorial, MOGRT, cinematic
+          </p>
+          <a
+            href="#/studio"
+            className="inline-flex items-center gap-3 bg-foreground text-background font-grotesk font-semibold text-sm uppercase tracking-widest px-8 py-4 hover:bg-foreground/85 transition-colors"
+          >
+            Open the studio <ArrowUpRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 04 · Editor — interactive hero-word demo (was null) ─── */
+const DEMO_WORDS = ['CLICK', 'ANY', 'WORD', 'TO', 'MAKE', 'IT', 'THE', 'HERO'];
+
+export function EditorShowcase() {
+  const [hero, setHero] = useState(4);
+  return (
+    <section id="editor" className="py-28 md:py-40 bg-background text-foreground border-t border-foreground/15">
+      <div className={wrap}>
+        <SectionHead
+          index="04"
+          kicker="the editor"
+          title={<>Direct the<br />attention.</>}
+        />
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-80px' }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="bg-black border border-foreground/15 p-10 md:p-16 min-h-[320px] flex items-center justify-center"
+          >
+            <div className="flex flex-wrap justify-center gap-x-4 gap-y-3">
+              {DEMO_WORDS.map((w, i) => (
+                <motion.button
+                  key={w}
+                  onClick={() => setHero(i)}
+                  animate={
+                    i === hero
+                      ? {
+                          scale: 1.9,
+                          color: '#E8D5B0',
+                          opacity: 1,
+                          // Push neighbours aside so the 1.9x hero word never eats their glyphs.
+                          marginLeft: `${(0.32 * w.length).toFixed(2)}em`,
+                          marginRight: `${(0.32 * w.length).toFixed(2)}em`,
+                        }
+                      : { scale: 1, color: '#EFEFEF', opacity: 0.35, marginLeft: '0em', marginRight: '0em' }
+                  }
+                  transition={{ type: 'spring', stiffness: 320, damping: 22 }}
+                  whileHover={i === hero ? undefined : { opacity: 0.8, scale: 1.08 }}
+                  className="font-editorial font-extrabold uppercase tracking-tight text-2xl md:text-3xl cursor-pointer origin-center"
+                >
+                  {w}
+                </motion.button>
+              ))}
+            </div>
+          </motion.div>
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/45 mb-6">
+              try it — this demo is live
+            </p>
+            <h3 className="font-editorial font-bold uppercase tracking-tight text-3xl md:text-4xl leading-tight mb-6">
+              Hero words carry<br />the punchline.
+            </h3>
+            <p className="text-foreground/55 font-grotesk text-lg leading-relaxed max-w-md">
+              One click promotes any word to hero status — bigger, bolder, impossible
+              to miss. The rhythm of your edit follows the rhythm of your voice.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 05 · Word-level timing (was null) ─── */
+const SAMPLE_TIMELINE = [
+  { id: 'w0', word: 'MAKE', start: '00:00.120', end: '00:00.380' },
+  { id: 'w1', word: 'EVERY', start: '00:00.400', end: '00:00.660' },
+  { id: 'w2', word: 'WORD', start: '00:00.680', end: '00:00.940' },
+  { id: 'w3', word: 'MOVE', start: '00:00.960', end: '00:01.240' },
+  { id: 'w4', word: 'WITH', start: '00:01.260', end: '00:01.440' },
+  { id: 'w5', word: 'THE', start: '00:01.460', end: '00:01.600' },
+  { id: 'w6', word: 'STORY', start: '00:01.620', end: '00:02.020' },
+];
+
+export function WordLevelSection() {
+  return (
+    <section className="py-28 md:py-40 bg-background text-foreground border-t border-foreground/15">
+      <div className={wrap}>
+        <SectionHead
+          index="05"
+          kicker="precision"
+          title={<>Timed to the<br /><span className="text-stroke">millisecond.</span></>}
+        />
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">
+          <p className="text-foreground/55 font-grotesk text-lg leading-relaxed max-w-md">
+            Transcription returns every word with its own in/out point — not
+            block subtitles, but a true timeline you can nudge, retime and
+            restyle word by word.
+            <span className="block mt-6 font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/40">
+              sample timeline — your words will differ
+            </span>
+          </p>
+          <div className="border-t border-foreground/15">
+            {SAMPLE_TIMELINE.map((r, i) => (
+              <motion.div
+                key={r.id}
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{ duration: 0.5, delay: i * 0.05 }}
+                className="group flex items-center justify-between py-4 border-b border-foreground/15 font-mono text-sm hover:bg-foreground/[0.04] px-2 transition-colors"
+              >
+                <div className="flex items-center gap-6">
+                  <span className="text-foreground/35 w-8">{r.id}</span>
+                  <span className="font-editorial font-bold uppercase tracking-wide text-base group-hover:text-[#E8D5B0] transition-colors">
+                    {r.word}
+                  </span>
+                </div>
+                <div className="text-foreground/50 text-xs md:text-sm tabular-nums">
+                  {r.start} <span className="text-foreground/30">→</span> {r.end}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 06 · Pricing ─── */
+export function PricingSection() {
+  return (
+    <section id="pricing" className="py-28 md:py-40 bg-background text-foreground border-t border-foreground/15">
+      <div className={wrap}>
+        <SectionHead
+          index="06"
+          kicker="pricing"
+          title={<>Start free.<br /><span className="text-stroke">Scale when ready.</span></>}
+        />
+        <div className="grid md:grid-cols-2 border-t border-l border-foreground/15 max-w-5xl">
+          <div className="p-10 md:p-14 border-r border-b border-foreground/15 flex flex-col">
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/45 mb-8">Creator</span>
+            <div className="font-editorial font-extrabold text-7xl tracking-tight mb-10">
+              $0<span className="text-xl font-grotesk font-normal text-foreground/45">/mo</span>
+            </div>
+            <ul className="space-y-5 mb-12 flex-1 font-grotesk">
+              {['10 mins of generation', '720p export', 'Core templates'].map(f => (
+                <li key={f} className="flex items-center gap-4 text-foreground/65">
+                  <Check className="w-4 h-4 shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+            <a href="#/auth?mode=signup" className="block text-center py-5 border border-foreground/25 font-grotesk font-semibold text-sm uppercase tracking-widest hover:border-foreground hover:bg-foreground/5 transition-colors">
+              Start free
+            </a>
+          </div>
+          <div className="p-10 md:p-14 border-r border-b border-foreground/15 bg-foreground text-background flex flex-col">
+            <span className="font-mono text-[11px] tracking-[0.25em] uppercase text-background/55 mb-8">Pro</span>
+            <div className="font-editorial font-extrabold text-7xl tracking-tight mb-10">
+              $15<span className="text-xl font-grotesk font-normal text-background/55">/mo</span>
+            </div>
+            <ul className="space-y-5 mb-12 flex-1 font-grotesk">
+              {['120 mins of generation', '4K export', 'All 70 templates', 'No watermark'].map(f => (
+                <li key={f} className="flex items-center gap-4 text-background/75">
+                  <Check className="w-4 h-4 shrink-0" /> {f}
+                </li>
+              ))}
+            </ul>
+            <a href="#/auth?mode=signup" className="block text-center py-5 bg-background text-foreground font-grotesk font-semibold text-sm uppercase tracking-widest hover:bg-background/85 transition-colors">
+              Upgrade to Pro
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─── 07 · FAQ ─── */
+const FAQS = [
+  { q: 'What video formats do you support?', a: 'MP4, MOV and WebM — up to 200MB per upload.' },
+  { q: 'Which languages can you transcribe?', a: 'Over 90, including English, Hindi, Hinglish, Spanish, French and Japanese — with auto-detection.' },
+  { q: 'Can I use my own fonts?', a: 'Custom font upload is available on Pro. Creator includes a curated set of premium typefaces.' },
+  { q: 'Do I keep the rights to my exports?', a: 'Yes. Everything you render is yours, forever — including on the free plan.' },
+];
+
+export function FAQSection() {
+  const [open, setOpen] = useState<number | null>(0);
+  return (
+    <section id="faq" className="py-28 md:py-40 bg-background text-foreground border-t border-foreground/15">
+      <div className={wrap}>
+        <SectionHead index="07" kicker="faq" title={<>Questions,<br />answered.</>} />
+        <div className="border-t border-foreground/15 max-w-4xl">
+          {FAQS.map((f, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={i} className="border-b border-foreground/15">
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="w-full flex items-center justify-between py-8 text-left group px-2"
+                >
+                  <span className="font-editorial font-bold uppercase tracking-tight text-xl md:text-2xl group-hover:translate-x-1 transition-transform">
+                    {f.q}
+                  </span>
+                  <span className={`font-mono text-2xl text-foreground/50 transition-transform duration-300 ${isOpen ? 'rotate-45' : ''}`}>
+                    +
+                  </span>
+                </button>
+                <motion.div
+                  initial={false}
+                  animate={{ height: isOpen ? 'auto' : 0, opacity: isOpen ? 1 : 0 }}
+                  transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                  className="overflow-hidden"
+                >
+                  <p className="pb-8 px-2 text-foreground/55 font-grotesk text-lg leading-relaxed max-w-2xl">
+                    {f.a}
+                  </p>
+                </motion.div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}

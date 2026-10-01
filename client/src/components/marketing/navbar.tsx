@@ -1,1 +1,169 @@
-aW1wb3J0IFJlYWN0LCB7IHVzZVN0YXRlIH0gZnJvbSAncmVhY3QnOwppbXBvcnQgeyB1c2VBcHBTdG9yZSB9IGZyb20gJy4uLy4uL2xpYi9zdG9yZSc7CmltcG9ydCB7IEFycm93VXBSaWdodCwgTWVudSwgWCB9IGZyb20gJ2x1Y2lkZS1yZWFjdCc7CmltcG9ydCB7IG1vdGlvbiwgQW5pbWF0ZVByZXNlbmNlIH0gZnJvbSAnbW90aW9uL3JlYWN0JzsKaW1wb3J0IHsgc3VwYWJhc2UgfSBmcm9tICcuLi8uLi9saWIvc3VwYWJhc2UnOwoKY29uc3QgTElOS1MgPSBbCiAgeyBuOiAnMDEnLCBsYWJlbDogJ1ByaW5jaXBsZXMnLCBocmVmOiAnI2ZlYXR1cmVzJyB9LAogIHsgbjogJzAyJywgbGFiZWw6ICdTdHlsZXMnLCBocmVmOiAnI3RlbXBsYXRlcycgfSwKICB7IG46ICcwMycsIGxhYmVsOiAnRWRpdG9yJywgaHJlZjogJyNlZGl0b3InIH0sCiAgeyBuOiAnMDQnLCBsYWJlbDogJ1ByaWNpbmcnLCBocmVmOiAnI3ByaWNpbmcnIH0sCl07CgpleHBvcnQgZnVuY3Rpb24gTmF2YmFyKCkgewogIGNvbnN0IHVzZXIgPSB1c2VBcHBTdG9yZShzdGF0ZSA9PiBzdGF0ZS51c2VyKTsKICBjb25zdCBzZXRUb2tlbiA9IHVzZUFwcFN0b3JlKHN0YXRlID0+IHN0YXRlLnNldFRva2VuKTsKICBjb25zdCBzZXRVc2VyID0gdXNlQXBwU3RvcmUoc3RhdGUgPT4gc3RhdGUuc2V0VXNlcik7CiAgY29uc3QgW21lbnVPcGVuLCBzZXRNZW51T3Blbl0gPSB1c2VTdGF0ZShmYWxzZSk7CgogIGFzeW5jIGZ1bmN0aW9uIGhhbmRsZUxvZ291dCgpIHsKICAgIGF3YWl0IHN1cGFiYXNlLmF1dGguc2lnbk91dCgpOwogICAgc2V0VG9rZW4obnVsbCk7CiAgICBzZXRVc2VyKG51bGwpOwogICAgd2luZG93LmxvY2F0aW9uLmhhc2ggPSAnIy8nOwogIH0KCiAgcmV0dXJuICgKICAgIDxtb3Rpb24uaGVhZGVyCiAgICAgIGluaXRpYWw9e3sgeTogLTI0LCBvcGFjaXR5OiAwIH19CiAgICAgIGFuaW1hdGU9e3sgeTogMCwgb3BhY2l0eTogMSB9fQogICAgICB0cmFuc2l0aW9uPXt7IGR1cmF0aW9uOiAwLjcsIGVhc2U6IFswLjE2LCAxLCAwLjMsIDFdIH19CiAgICAgIGNsYXNzTmFtZT0iZml4ZWQgdG9wLTAgbGVmdC0wIHctZnVsbCB6LTUwIGJnLWJhY2tncm91bmQvODUgYmFja2Ryb3AtYmx1ci1tZCBib3JkZXItYiBib3JkZXItZm9yZWdyb3VuZC8xNSIKICAgID4KICAgICAgPGRpdiBjbGFzc05hbWU9Im1heC13LVsxMDByZW1dIG14LWF1dG8gcHgtNiBtZDpweC0xMCBoLTE2IGZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktYmV0d2VlbiI+CiAgICAgICAgPGEgaHJlZj0iIy8iIGNsYXNzTmFtZT0iZm9udC1lZGl0b3JpYWwgZm9udC1leHRyYWJvbGQgdGV4dC1iYXNlIHNtOnRleHQtbGcgdHJhY2tpbmctdGlnaHQgdXBwZXJjYXNlIGxlYWRpbmctbm9uZSBzaHJpbmstMCI+CiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9ImhpZGRlbiBtaW4tWzUyMHB4XTppbmxpbmUiPgogICAgICAgICAgICBNb3Rpb248c3BhbiBjbGFzc05hbWU9InRleHQtZm9yZWdyb3VuZC80MCI+4oCUPC9zcGFuPlN1YnRpdGxlCiAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICA8c3BhbiBjbGFzc05hbWU9Im1pbi1bNTIwcHhdOmhpZGRlbiIgYXJpYS1sYWJlbD0iTW90aW9uIFN1YnRpdGxlIj4KICAgICAgICAgICAgTTxzcGFuIGNsYXNzTmFtZT0idGV4dC1mb3JlZ3JvdW5kLzQwIj7igJQ8L3NwYW4+UwogICAgICAgICAgPC9zcGFuPgogICAgICAgIDwvYT4KCiAgICAgICAgPG5hdiBjbGFzc05hbWU9ImhpZGRlbiBsZzpmbGV4IGl0ZW1zLWNlbnRlciBnYXAtOCI+CiAgICAgICAgICB7TElOS1MubWFwKGwgPT4gKAogICAgICAgICAgICA8YQogICAgICAgICAgICAgIGtleT17bC5ufQogICAgICAgICAgICAgIGhyZWY9e2wuaHJlZn0KICAgICAgICAgICAgICBjbGFzc05hbWU9Imdyb3VwIGZvbnQtbW9ubyB0ZXh0LVsxMXB4XSB0cmFja2luZy1bMC4yZW1dIHVwcGVyY2FzZSB0ZXh0LWZvcmVncm91bmQvNTUgaG92ZXI6dGV4dC1mb3JlZ3JvdW5kIHRyYW5zaXRpb24tY29sb3JzIgogICAgICAgICAgICA+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ0ZXh0LWZvcmVncm91bmQvMzAgbXItMS41Ij57bC5ufTwvc3Bhbj4KICAgICAgICAgICAgICB7bC5sYWJlbH0KICAgICAgICAgICAgPC9hPgogICAgICAgICAgKSl9CiAgICAgICAgPC9uYXY+CgogICAgICAgIDxkaXYgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBnYXAtMiBzbTpnYXAtMyI+CiAgICAgICAgICB7LyogTW9iaWxlIG1lbnUgdG9nZ2xlICovfQogICAgICAgICAgPGJ1dHRvbgogICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRNZW51T3BlbihvID0+ICFvKX0KICAgICAgICAgICAgYXJpYS1sYWJlbD17bWVudU9wZW4gPyAnQ2xvc2UgbWVudScgOiAnT3BlbiBtZW51J30KICAgICAgICAgICAgY2xhc3NOYW1lPSJsZzpoaWRkZW4gaW5saW5lLWZsZXggaXRlbXMtY2VudGVyIGp1c3RpZnktY2VudGVyIHctMTAgaC0xMCAtbXItMSB0ZXh0LWZvcmVncm91bmQvNzAgaG92ZXI6dGV4dC1mb3JlZ3JvdW5kIHRyYW5zaXRpb24tY29sb3JzIgogICAgICAgICAgPgogICAgICAgICAgICB7bWVudU9wZW4gPyA8WCBjbGFzc05hbWU9InctNSBoLTUiIC8+IDogPE1lbnUgY2xhc3NOYW1lPSJ3LTUgaC01IiAvPn0KICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAge3VzZXIgPyAoCiAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJoaWRkZW4gc206aW5saW5lLWZsZXggaXRlbXMtY2VudGVyIGdhcC0yIGZvbnQtbW9ubyB0ZXh0LVsxMXB4XSB0cmFja2luZy13aWRlc3QgdGV4dC1mb3JlZ3JvdW5kLzYwIGJvcmRlciBib3JkZXItZm9yZWdyb3VuZC8yMCBweC0zIHB5LTIiPgogICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJ3LTEuNSBoLTEuNSBiZy1mb3JlZ3JvdW5kIiAvPgogICAgICAgICAgICAgICAge3VzZXIuY3JlZGl0c30gQ1IKICAgICAgICAgICAgICA8L3NwYW4+CiAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgIGhyZWY9IiMvc3R1ZGlvIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJpbmxpbmUtZmxleCBpdGVtcy1jZW50ZXIgZ2FwLTIgYmctZm9yZWdyb3VuZCB0ZXh0LWJhY2tncm91bmQgZm9udC1ncm90ZXNrIGZvbnQtc2VtaWJvbGQgdGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHB4LTQgc206cHgtNSBweS0yLjUgaG92ZXI6YmctZm9yZWdyb3VuZC84NSB0cmFuc2l0aW9uLWNvbG9ycyIKICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICBTdHVkaW8gPEFycm93VXBSaWdodCBjbGFzc05hbWU9InctMy41IGgtMy41IiAvPgogICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICBvbkNsaWNrPXtoYW5kbGVMb2dvdXR9CiAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImhpZGRlbiBzbTpibG9jayBmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMmVtXSB1cHBlcmNhc2UgdGV4dC1mb3JlZ3JvdW5kLzQ1IGhvdmVyOnRleHQtZm9yZWdyb3VuZCB0cmFuc2l0aW9uLWNvbG9ycyBweC0yIgogICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgIE91dAogICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICA8Lz4KICAgICAgICAgICkgOiAoCiAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgIGhyZWY9IiMvYXV0aD9tb2RlPWxvZ2luIgogICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJoaWRkZW4gc206YmxvY2sgZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjJlbV0gdXBwZXJjYXNlIHRleHQtZm9yZWdyb3VuZC81NSBob3Zlcjp0ZXh0LWZvcmVncm91bmQgdHJhbnNpdGlvbi1jb2xvcnMgcHgtMiIKICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICBMb2cgaW4KICAgICAgICAgICAgICA8L2E+CiAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgIGhyZWY9IiMvYXV0aD9tb2RlPXNpZ251cCIKICAgICAgICAgICAgICAgIGNsYXNzTmFtZT0iYmctZm9yZWdyb3VuZCB0ZXh0LWJhY2tncm91bmQgZm9udC1ncm90ZXNrIGZvbnQtc2VtaWJvbGQgdGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHB4LTQgc206cHgtNSBweS0yLjUgaG92ZXI6YmctZm9yZWdyb3VuZC84NSB0cmFuc2l0aW9uLWNvbG9ycyIKICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICBHZXQgc3RhcnRlZAogICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgPC8+CiAgICAgICAgICApfQogICAgICAgIDwvZGl2PgogICAgICA8L2Rpdj4KCiAgICAgIHsvKiBNb2JpbGUgZHJvcGRvd24gbWVudSAqL30KICAgICAgPEFuaW1hdGVQcmVzZW5jZT4KICAgICAgICB7bWVudU9wZW4gJiYgKAogICAgICAgICAgPG1vdGlvbi5uYXYKICAgICAgICAgICAgaW5pdGlhbD17eyBvcGFjaXR5OiAwLCBoZWlnaHQ6IDAgfX0KICAgICAgICAgICAgYW5pbWF0ZT17eyBvcGFjaXR5OiAxLCBoZWlnaHQ6ICdhdXRvJyB9fQogICAgICAgICAgICBleGl0PXt7IG9wYWNpdHk6IDAsIGhlaWdodDogMCB9fQogICAgICAgICAgICB0cmFuc2l0aW9uPXt7IGR1cmF0aW9uOiAwLjI1LCBlYXNlOiBbMC4xNiwgMSwgMC4zLCAxXSB9fQogICAgICAgICAgICBjbGFzc05hbWU9ImxnOmhpZGRlbiBvdmVyZmxvdy1oaWRkZW4gYm9yZGVyLXQgYm9yZGVyLWZvcmVncm91bmQvMTAiCiAgICAgICAgICA+CiAgICAgICAgICAgIDxkaXYgY2xhc3NOYW1lPSJweC02IHB5LTQgZmxleCBmbGV4LWNvbCI+CiAgICAgICAgICAgICAge0xJTktTLm1hcChsID0+ICgKICAgICAgICAgICAgICAgIDxhCiAgICAgICAgICAgICAgICAgIGtleT17bC5ufQogICAgICAgICAgICAgICAgICBocmVmPXtsLmhyZWZ9CiAgICAgICAgICAgICAgICAgIG9uQ2xpY2s9eygpID0+IHNldE1lbnVPcGVuKGZhbHNlKX0KICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmbGV4IGl0ZW1zLWNlbnRlciBqdXN0aWZ5LWJldHdlZW4gcHktNCBib3JkZXItYiBib3JkZXItZm9yZWdyb3VuZC8xMCBmb250LWdyb3Rlc2sgZm9udC1zZW1pYm9sZCB0ZXh0LXNtIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgdGV4dC1mb3JlZ3JvdW5kLzcwIGFjdGl2ZTp0ZXh0LWZvcmVncm91bmQiCiAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgIDxzcGFuPntsLmxhYmVsfTwvc3Bhbj4KICAgICAgICAgICAgICAgICAgPHNwYW4gY2xhc3NOYW1lPSJmb250LW1vbm8gdGV4dC1bMTFweF0gdGV4dC1mb3JlZ3JvdW5kLzMwIj57bC5ufTwvc3Bhbj4KICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICApKX0KICAgICAgICAgICAgICB7LyogQXV0aCBhY3Rpb25zIOKAlCBoaWRkZW4gZnJvbSB0aGUgYmFyIG9uIHNtYWxsIHBob25lcyAqL30KICAgICAgICAgICAgICA8ZGl2IGNsYXNzTmFtZT0ic206aGlkZGVuIGZsZXggaXRlbXMtY2VudGVyIGdhcC0zIHB0LTQgcGItMiI+CiAgICAgICAgICAgICAgICB7dXNlciA/ICgKICAgICAgICAgICAgICAgICAgPD4KICAgICAgICAgICAgICAgICAgICA8YQogICAgICAgICAgICAgICAgICAgICAgaHJlZj0iIy9zdHVkaW8iCiAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiBzZXRNZW51T3BlbihmYWxzZSl9CiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImZsZXgtMSB0ZXh0LWNlbnRlciBiZy1mb3JlZ3JvdW5kIHRleHQtYmFja2dyb3VuZCBmb250LWdyb3Rlc2sgZm9udC1zZW1pYm9sZCB0ZXh0LXhzIHVwcGVyY2FzZSB0cmFja2luZy13aWRlc3QgcHgtNCBweS0zIgogICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgIFN0dWRpbwogICAgICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgICAgICA8YnV0dG9uCiAgICAgICAgICAgICAgICAgICAgICBvbkNsaWNrPXsoKSA9PiB7IHNldE1lbnVPcGVuKGZhbHNlKTsgaGFuZGxlTG9nb3V0KCk7IH19CiAgICAgICAgICAgICAgICAgICAgICBjbGFzc05hbWU9ImZsZXgtMSBmb250LW1vbm8gdGV4dC1bMTFweF0gdHJhY2tpbmctWzAuMmVtXSB1cHBlcmNhc2UgdGV4dC1mb3JlZ3JvdW5kLzU1IGJvcmRlciBib3JkZXItZm9yZWdyb3VuZC8yMCBweC00IHB5LTMiCiAgICAgICAgICAgICAgICAgICAgPgogICAgICAgICAgICAgICAgICAgICAgTG9nIG91dAogICAgICAgICAgICAgICAgICAgIDwvYnV0dG9uPgogICAgICAgICAgICAgICAgICA8Lz4KICAgICAgICAgICAgICAgICkgOiAoCiAgICAgICAgICAgICAgICAgIDw+CiAgICAgICAgICAgICAgICAgICAgPGEKICAgICAgICAgICAgICAgICAgICAgIGhyZWY9IiMvYXV0aD9tb2RlPWxvZ2luIgogICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0TWVudU9wZW4oZmFsc2UpfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmbGV4LTEgdGV4dC1jZW50ZXIgZm9udC1tb25vIHRleHQtWzExcHhdIHRyYWNraW5nLVswLjJlbV0gdXBwZXJjYXNlIHRleHQtZm9yZWdyb3VuZC83MCBib3JkZXIgYm9yZGVyLWZvcmVncm91bmQvMjAgcHgtNCBweS0zIgogICAgICAgICAgICAgICAgICAgID4KICAgICAgICAgICAgICAgICAgICAgIExvZyBpbgogICAgICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgICAgICA8YQogICAgICAgICAgICAgICAgICAgICAgaHJlZj0iIy9hdXRoP21vZGU9c2lnbnVwIgogICAgICAgICAgICAgICAgICAgICAgb25DbGljaz17KCkgPT4gc2V0TWVudU9wZW4oZmFsc2UpfQogICAgICAgICAgICAgICAgICAgICAgY2xhc3NOYW1lPSJmbGV4LTEgdGV4dC1jZW50ZXIgYmctZm9yZWdyb3VuZCB0ZXh0LWJhY2tncm91bmQgZm9udC1ncm90ZXNrIGZvbnQtc2VtaWJvbGQgdGV4dC14cyB1cHBlcmNhc2UgdHJhY2tpbmctd2lkZXN0IHB4LTQgcHktMyIKICAgICAgICAgICAgICAgICAgICA+CiAgICAgICAgICAgICAgICAgICAgICBHZXQgc3RhcnRlZAogICAgICAgICAgICAgICAgICAgIDwvYT4KICAgICAgICAgICAgICAgICAgPC8+CiAgICAgICAgICAgICAgICApfQogICAgICAgICAgICAgIDwvZGl2PgogICAgICAgICAgICA8L2Rpdj4KICAgICAgICAgIDwvbW90aW9uLm5hdj4KICAgICAgICApfQogICAgICA8L0FuaW1hdGVQcmVzZW5jZT4KICAgIDwvbW90aW9uLmhlYWRlcj4KICApOwp9Cg==
+import React, { useState } from 'react';
+import { useAppStore } from '../../lib/store';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { supabase } from '../../lib/supabase';
+
+const LINKS = [
+  { n: '01', label: 'Principles', href: '#features' },
+  { n: '02', label: 'Styles', href: '#templates' },
+  { n: '03', label: 'Editor', href: '#editor' },
+  { n: '04', label: 'Pricing', href: '#pricing' },
+];
+
+export function Navbar() {
+  const user = useAppStore(state => state.user);
+  const setToken = useAppStore(state => state.setToken);
+  const setUser = useAppStore(state => state.setUser);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  async function handleLogout() {
+    await supabase.auth.signOut();
+    setToken(null);
+    setUser(null);
+    window.location.hash = '#/';
+  }
+
+  return (
+    <motion.header
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed top-0 left-0 w-full z-50 bg-background/85 backdrop-blur-md border-b border-foreground/15"
+    >
+      <div className="max-w-[100rem] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
+        <a href="#/" className="font-editorial font-extrabold text-base sm:text-lg tracking-tight uppercase leading-none shrink-0">
+          <span className="hidden min-[520px]:inline">
+            Motion<span className="text-foreground/40">—</span>Subtitle
+          </span>
+          <span className="min-[520px]:hidden" aria-label="Motion Subtitle">
+            M<span className="text-foreground/40">—</span>S
+          </span>
+        </a>
+
+        <nav className="hidden lg:flex items-center gap-8">
+          {LINKS.map(l => (
+            <a
+              key={l.n}
+              href={l.href}
+              className="group font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 hover:text-foreground transition-colors"
+            >
+              <span className="text-foreground/30 mr-1.5">{l.n}</span>
+              {l.label}
+            </a>
+          ))}
+        </nav>
+
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+          {user ? (
+            <>
+              <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[11px] tracking-widest text-foreground/60 border border-foreground/20 px-3 py-2">
+                <span className="w-1.5 h-1.5 bg-foreground" />
+                {user.credits} CR
+              </span>
+              <a
+                href="#/studio"
+                className="inline-flex items-center gap-2 bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 sm:px-5 py-2.5 hover:bg-foreground/85 transition-colors"
+              >
+                Studio <ArrowUpRight className="w-3.5 h-3.5" />
+              </a>
+              <button
+                onClick={handleLogout}
+                className="hidden sm:block font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/45 hover:text-foreground transition-colors px-2"
+              >
+                Out
+              </button>
+            </>
+          ) : (
+            <>
+              <a
+                href="#/auth?mode=login"
+                className="hidden sm:block font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 hover:text-foreground transition-colors px-2"
+              >
+                Log in
+              </a>
+              <a
+                href="#/auth?mode=signup"
+                className="bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 sm:px-5 py-2.5 hover:bg-foreground/85 transition-colors"
+              >
+                Get started
+              </a>
+            </>
+          )}
+        </div>
+      </div>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:hidden overflow-hidden border-t border-foreground/10"
+          >
+            <div className="px-6 py-4 flex flex-col">
+              {LINKS.map(l => (
+                <a
+                  key={l.n}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-between py-4 border-b border-foreground/10 font-grotesk font-semibold text-sm uppercase tracking-widest text-foreground/70 active:text-foreground"
+                >
+                  <span>{l.label}</span>
+                  <span className="font-mono text-[11px] text-foreground/30">{l.n}</span>
+                </a>
+              ))}
+              {/* Auth actions — hidden from the bar on small phones */}
+              <div className="sm:hidden flex items-center gap-3 pt-4 pb-2">
+                {user ? (
+                  <>
+                    <a
+                      href="#/studio"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 py-3"
+                    >
+                      Studio
+                    </a>
+                    <button
+                      onClick={() => { setMenuOpen(false); handleLogout(); }}
+                      className="flex-1 font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 border border-foreground/20 px-4 py-3"
+                    >
+                      Log out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <a
+                      href="#/auth?mode=login"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/70 border border-foreground/20 px-4 py-3"
+                    >
+                      Log in
+                    </a>
+                    <a
+                      href="#/auth?mode=signup"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 py-3"
+                    >
+                      Get started
+                    </a>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  );
+}
