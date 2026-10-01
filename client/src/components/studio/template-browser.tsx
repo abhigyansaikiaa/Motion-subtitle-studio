@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TEMPLATES } from '../../lib/templates';
+import { TEMPLATES, getCuratedTemplates } from '../../lib/templates';
 import { useAppStore } from '../../lib/store';
 import { cn } from '../../lib/utils';
 import { Check, Flame } from 'lucide-react';
@@ -34,16 +34,20 @@ function categoryOf(t: { layoutType: string; category?: string }): string {
   }
 }
 
-const ALL_CATS = ['All', 'Viral', 'Editorial', 'Inline', 'Stacked', 'Poster', 'Dynamic', 'Cinematic', 'MOGRT'];
+const ALL_CATS = ['Dynamic', 'Viral', 'All', 'Editorial', 'Inline', 'Stacked', 'Poster', 'Cinematic', 'MOGRT'];
 
 export function TemplateBrowser() {
   const selectedStyleId    = useAppStore(s => s.selectedStyleId);
   const setSelectedStyleId = useAppStore(s => s.setSelectedStyleId);
-  const [activeCategory, setActiveCategory] = useState('All');
+  const [activeCategory, setActiveCategory] = useState('Dynamic');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const displayed = TEMPLATES.filter(t =>
-    (activeCategory === 'All' || categoryOf(t) === activeCategory) &&
+  // 'Dynamic' is the curated set: fewer templates, each with a genuinely
+  // distinct motion behavior. 'All' (and the other tabs) expose the full library.
+  const curated = React.useMemo(() => getCuratedTemplates(), []);
+  const pool = activeCategory === 'Dynamic' ? curated : TEMPLATES;
+  const displayed = pool.filter(t =>
+    (activeCategory === 'Dynamic' || activeCategory === 'All' || categoryOf(t) === activeCategory) &&
     (searchQuery === '' || t.name.toLowerCase().includes(searchQuery.toLowerCase()) || t.fontFamily.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 

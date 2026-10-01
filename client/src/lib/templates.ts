@@ -2131,9 +2131,9 @@ TEMPLATES.push(
     letterSpacing: '0.04em',
     lineHeight: 1.3,
     shadow: '0 2px 0 rgba(0,0,0,0.8)',
-    entranceAnimation: 'fade',
+    entranceAnimation: 'glitch',
     animationLevel: 'word',
-    wordActivation: 'scale-up',
+    wordActivation: 'none',
     
     animationSpeed: 1.0,
     captionDepth: 'front',
@@ -2876,6 +2876,37 @@ TEMPLATES.push(
     position: 'center',
   },
 );
+
+// ─── CURATED DYNAMIC SET ─────────────────────────────────────────────────
+// The studio's default "Dynamic" tab: fewer templates, each with a genuinely
+// DISTINCT motion behavior (not color/font swaps). Order = display order.
+export const CURATED_DYNAMIC_IDS: string[] = [
+  'mont-hormozi',   // Hormozi Black — transient word punch, Montserrat 900
+  'beast-cartoon',  // Beast Toon — cartoon bounce pop
+  'kinetic-slam',   // Kinetic Slam — elastic slam
+  'punch-zoom',     // Punch Zoom — punch-in zoom
+  'crimson-box',    // Crimson Box Pop — box snaps behind word
+  'pill-slide',     // Pill Slide — pill tracks the spoken word
+  'karaoke',        // Box Karaoke — yellow box karaoke
+  'karaoke-fill',   // Karaoke Fill — true text flood, no box
+  'neon-arcade',    // Neon Arcade — blur-in neon pop
+  'spring',         // Spring — spring-up pop
+  'butter-up',      // Butter — spring-up, color only (smooth, no pop)
+  'typewriter',     // Typewriter — letter-by-letter stagger
+  'mono-terminal',  // Terminal Pop — snap-in mono punch
+  'mono-ticker',    // Ticker — continuous scroll banner
+  'glitch',         // Glitch — RGB-split tear-in
+  'vhs-tracking',   // VHS Tracking — motion-blur cinematic
+  'depth-titan',    // Titan Behind — giant type behind subject
+  'paper-cut',      // Paper Cut — editorial rise
+  'syne-surge',     // Syne Surge — stacked spring
+  'minimal',        // Minimal — calm, near-static
+];
+
+export function getCuratedTemplates(): TemplateDefinition[] {
+  const byId = new Map(TEMPLATES.map(t => [t.id, t]));
+  return CURATED_DYNAMIC_IDS.map(id => byId.get(id)).filter((t): t is TemplateDefinition => !!t);
+}
 
 export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
