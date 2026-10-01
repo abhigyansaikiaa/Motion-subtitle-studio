@@ -175,6 +175,12 @@ export function CompositedPreview() {
   // read as "loading", not as a mysterious auto-pause.
   const [isBuffering, setIsBuffering] = useState(false);
   const playRequestRef = useRef(0);
+  // When the video errors (e.g. the baked-in auth token expired mid-session) we
+  // rebuild the <video> src with a fresh token. Swapping src makes the browser
+  // fire a native `pause` — without the guard below the video would sit paused
+  // afterwards and look like it "paused itself". This ref remembers the
+  // playback intent across that swap so we can resume on canplay.
+  const resumeAfterRecoveryRef = useRef(false);
 
   // Video playback sync
   useEffect(() => {
@@ -197,22 +203,42 @@ export function CompositedPreview() {
       }
     } else {
       playRequestRef.current++;
+      // An explicit user pause cancels any pending post-recovery resume.
+      resumeAfterRecoveryRef.current = false;
       video.pause();
     }
   }, [isPlaying, videoUrl, setIsPlaying]);
 
   // Native element events → store (element is ground truth)
   const handleNativePlay = useCallback(() => {
+    resumeAfterRecoveryRef.current = false;
     setIsPlaying(true);
     setIsBuffering(false);
   }, [setIsPlaying]);
   const handleNativePause = useCallback(() => {
+    // Ignore the pause the browser fires when WE swap src for token recovery —
+    // playback is resumed on canplay. A genuine pause is never suppressed.
+    if (resumeAfterRecoveryRef.current) return;
     setIsPlaying(false);
     setIsBuffering(false);
   }, [setIsPlaying]);
   const handleNativeWaiting = useCallback(() => setIsBuffering(true), []);
-  const handleNativePlaying = useCallback(() => setIsBuffering(false), []);
-  const handleNativeCanPlay = useCallback(() => setIsBuffering(false), []);
+  const handleNativePlaying = useCallback(() => {
+    resumeAfterRecoveryRef.current = false;
+    setIsBuffering(false);
+  }, []);
+  const handleNativeCanPlay = useCallback(() => {
+    setIsBuffering(false);
+    if (resumeAfterRecoveryRef.current) {
+      resumeAfterRecoveryRef.current = false;
+      const video = videoRef.current;
+      // Only resume if the user still intends to play (they may have paused
+      // while the new source was loading).
+      if (video && useAppStore.getState().isPlaying) {
+        video.play().catch(() => { /* surfaces via native events */ });
+      }
+    }
+  }, []);
   const handleNativeError = useCallback(() => {
     setIsBuffering(false);
     // If the auth token rotated since the URL was baked, media range requests
@@ -220,8 +246,15 @@ export function CompositedPreview() {
     const fresh = useAppStore.getState().token
       || (typeof localStorage !== 'undefined' ? localStorage.getItem('rt_token') : null);
     if (fresh && fresh !== tokenUsedInUrl.current) {
+      // Capture the user's intent from the store (not the element's transient
+      // paused flag — the failure itself may already have paused the element).
+      resumeAfterRecoveryRef.current = useAppStore.getState().isPlaying;
       tokenUsedInUrl.current = fresh;
       setUrlBuster(b => b + 1);
+    } else {
+      // Not rebuilding (no fresher token) — make sure a stale flag can never
+      // swallow a genuine pause later.
+      resumeAfterRecoveryRef.current = false;
     }
   }, []);
 

@@ -84,6 +84,7 @@ export function StudioWorkflow() {
   const [transcribeElapsed, setTranscribeElapsed] = useState(0);
   const [transcribeFailed, setTranscribeFailed] = useState(false);
   const transcribePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const renderPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -98,9 +99,12 @@ export function StudioWorkflow() {
     fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(40_000) }).catch(() => {});
   }, []);
 
-  // Never leak the transcribe poller if the component unmounts mid-transcription
+  // Never leak the transcribe/render pollers if the component unmounts mid-job
   useEffect(() => {
-    return () => { if (transcribePollRef.current) clearInterval(transcribePollRef.current); };
+    return () => {
+      if (transcribePollRef.current) clearInterval(transcribePollRef.current);
+      if (renderPollRef.current) clearInterval(renderPollRef.current);
+    };
   }, []);
 
   // Note: Video events and playback sync are now entirely handled by CompositedPreview.
@@ -223,24 +227,40 @@ export function StudioWorkflow() {
     try {
       setIsProcessing(true); setError(null); setStep(6); setProcessingMsg('RENDERING...');
       const res = await api.render(currentProject.id, editorSegments, activeTemplate, resolution);
+      if (renderPollRef.current) clearInterval(renderPollRef.current);
+      const queuedAt = Date.now();
+      let warnedStuck = false;
       const poll = setInterval(async () => {
         try {
           const jobRes = await api.getJob(res.job.id);
-          if (jobRes.job.status === 'COMPLETED') {
-            clearInterval(poll);
+          const job = jobRes.job;
+          if (job.status === 'COMPLETED') {
+            clearInterval(poll); renderPollRef.current = null;
             const projRes = await api.getProject(currentProject.id);
             setCurrentProject(projRes.project);
             setStep(7); setIsProcessing(false); setProcessingMsg('');
-          } else if (jobRes.job.status === 'FAILED') {
-            clearInterval(poll);
-            setError(jobRes.job.message || 'Render failed');
+          } else if (job.status === 'FAILED') {
+            clearInterval(poll); renderPollRef.current = null;
+            setError(job.message || 'Render failed');
             setStep(5); setIsProcessing(false); setProcessingMsg('');
+          } else {
+            // Surface the worker's own progress message; if the job sits in
+            // QUEUED too long the render worker is offline (the server fires a
+            // backup renderer after 45s) — say so instead of spinning forever.
+            if (job.status === 'QUEUED' && Date.now() - queuedAt > 75000 && !warnedStuck) {
+              warnedStuck = true;
+              setProcessingMsg('RENDER WORKER NOT RESPONDING — BACKUP RENDERER STARTING, THIS TAKES A FEW MINUTES…');
+            } else if (!warnedStuck) {
+              const label = job.message || (job.status === 'QUEUED' ? 'Queued…' : `${job.status}…`);
+              setProcessingMsg(label.toUpperCase());
+            }
           }
         } catch (e) { 
           console.warn('Render status check failed, retrying...', e);
           // Do not clear interval on transient network errors
         }
       }, 3000);
+      renderPollRef.current = poll;
     } catch (err: any) {
       setError(err.message); setStep(5); setIsProcessing(false); setProcessingMsg('');
     }
