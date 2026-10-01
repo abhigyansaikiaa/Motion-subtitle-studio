@@ -13,7 +13,7 @@ const { supabase } = require('../supabase');
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-for-dev';
+const JWT_SECRET = require('../security').getSecret('JWT_SECRET');
 const COST = 1;
 
 if (!supabaseUrl || !supabaseKey) {

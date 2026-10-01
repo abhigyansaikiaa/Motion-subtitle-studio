@@ -76,6 +76,16 @@ async function dispatchGitHubAction(jobId, type) {
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- Security hardening (server/security.js: no extra dependencies) ---
+const { securityHeaders, rateLimit } = require('./security');
+app.disable('x-powered-by'); // don't advertise the stack
+app.use(securityHeaders);
+// General API abuse dampening: 300 req/min per IP (polling loops stay well under)
+app.use('/api', rateLimit({ windowMs: 60 * 1000, max: 300 }));
+// Stricter cap on the expensive endpoints (transcode/render/upload are credit-gated too)
+const heavyLimiter = rateLimit({ windowMs: 60 * 1000, max: 15, message: 'Too many heavy requests, please slow down.' });
+app.use(['/api/transcribe', '/api/render', '/api/compose', '/api/upload'], heavyLimiter);
+
 app.get('/health', (req, res) => {
   res.json({
     status: 'ok',
@@ -99,7 +109,7 @@ const corsOptions = {
   credentials: true
 };
 app.use(cors(corsOptions));
-app.use(express.json({ limit: '50mb' }));
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static(path.join(__dirname, '../public')));
 // Local uploads directory is no longer exposed publicly since media is behind authenticated proxy routes
 
@@ -126,7 +136,19 @@ const storage = multer.diskStorage({
 });
 const upload = multer({
   storage,
-  limits: { fileSize: 200 * 1024 * 1024 } // 200MB
+  limits: { fileSize: 200 * 1024 * 1024 }, // 200MB
+  fileFilter: (req, file, cb) => {
+    // Only video uploads are legitimate here. Check both the client-declared
+    // MIME type and the file extension — either alone can be spoofed, but
+    // together they stop casual malicious uploads (scripts, HTML, zips).
+    const allowedExts = ['.mp4', '.mov', '.webm', '.mkv', '.avi', '.m4v', '.3gp', '.mpeg', '.mpg'];
+    const ext = path.extname(file.originalname || '').toLowerCase();
+    const mimeOk = (file.mimetype || '').startsWith('video/');
+    if (mimeOk && allowedExts.includes(ext)) {
+      return cb(null, true);
+    }
+    cb(new Error('Only video files are accepted (mp4, mov, webm, mkv, avi).'));
+  }
 });
 
 // ============ AUTH ============

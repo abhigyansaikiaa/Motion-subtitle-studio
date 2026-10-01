@@ -100,7 +100,7 @@ async function processJob(jobId, inputPath, outputPath, outputB2Key) {
     setTimeout(() => updateJobState(jobId, 'ENCODING', 70, `Rendering ${job.style} animation`), 3000);
 
     const jwt = require('jsonwebtoken');
-    const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret-in-production-make-it-long-and-random';
+    const JWT_SECRET = require('../security').getSecret('JWT_SECRET');
     const token = jwt.sign({ id: job.userId }, JWT_SECRET, { expiresIn: '1h' });
 
     await renderVideo(inputPath, outputPath, job.segments, job.style, job.projectId, token);

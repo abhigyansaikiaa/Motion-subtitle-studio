@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 
 const rootDir = path.join(__dirname, '..');
-const MEDIA_SECRET = crypto.randomBytes(32).toString('hex');
+const MEDIA_SECRET = require('../security').getSecret('MEDIA_SECRET');
 
 async function init() {
   const uploadDir = path.join(rootDir, 'uploads');

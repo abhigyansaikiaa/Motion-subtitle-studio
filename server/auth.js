@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const fs = require('fs');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret-in-production-make-it-long-and-random';
+const JWT_SECRET = require('./security').getSecret('JWT_SECRET');
 const dbPath = path.join(__dirname, 'app.db.json');
 
 function readDB() {

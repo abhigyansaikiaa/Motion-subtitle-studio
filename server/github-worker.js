@@ -10,7 +10,7 @@ const { renderVideo } = require('./render');
 const { checkCredits, deductCredits, incrementVideosUsed } = require('./credits');
 const jwt = require('jsonwebtoken');
 
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-secret-in-production-make-it-long-and-random';
+const JWT_SECRET = require('./security').getSecret('JWT_SECRET');
 const uploadDir = path.join(__dirname, 'uploads');
 const outputDir = path.join(__dirname, 'outputs');
 

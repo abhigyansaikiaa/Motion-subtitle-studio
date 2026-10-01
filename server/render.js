@@ -1,4 +1,4 @@
-const { exec } = require('child_process');
+const { execFile } = require('child_process');
 const path = require('path');
 const fs = require('fs');
 const ffmpegPath = require('ffmpeg-static');
@@ -10,7 +10,8 @@ const ffprobePath = require('ffprobe-static').path;
  */
 function getVideoMeta(inputPath) {
   return new Promise((resolve, reject) => {
-    exec(`"${ffprobePath}" -v quiet -print_format json -show_format -show_streams "${inputPath}"`, (err, stdout, stderr) => {
+    // execFile (no shell) so paths can never be interpreted as shell syntax
+    execFile(ffprobePath, ['-v', 'quiet', '-print_format', 'json', '-show_format', '-show_streams', inputPath], (err, stdout, stderr) => {
       if (err) {
         return reject(new Error(stderr || err.message));
       }
@@ -45,9 +46,13 @@ function getVideoMeta(inputPath) {
   });
 }
 
-function runCommand(cmd) {
+/**
+ * Run ffmpeg without a shell: arguments are passed as an array so file paths
+ * can never be interpreted as shell syntax (command-injection hardening).
+ */
+function runFfmpeg(args) {
   return new Promise((resolve, reject) => {
-    exec(cmd, { maxBuffer: 1024 * 1024 * 500 }, (err, stdout, stderr) => {
+    execFile(ffmpegPath, args, { maxBuffer: 1024 * 1024 * 500 }, (err, stdout, stderr) => {
       if (err) return reject(new Error(stderr || err.message));
       resolve(stdout);
     });
@@ -95,11 +100,21 @@ async function renderFront(inputPath, outputPath, durationSec, projectId, token,
     if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
       filterGraph = `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in];[scaled_in][1:v]overlay=0:0[final_out]`;
     }
-    const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
-                `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
-                `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
-                `-movflags +faststart -y "${outputPath}"`;
-    await runCommand(cmd);
+    await runFfmpeg([
+      '-i', inputPath,
+      '-c:v', 'libvpx-vp9',
+      '-i', fgTextPath,
+      '-filter_complex', filterGraph,
+      '-map', '[final_out]',
+      '-map', '0:a?',
+      '-c:v', 'libx264',
+      '-preset', 'ultrafast',
+      '-crf', '23',
+      '-c:a', 'aac',
+      '-b:a', '192k',
+      '-movflags', '+faststart',
+      '-y', outputPath
+    ]);
     try { fs.unlinkSync(fgTextPath); } catch(e) {}
     console.log('[RENDER] Sequential VP9 fallback render completed successfully.');
   }
@@ -127,7 +142,8 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
   console.log(`[RENDER] Generating subject mask via Python MediaPipe...`);
   await new Promise((resolve, reject) => {
     const pythonScript = path.join(__dirname, 'segment.py');
-    exec(`python "${pythonScript}" "${inputPath}" "${maskPath}"`, (err, stdout, stderr) => {
+    // execFile: no shell, paths passed as discrete arguments
+    execFile('python', [pythonScript, inputPath, maskPath], (err, stdout, stderr) => {
       if (err) return reject(new Error(stderr || err.message));
       resolve();
     });
@@ -154,12 +170,24 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
     ].join(';');
   }
 
-  const cmd = `"${ffmpegPath}" -i "${inputPath}" -c:v libvpx-vp9 -i "${bgTextPath}" -i "${maskPath}" -c:v libvpx-vp9 -i "${fgTextPath}" ` +
-              `-filter_complex "${filterGraph}" -map "[final_out]" -map 0:a? ` +
-              `-c:v libx264 -preset ultrafast -crf 23 -c:a aac -b:a 192k ` +
-              `-movflags +faststart -y "${outputPath}"`;
-
-  await runCommand(cmd);
+  await runFfmpeg([
+    '-i', inputPath,
+    '-c:v', 'libvpx-vp9',
+    '-i', bgTextPath,
+    '-i', maskPath,
+    '-c:v', 'libvpx-vp9',
+    '-i', fgTextPath,
+    '-filter_complex', filterGraph,
+    '-map', '[final_out]',
+    '-map', '0:a?',
+    '-c:v', 'libx264',
+    '-preset', 'ultrafast',
+    '-crf', '23',
+    '-c:a', 'aac',
+    '-b:a', '192k',
+    '-movflags', '+faststart',
+    '-y', outputPath
+  ]);
 
   // Cleanup temp files
   try {
