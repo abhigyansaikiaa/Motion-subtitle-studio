@@ -1,61 +1,92 @@
 import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
+
+const COLS: { head: string; links: { label: string; href: string }[] }[] = [
+  {
+    head: 'Product',
+    links: [
+      { label: 'Studio', href: '#/studio' },
+      { label: 'Styles', href: '#templates' },
+      { label: 'Editor', href: '#editor' },
+      { label: 'Pricing', href: '#pricing' },
+    ],
+  },
+  {
+    head: 'Workflow',
+    links: [
+      { label: 'Upload', href: '#how-it-works' },
+      { label: 'Transcribe', href: '#how-it-works' },
+      { label: 'Render', href: '#how-it-works' },
+    ],
+  },
+  {
+    head: 'Company',
+    links: [
+      { label: 'Principles', href: '#features' },
+      { label: 'FAQ', href: '#faq' },
+    ],
+  },
+];
 
 export function FooterSection() {
   return (
-    <footer className="w-full bg-surface-container-lowest pt-32 pb-12 px-6 relative overflow-hidden">
-      <div className="max-w-[90rem] mx-auto flex flex-col md:flex-row justify-between gap-16 relative z-10 border-b border-border/10 pb-24">
-        
-        {/* Brand Column */}
-        <div className="flex flex-col gap-6 md:w-1/3">
-          <div className="flex items-center gap-2 text-on-surface">
-            <span className="font-editorial font-bold text-4xl tracking-tighter uppercase leading-none">
-              MOTION<br/>SUBTITLE
-            </span>
+    <footer className="w-full bg-background text-foreground border-t border-foreground/15 overflow-hidden">
+      <div className="max-w-[100rem] mx-auto px-6 md:px-10 pt-20 md:pt-28">
+        <div className="grid md:grid-cols-[1fr_2fr] gap-16 pb-20 md:pb-28">
+          <div>
+            <p className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/45 mb-6">
+              [ Motion Subtitle Studio ]
+            </p>
+            <p className="text-foreground/55 font-grotesk leading-relaxed max-w-xs">
+              The word-level caption engine for creators who care how every
+              syllable lands.
+            </p>
+            <a
+              href="#/studio"
+              className="mt-8 inline-flex items-center gap-2 font-grotesk font-semibold text-sm uppercase tracking-widest border-b border-foreground/40 pb-1 hover:border-foreground transition-colors"
+            >
+              Open the studio <ArrowUpRight className="w-4 h-4" />
+            </a>
           </div>
-          <p className="text-muted-foreground max-w-sm leading-relaxed font-grotesk text-lg">
-            The premium video caption editor designed for tactile kinetic typography. Build dynamic cinematic experiences directly in your browser.
-          </p>
-        </div>
-
-        {/* Links Columns */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:w-2/3 border-t-2 border-l-2 border-border/20 pt-8 pl-8">
-          <div className="flex flex-col gap-4">
-            <h4 className="font-editorial text-xl font-bold tracking-tighter text-on-surface uppercase mb-4">Product</h4>
-            <a href="#/studio" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Studio</a>
-            <a href="#templates" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Templates</a>
-            <a href="#pricing" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Pricing</a>
-          </div>
-          
-          <div className="flex flex-col gap-4">
-            <h4 className="font-editorial text-xl font-bold tracking-tighter text-on-surface uppercase mb-4">Company</h4>
-            <a href="#about" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">About</a>
-            <a href="#blog" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Blog</a>
-            <a href="#careers" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Careers</a>
-          </div>
-          
-          <div className="flex flex-col gap-4">
-            <h4 className="font-editorial text-xl font-bold tracking-tighter text-on-surface uppercase mb-4">Resources</h4>
-            <a href="#help" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Help</a>
-            <a href="#tutorials" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Tutorials</a>
-            <a href="#api" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">API</a>
-          </div>
-          
-          <div className="flex flex-col gap-4">
-            <h4 className="font-editorial text-xl font-bold tracking-tighter text-on-surface uppercase mb-4">Social</h4>
-            <a href="#twitter" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Twitter (X)</a>
-            <a href="#instagram" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">Insta</a>
-            <a href="#youtube" className="text-muted-foreground hover:text-primary text-sm font-bold uppercase tracking-widest transition-colors">YouTube</a>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-10">
+            {COLS.map(c => (
+              <div key={c.head}>
+                <h4 className="font-mono text-[11px] tracking-[0.25em] uppercase text-foreground/40 mb-6">
+                  {c.head}
+                </h4>
+                <ul className="space-y-4">
+                  {c.links.map(l => (
+                    <li key={l.label}>
+                      <a
+                        href={l.href}
+                        className="font-grotesk text-sm uppercase tracking-widest text-foreground/65 hover:text-foreground transition-colors"
+                      >
+                        {l.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-      
-      <div className="max-w-[90rem] mx-auto mt-12 flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
-        <div className="text-muted-foreground text-[10px] font-bold tracking-widest uppercase">
-          © {new Date().getFullYear()} Motion Subtitle Studio. All rights reserved.
+
+      {/* Giant wordmark */}
+      <div className="px-2 select-none" aria-hidden>
+        <div className="font-editorial font-extrabold uppercase leading-[0.8] tracking-tight text-center whitespace-nowrap text-[11.5vw] text-foreground/[0.92]">
+          Motion Subtitle
         </div>
-        <div className="flex gap-8 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
-          <a href="#privacy" className="hover:text-primary transition-colors">Privacy Policy</a>
-          <a href="#terms" className="hover:text-primary transition-colors">Terms of Service</a>
+      </div>
+
+      <div className="border-t border-foreground/15 mt-6">
+        <div className="max-w-[100rem] mx-auto px-6 md:px-10 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
+            © {new Date().getFullYear()} Motion Subtitle Studio
+          </span>
+          <span className="font-mono text-[10px] tracking-[0.25em] uppercase text-foreground/40">
+            set in Syne & Jakarta — rendered with care
+          </span>
         </div>
       </div>
     </footer>

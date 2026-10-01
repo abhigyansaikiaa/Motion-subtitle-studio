@@ -57,6 +57,34 @@
   --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Syne', ui-sans-serif, system-ui, sans-serif;
   --font-serif: 'Syne', ui-sans-serif, Georgia, serif;
+  /* Aliases used across marketing + studio components */
+  --font-editorial: 'Syne', ui-sans-serif, system-ui, sans-serif;
+  --font-grotesk: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
+
+  /* ─── Motion ─── */
+  --animate-marquee: marquee 42s linear infinite;
+  --animate-caption-pop: caption-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes caption-pop {
+    0% { transform: scale(0.55); opacity: 0; }
+    60% { transform: scale(1.14); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+}
+
+/* Outlined display type — darkroom signature */
+@utility text-stroke {
+  -webkit-text-stroke: 1.5px color-mix(in srgb, currentColor 40%, transparent);
+  color: transparent;
+}
+
+@utility text-stroke-thin {
+  -webkit-text-stroke: 1px color-mix(in srgb, currentColor 30%, transparent);
+  color: transparent;
 }
 
 @layer base {
@@ -76,6 +104,7 @@
   }
   .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
   .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
+  ::selection { background: #EFEFEF; color: #0A0A0A; }
 }
 
 ::-webkit-scrollbar { display: none; }

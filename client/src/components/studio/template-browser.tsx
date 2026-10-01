@@ -5,7 +5,10 @@ import { cn } from '../../lib/utils';
 import { Check, Flame } from 'lucide-react';
 
 // Map layoutType → category label
-function categoryOf(t: { layoutType: string }): string {
+function categoryOf(t: { layoutType: string; category?: string }): string {
+  // Prefer the template's own category (e.g. 'Viral') when declared,
+  // otherwise derive a bucket from the layout type.
+  if (t.category) return t.category;
   switch (t.layoutType) {
     case 'editorial':
     case 'hero-micro':
@@ -30,7 +33,7 @@ function categoryOf(t: { layoutType: string }): string {
   }
 }
 
-const ALL_CATS = ['All', 'Editorial', 'Inline', 'Stacked', 'Poster', 'Dynamic', 'Cinematic'];
+const ALL_CATS = ['All', 'Viral', 'Editorial', 'Inline', 'Stacked', 'Poster', 'Dynamic', 'Cinematic', 'MOGRT'];
 
 export function TemplateBrowser() {
   const selectedStyleId    = useAppStore(s => s.selectedStyleId);

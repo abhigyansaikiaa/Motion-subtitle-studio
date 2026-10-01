@@ -1,24 +1,30 @@
 import React from 'react';
 import { Navbar } from '../components/marketing/navbar';
-import { HeroShowcase } from '../components/ui/hero-showcase';
-import { 
-  FeaturesSection, 
-  HowItWorksSection, 
-  TemplateShowcase, 
+import { LenisHero } from '../components/marketing/lenis-hero';
+import { TemplateMarquee } from '../components/marketing/template-marquee';
+import {
+  FeaturesSection,
+  HowItWorksSection,
+  TemplateShowcase,
+  EditorShowcase,
+  WordLevelSection,
   PricingSection,
-  FAQSection 
+  FAQSection,
 } from '../components/marketing/marketing-sections';
 import { FooterSection } from '../components/ui/footer-section';
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground antialiased">
       <Navbar />
       <main>
-        <HeroShowcase />
+        <LenisHero />
+        <TemplateMarquee />
         <FeaturesSection />
         <HowItWorksSection />
         <TemplateShowcase />
+        <EditorShowcase />
+        <WordLevelSection />
         <PricingSection />
         <FAQSection />
       </main>
