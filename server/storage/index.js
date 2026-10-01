@@ -30,5 +30,26 @@ module.exports = {
   getPresignedUploadUrl: async (remoteKey, contentType, expiresInSeconds) => await getProvider().getPresignedUploadUrl(remoteKey, contentType, expiresInSeconds),
   getStream: async (remoteKey, range) => await getProvider().getStream(remoteKey, range),
   deleteFile: async (remoteKey) => await getProvider().deleteFile(remoteKey),
+  supportsMultipart: () => getProvider().supportsMultipart === true,
+  createMultipartUpload: async (remoteKey, contentType) => {
+    const p = getProvider();
+    if (typeof p.createMultipartUpload !== 'function') throw new Error('Multipart upload not supported by storage provider');
+    return p.createMultipartUpload(remoteKey, contentType);
+  },
+  getMultipartPartUploadUrl: async (remoteKey, uploadId, partNumber, expiresInSeconds) => {
+    const p = getProvider();
+    if (typeof p.getMultipartPartUploadUrl !== 'function') throw new Error('Multipart upload not supported by storage provider');
+    return p.getMultipartPartUploadUrl(remoteKey, uploadId, partNumber, expiresInSeconds);
+  },
+  completeMultipartUpload: async (remoteKey, uploadId) => {
+    const p = getProvider();
+    if (typeof p.completeMultipartUpload !== 'function') throw new Error('Multipart upload not supported by storage provider');
+    return p.completeMultipartUpload(remoteKey, uploadId);
+  },
+  abortMultipartUpload: async (remoteKey, uploadId) => {
+    const p = getProvider();
+    if (typeof p.abortMultipartUpload !== 'function') return; // best-effort
+    return p.abortMultipartUpload(remoteKey, uploadId);
+  },
   get type() { return process.env.STORAGE_PROVIDER; }
 };

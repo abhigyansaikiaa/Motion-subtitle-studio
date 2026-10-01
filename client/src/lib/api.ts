@@ -23,6 +23,176 @@ async function fetchApi<T>(path: string, options: RequestInit = {}): Promise<T> 
   return res.json();
 }
 
+const MULTIPART_THRESHOLD_BYTES = 25 * 1024 * 1024; // files above this use parallel multipart
+const MULTIPART_PART_SIZE = 10 * 1024 * 1024;      // 10MB parts (R2 minimum is 5MB except last)
+const MULTIPART_CONCURRENCY = 5;                   // parallel part uploads
+const MULTIPART_PART_RETRIES = 3;
+
+function sleep(ms: number) {
+  return new Promise<void>((resolve) => setTimeout(resolve, ms));
+}
+
+// PUT a blob to a presigned URL with progress, no fixed timeout, and a
+// stall detector (aborts only after 60s of zero bytes moved).
+function putBlobWithProgress(
+  url: string,
+  blob: Blob,
+  contentType: string,
+  onChunkProgress?: (loaded: number) => void
+): Promise<void> {
+  return new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url, true);
+    xhr.setRequestHeader('Content-Type', contentType);
+
+    const STALL_LIMIT_MS = 60_000;
+    let lastProgressAt = Date.now();
+    let settled = false;
+    let stallTimer: ReturnType<typeof setInterval>;
+    const settle = (fn: () => void) => {
+      if (settled) return;
+      settled = true;
+      clearInterval(stallTimer);
+      fn();
+    };
+    stallTimer = setInterval(() => {
+      if (Date.now() - lastProgressAt > STALL_LIMIT_MS) {
+        xhr.abort();
+        settle(() => reject(new Error('Upload stalled — your connection dropped. Please retry.')));
+      }
+    }, 5_000);
+
+    xhr.upload.addEventListener('progress', (e) => {
+      lastProgressAt = Date.now();
+      if (onChunkProgress) onChunkProgress(e.loaded);
+    });
+
+    xhr.onload = () => settle(() => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new Error(`Upload failed (HTTP ${xhr.status})`));
+    });
+    xhr.onerror = () => settle(() => reject(new Error('Network error during upload')));
+    xhr.onabort = () => settle(() => reject(new Error('Upload cancelled')));
+    xhr.send(blob);
+  });
+}
+
+async function finalizeUpload(key: string, videoUuid: string, filename: string) {
+  const finalizeRes = await fetchApi<{ projectId: string, b2Key: string }>('/api/upload/finalize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, videoUuid, filename })
+  });
+  return { projectId: finalizeRes.projectId, videoId: finalizeRes.b2Key };
+}
+
+// Single-PUT direct upload (small files, or providers without multipart).
+async function uploadVideoSinglePut(file: File, onProgress?: (p: number) => void) {
+  const presignedRes = await fetchApi<{ url: string, key: string, videoUuid: string, safeFilename: string }>('/api/upload/presigned-url', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ filename: file.name, contentType: file.type || 'video/mp4' })
+  });
+
+  await putBlobWithProgress(presignedRes.url, file, file.type || 'video/mp4', (loaded) => {
+    if (onProgress) onProgress(Math.round((loaded / file.size) * 100));
+  });
+
+  return finalizeUpload(presignedRes.key, presignedRes.videoUuid, presignedRes.safeFilename);
+}
+
+// Parallel multipart direct upload (large files): 10MB parts, 5 at a time,
+// each part retried independently. The server collects ETags via ListParts,
+// so the browser never needs ETag CORS exposure.
+async function uploadVideoMultipart(file: File, onProgress?: (p: number) => void) {
+  let init: { key: string, videoUuid: string, safeFilename: string, uploadId: string };
+  try {
+    init = await fetchApi<{ key: string, videoUuid: string, safeFilename: string, uploadId: string }>('/api/upload/multipart/init', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ filename: file.name, contentType: file.type || 'video/mp4' })
+    });
+  } catch (err) {
+    if (err instanceof Error && /not supported/i.test(err.message)) {
+      throw new Error('MULTIPART_UNSUPPORTED');
+    }
+    throw err;
+  }
+  const { key, videoUuid, safeFilename, uploadId } = init;
+  const contentType = file.type || 'video/mp4';
+
+  const totalParts = Math.ceil(file.size / MULTIPART_PART_SIZE);
+  const partLoaded = new Array<number>(totalParts).fill(0);
+  const report = () => {
+    if (onProgress) {
+      const done = partLoaded.reduce((a, b) => a + b, 0);
+      onProgress(Math.round((done / file.size) * 100));
+    }
+  };
+
+  let nextPart = 1;
+  let firstError: unknown = null;
+
+  async function uploadOnePart(partNumber: number): Promise<void> {
+    const start = (partNumber - 1) * MULTIPART_PART_SIZE;
+    const chunk = file.slice(start, Math.min(start + MULTIPART_PART_SIZE, file.size));
+    let lastErr: unknown = null;
+    for (let attempt = 0; attempt < MULTIPART_PART_RETRIES; attempt++) {
+      try {
+        const { url } = await fetchApi<{ url: string }>('/api/upload/multipart/part-url', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ key, uploadId, partNumber })
+        });
+        await putBlobWithProgress(url, chunk, contentType, (loaded) => {
+          partLoaded[partNumber - 1] = loaded;
+          report();
+        });
+        partLoaded[partNumber - 1] = chunk.size;
+        report();
+        return;
+      } catch (err) {
+        lastErr = err;
+        partLoaded[partNumber - 1] = 0;
+        await sleep(1000 * (attempt + 1));
+      }
+    }
+    throw lastErr;
+  }
+
+  async function worker(): Promise<void> {
+    while (nextPart <= totalParts && !firstError) {
+      const partNumber = nextPart++;
+      try {
+        await uploadOnePart(partNumber);
+      } catch (err) {
+        firstError = err;
+        return;
+      }
+    }
+  }
+
+  await Promise.all(Array.from({ length: Math.min(MULTIPART_CONCURRENCY, totalParts) }, () => worker()));
+
+  if (firstError) {
+    // Best-effort cleanup of the dangling multipart upload server-side.
+    fetchApi('/api/upload/multipart/abort', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key, uploadId })
+    }).catch(() => { /* ignore */ });
+    throw firstError;
+  }
+
+  await fetchApi('/api/upload/multipart/complete', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, uploadId })
+  });
+
+  return finalizeUpload(key, videoUuid, safeFilename);
+}
+
 export const api = {
   // Auth
   login: (email: string, password: string) =>
@@ -46,76 +216,21 @@ export const api = {
   getProject: (id: string) => fetchApi<{ project: Project }>('/api/projects/' + id),
   deleteProject: (id: string) => fetchApi<{ success: boolean }>('/api/projects/' + id, { method: 'DELETE' }),
 
-  // Upload
+  // Upload — large files go via parallel multipart (5 x 10MB parts at a time,
+  // straight to R2), small files via single PUT. Falls back to single PUT
+  // when the storage provider doesn't support multipart.
   uploadVideo: async (file: File, onProgress?: (p: number) => void) => {
-    // 1. Get presigned URL
-    const presignedRes = await fetchApi<{ url: string, key: string, videoUuid: string, safeFilename: string }>('/api/upload/presigned-url', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ filename: file.name, contentType: file.type || 'video/mp4' })
-    });
-
-    // 2. Upload directly to R2 using XMLHttpRequest (for progress)
-    await new Promise<void>((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('PUT', presignedRes.url, true);
-      // Don't set Authorization header for R2, it uses the presigned URL credentials
-      xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
-
-      // No fixed timeout: large videos on slow connections legitimately take
-      // many minutes (a 200MB file needs ~9 Mbps sustained to fit in 3 min).
-      // The presigned URL itself expires after 1 hour, which bounds the upload.
-      // Instead, abort only if the connection stalls with zero progress.
-      const STALL_LIMIT_MS = 60_000;
-      let lastProgressAt = Date.now();
-      let settled = false;
-      let stallTimer: ReturnType<typeof setInterval>;
-      const settle = (fn: () => void) => {
-        if (settled) return;
-        settled = true;
-        clearInterval(stallTimer);
-        fn();
-      };
-      stallTimer = setInterval(() => {
-        if (Date.now() - lastProgressAt > STALL_LIMIT_MS) {
-          xhr.abort();
-          settle(() => reject(new Error('Upload stalled — your connection dropped. Please retry.')));
+    if (file.size > MULTIPART_THRESHOLD_BYTES) {
+      try {
+        return await uploadVideoMultipart(file, onProgress);
+      } catch (err) {
+        if (err instanceof Error && err.message === 'MULTIPART_UNSUPPORTED') {
+          return await uploadVideoSinglePut(file, onProgress);
         }
-      }, 5_000);
-
-      xhr.upload.addEventListener('progress', (e) => {
-        lastProgressAt = Date.now();
-        if (e.lengthComputable && onProgress) {
-          onProgress(Math.round((e.loaded / e.total) * 100));
-        }
-      });
-
-      xhr.onload = () => settle(() => {
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve();
-        } else {
-          reject(new Error('Direct upload failed'));
-        }
-      });
-
-      xhr.onerror = () => settle(() => reject(new Error('Network error during upload')));
-      xhr.onabort = () => settle(() => reject(new Error('Upload cancelled')));
-
-      xhr.send(file); // Send file directly, not as FormData
-    });
-
-    // 3. Finalize upload metadata
-    const finalizeRes = await fetchApi<{ projectId: string, b2Key: string }>('/api/upload/finalize', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        key: presignedRes.key,
-        videoUuid: presignedRes.videoUuid,
-        filename: presignedRes.safeFilename
-      })
-    });
-
-    return { projectId: finalizeRes.projectId, videoId: finalizeRes.b2Key };
+        throw err;
+      }
+    }
+    return await uploadVideoSinglePut(file, onProgress);
   },
 
   // Transcribe — force=true resets a row wedged in TRANSCRIBING/QUEUED by a dead worker

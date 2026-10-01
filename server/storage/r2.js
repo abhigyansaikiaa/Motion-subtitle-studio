@@ -1,4 +1,4 @@
-const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, HeadBucketCommand } = require('@aws-sdk/client-s3');
+const { S3Client, PutObjectCommand, GetObjectCommand, DeleteObjectCommand, HeadBucketCommand, CreateMultipartUploadCommand, UploadPartCommand, CompleteMultipartUploadCommand, AbortMultipartUploadCommand, ListPartsCommand } = require('@aws-sdk/client-s3');
 const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 const fs = require('fs');
 
@@ -115,6 +115,69 @@ async function deleteFile(remoteKey) {
   }));
 }
 
+// ---------------------------------------------------------------------------
+// Multipart upload (parallel, resumable-friendly). Used for large video
+// uploads: the browser PUTs each part directly to R2 and the server only
+// signs URLs + completes the upload. ETags are collected server-side via
+// ListParts so the browser never needs to read ETag response headers
+// (avoids bucket CORS expose-headers configuration).
+// ---------------------------------------------------------------------------
+async function createMultipartUpload(remoteKey, contentType) {
+  const res = await s3Client.send(new CreateMultipartUploadCommand({
+    Bucket: bucketName,
+    Key: remoteKey,
+    ContentType: contentType || 'application/octet-stream'
+  }));
+  return res.UploadId;
+}
+
+async function getMultipartPartUploadUrl(remoteKey, uploadId, partNumber, expiresInSeconds = 3600) {
+  const command = new UploadPartCommand({
+    Bucket: bucketName,
+    Key: remoteKey,
+    UploadId: uploadId,
+    PartNumber: partNumber
+  });
+  return getSignedUrl(s3Client, command, { expiresIn: expiresInSeconds });
+}
+
+async function completeMultipartUpload(remoteKey, uploadId) {
+  const parts = [];
+  let partNumberMarker;
+  for (;;) {
+    const res = await s3Client.send(new ListPartsCommand({
+      Bucket: bucketName,
+      Key: remoteKey,
+      UploadId: uploadId,
+      PartNumberMarker: partNumberMarker,
+      MaxParts: 1000
+    }));
+    for (const p of (res.Parts || [])) {
+      parts.push({ PartNumber: p.PartNumber, ETag: p.ETag });
+    }
+    if (!res.IsTruncated) break;
+    partNumberMarker = res.NextPartNumberMarker;
+  }
+  parts.sort((a, b) => a.PartNumber - b.PartNumber);
+  if (parts.length === 0) {
+    throw new Error('No uploaded parts found for multipart completion');
+  }
+  await s3Client.send(new CompleteMultipartUploadCommand({
+    Bucket: bucketName,
+    Key: remoteKey,
+    UploadId: uploadId,
+    MultipartUpload: { Parts: parts }
+  }));
+}
+
+async function abortMultipartUpload(remoteKey, uploadId) {
+  await s3Client.send(new AbortMultipartUploadCommand({
+    Bucket: bucketName,
+    Key: remoteKey,
+    UploadId: uploadId
+  }));
+}
+
 module.exports = {
   init,
   uploadFile,
@@ -122,5 +185,10 @@ module.exports = {
   getPresignedUrl,
   getPresignedUploadUrl,
   getStream,
-  deleteFile
+  deleteFile,
+  supportsMultipart: true,
+  createMultipartUpload,
+  getMultipartPartUploadUrl,
+  completeMultipartUpload,
+  abortMultipartUpload
 };

@@ -97,5 +97,6 @@ module.exports = {
   getPresignedUrl,
   getStream,
   deleteFile,
-  verifySignature
+  verifySignature,
+  supportsMultipart: false // local disk provider: clients use single PUT
 };

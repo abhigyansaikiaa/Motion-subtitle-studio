@@ -25,13 +25,14 @@ R2_BUCKET = os.environ.get("R2_BUCKET", "motion-subtitle-media")
 
 # ---------------------------------------------------------------------------
 # Speed config — inference knobs (env-overridable; no code change needed to tune).
-#   WHISPER_MODEL         tiny | base | small | medium | large-v3 | distil-*
+#   WHISPER_MODEL         tiny (default: ~5x faster than base, solid for clear
+#                         speech) | base | small | medium | large-v3 | distil-*
 #   WHISPER_COMPUTE_TYPE  int8 (fastest on CPU) | float16 | float32
 #   WHISPER_BEAM_SIZE     1 = greedy, fastest (default) | 5 = beam, slightly better
 #   WHISPER_VAD_FILTER    true = skip silence via Silero VAD (default) | false
 #   WHISPER_CPU_THREADS / WHISPER_NUM_WORKERS  parallelism (default 4 / 2)
 # ---------------------------------------------------------------------------
-WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "base")
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "tiny")
 WHISPER_COMPUTE_TYPE = os.environ.get("WHISPER_COMPUTE_TYPE", "int8")
 WHISPER_BEAM_SIZE = int(os.environ.get("WHISPER_BEAM_SIZE", "1"))
 WHISPER_VAD_FILTER = os.environ.get("WHISPER_VAD_FILTER", "true").lower() in ("1", "true", "yes")
@@ -101,7 +102,7 @@ else:
 
 # ---------------------------------------------------------------------------
 # Model is loaded ONCE at process startup and stays warm.
-# Config comes from the WHISPER_* env knobs above (defaults: base / cpu /
+# Config comes from the WHISPER_* env knobs above (defaults: tiny / cpu /
 # int8 / 4 threads / 2 workers). The model weights are baked into the Docker
 # image; this call loads from disk — no network download, no cold-start delay.
 # ---------------------------------------------------------------------------
@@ -181,7 +182,7 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v7_fast"}
+    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v8_tiny_multipart"}
 
 
 # ---------------------------------------------------------------------------

@@ -84,7 +84,10 @@ app.use(securityHeaders);
 app.use('/api', rateLimit({ windowMs: 60 * 1000, max: 300 }));
 // Stricter cap on the expensive endpoints (transcode/render/upload are credit-gated too)
 const heavyLimiter = rateLimit({ windowMs: 60 * 1000, max: 15, message: 'Too many heavy requests, please slow down.' });
-app.use(['/api/transcribe', '/api/render', '/api/compose', '/api/upload'], heavyLimiter);
+// NOTE: heavyLimiter is applied per-route (see /api/upload, /api/transcribe,
+// /api/compose, /api/render below) rather than by path prefix, so that
+// high-volume lightweight endpoints like /api/upload/multipart/part-url
+// (one call per 10MB chunk) are NOT throttled by it.
 
 app.get('/health', (req, res) => {
   res.json({
@@ -203,7 +206,7 @@ app.get('/api/styles', (req, res) => {
 });
 
 // Step 1: Upload -> Create Project
-app.post('/api/upload', authMiddleware, upload.single('video'), async (req, res) => {
+app.post('/api/upload', authMiddleware, heavyLimiter, upload.single('video'), async (req, res) => {
   try {
     if (!req.file) return res.status(400).json({ error: 'No video uploaded' });
 
@@ -275,8 +278,89 @@ app.post('/api/upload/finalize', authMiddleware, async (req, res) => {
   }
 });
 
+// Step 1c: Multipart Direct Upload (large files) — browser uploads 10MB
+// parts in parallel straight to R2; the server only signs URLs and completes.
+// NOTE: part-url is intentionally NOT heavy-limited (one call per chunk).
+app.post('/api/upload/multipart/init', authMiddleware, async (req, res) => {
+  try {
+    if (!storageProvider.supportsMultipart()) {
+      return res.status(501).json({ error: 'Multipart upload not supported by storage provider' });
+    }
+    const { filename, contentType } = req.body;
+    if (!filename) return res.status(400).json({ error: 'Filename is required' });
+
+    const videosUsed = req.user.videos_used || 0;
+    if (videosUsed >= 3) {
+      return res.status(403).json({ error: 'Video limit reached (3 videos max per account)' });
+    }
+
+    const { randomUUID } = require('crypto');
+    const videoUuid = randomUUID();
+    const safeFilename = filename.replace(/[^a-zA-Z0-9.\-_]/g, '_');
+    const key = `uploads/${req.user.id}/${videoUuid}/${safeFilename}`;
+
+    const uploadId = await storageProvider.createMultipartUpload(key, contentType || 'application/octet-stream');
+    res.json({ success: true, key, videoUuid, safeFilename, uploadId });
+  } catch (err) {
+    console.error('[API] /api/upload/multipart/init error:', err);
+    res.status(500).json({ error: 'Failed to start multipart upload' });
+  }
+});
+
+app.post('/api/upload/multipart/part-url', authMiddleware, async (req, res) => {
+  try {
+    const { key, uploadId, partNumber } = req.body;
+    if (!key || !uploadId || partNumber == null) {
+      return res.status(400).json({ error: 'Missing required parameters' });
+    }
+    const n = parseInt(partNumber, 10);
+    if (!Number.isInteger(n) || n < 1 || n > 10000) {
+      return res.status(400).json({ error: 'Invalid part number' });
+    }
+    // Constrain the key to this user's own upload namespace.
+    if (!key.startsWith(`uploads/${req.user.id}/`)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    const url = await storageProvider.getMultipartPartUploadUrl(key, uploadId, n, 3600);
+    res.json({ success: true, url });
+  } catch (err) {
+    console.error('[API] /api/upload/multipart/part-url error:', err);
+    res.status(500).json({ error: 'Failed to sign part URL' });
+  }
+});
+
+app.post('/api/upload/multipart/complete', authMiddleware, async (req, res) => {
+  try {
+    const { key, uploadId } = req.body;
+    if (!key || !uploadId) return res.status(400).json({ error: 'Missing required parameters' });
+    if (!key.startsWith(`uploads/${req.user.id}/`)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    await storageProvider.completeMultipartUpload(key, uploadId);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[API] /api/upload/multipart/complete error:', err);
+    res.status(500).json({ error: 'Failed to complete multipart upload' });
+  }
+});
+
+app.post('/api/upload/multipart/abort', authMiddleware, async (req, res) => {
+  try {
+    const { key, uploadId } = req.body;
+    if (!key || !uploadId) return res.status(400).json({ error: 'Missing required parameters' });
+    if (!key.startsWith(`uploads/${req.user.id}/`)) {
+      return res.status(403).json({ error: 'Forbidden' });
+    }
+    await storageProvider.abortMultipartUpload(key, uploadId);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('[API] /api/upload/multipart/abort error:', err);
+    res.status(500).json({ error: 'Failed to abort multipart upload' });
+  }
+});
+
 // Step 2: Trigger Transcription
-app.post('/api/transcribe', authMiddleware, async (req, res) => {
+app.post('/api/transcribe', authMiddleware, heavyLimiter, async (req, res) => {
   try {
     const { projectId, force } = req.body;
     if (!projectId) return res.status(400).json({ error: 'projectId required' });
@@ -342,7 +426,7 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
 
 
 // Step 4: Compose
-app.post('/api/compose', authMiddleware, async (req, res) => {
+app.post('/api/compose', authMiddleware, heavyLimiter, async (req, res) => {
   try {
     const { projectId, styleId } = req.body;
     
@@ -382,7 +466,7 @@ app.post('/api/compose', authMiddleware, async (req, res) => {
 // Step 6: Render final captioned video
 const { getJob, getActiveJobForUser, createJob, processJob, COST } = require('./engine/JobEngine');
 
-app.post('/api/render', authMiddleware, async (req, res) => {
+app.post('/api/render', authMiddleware, heavyLimiter, async (req, res) => {
   try {
     const { projectId, template, resolution = 'original' } = req.body;
     
