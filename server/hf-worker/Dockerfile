@@ -26,14 +26,17 @@ RUN pip install --no-cache-dir -r requirements.txt
 # model loads from the local cache — no network download, no cold-start delay.
 # Both base (default quality) and tiny (WHISPER_MODEL=tiny speed option) are
 # baked so switching models never triggers a download at runtime.
-RUN python -c "\
-from faster_whisper import WhisperModel; \
-print('Downloading faster-whisper base (int8) weights...'); \
-WhisperModel('base', device='cpu', compute_type='int8'); \
-print('Downloading faster-whisper tiny (int8) weights...'); \
-WhisperModel('tiny', device='cpu', compute_type='int8'); \
-print('Model weights cached successfully.') \
-"
+#
+# NOTE: weights are fetched with snapshot_download (pure file download, tiny
+# RAM footprint). Instantiating WhisperModel here instead would LOAD each
+# model into RAM (~1GB for base) and OOM-kill the Docker build on Render.
+RUN python - <<'EOF'
+from huggingface_hub import snapshot_download
+for m in ('base', 'tiny'):
+    print(f'Downloading faster-whisper {m} weights...', flush=True)
+    snapshot_download(f'Systran/faster-whisper-{m}')
+print('Model weights cached successfully.')
+EOF
 
 # Copy application code (changes here do NOT invalidate the model cache layer above).
 COPY --chown=user . $HOME/app
@@ -41,4 +44,5 @@ COPY --chown=user . $HOME/app
 # Expose port 7860 (Hugging Face Spaces default).
 EXPOSE 7860
 
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "7860"]
+# Respect Render's $PORT when present; fall back to 7860 for Hugging Face Spaces.
+CMD ["sh", "-c", "uvicorn app:app --host 0.0.0.0 --port ${PORT:-7860}"]
