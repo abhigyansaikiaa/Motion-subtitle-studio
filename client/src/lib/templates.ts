@@ -2889,6 +2889,7 @@ export const CURATED_DYNAMIC_IDS: string[] = [
   'pill-slide',     // Pill Slide — pill tracks the spoken word
   'karaoke',        // Box Karaoke — yellow box karaoke
   'karaoke-fill',   // Karaoke Fill — true text flood, no box
+  'dynamic-marker', // Dynamic Marker — handwritten ink, yellow marker sweeps the spoken word
   'neon-arcade',    // Neon Arcade — blur-in neon pop
   'spring',         // Spring — spring-up pop
   'butter-up',      // Butter — spring-up, color only (smooth, no pop)
