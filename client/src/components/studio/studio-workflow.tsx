@@ -80,6 +80,9 @@ export function StudioWorkflow() {
   const [isDragging, setIsDragging] = useState(false);
   const [activeTool, setActiveTool] = useState<ToolId>('templates');
   const [resolution, setResolution] = useState('original');
+  const [transcribeElapsed, setTranscribeElapsed] = useState(0);
+  const [transcribeFailed, setTranscribeFailed] = useState(false);
+  const transcribePollRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -92,6 +95,11 @@ export function StudioWorkflow() {
   useEffect(() => {
     const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
     fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(40_000) }).catch(() => {});
+  }, []);
+
+  // Never leak the transcribe poller if the component unmounts mid-transcription
+  useEffect(() => {
+    return () => { if (transcribePollRef.current) clearInterval(transcribePollRef.current); };
   }, []);
 
   // Note: Video events and playback sync are now entirely handled by CompositedPreview.
@@ -128,22 +136,40 @@ export function StudioWorkflow() {
   };
 
   // ─── TRANSCRIBE ───────────────────────────────────────────────────────────
+  // 20-minute client-side ceiling: a stuck worker job surfaces a retry
+  // instead of an eternal spinner.
+  const TRANSCRIBE_TIMEOUT_MS = 20 * 60 * 1000;
+
   const handleTranscribe = async () => {
     if (!currentProject) return;
     try {
-      setIsProcessing(true); setError(null); setProcessingMsg('PREPARING AUDIO...');
+      setIsProcessing(true); setError(null); setTranscribeFailed(false);
+      setTranscribeElapsed(0); setProcessingMsg('PREPARING AUDIO...');
       await api.transcribe(currentProject.id, transcribeLang);
+      const startedAt = Date.now();
+      if (transcribePollRef.current) clearInterval(transcribePollRef.current);
       const poll = setInterval(async () => {
+        const elapsedSec = Math.floor((Date.now() - startedAt) / 1000);
+        setTranscribeElapsed(elapsedSec);
+        if (Date.now() - startedAt > TRANSCRIBE_TIMEOUT_MS) {
+          clearInterval(poll); transcribePollRef.current = null;
+          setIsProcessing(false); setProcessingMsg('');
+          setTranscribeFailed(true);
+          setError('Transcription is taking unusually long — the worker may have stalled. Your video is safe. Please retry.');
+          return;
+        }
         try {
           const res = await api.getProject(currentProject.id);
           const status = res.project.status;
-          
+
           if (status === 'TRANSCRIBING') {
-            setProcessingMsg('TRANSCRIBING...');
+            setProcessingMsg(`TRANSCRIBING... ${elapsedSec}s`);
+          } else if ((status as string) === 'QUEUED_RENDER_TRANS') {
+            setProcessingMsg(`QUEUED — STARTING WORKER... ${elapsedSec}s`);
           }
-          
+
           if (['TRANSCRIBED', 'READY_TO_EDIT', 'COMPLETED'].includes(status)) {
-            clearInterval(poll);
+            clearInterval(poll); transcribePollRef.current = null;
             setProcessingMsg('CAPTIONS READY');
             try {
               const composeRes = await api.compose(currentProject.id, selectedStyleId);
@@ -162,17 +188,20 @@ export function StudioWorkflow() {
             }
             setIsProcessing(false); setProcessingMsg('');
           } else if (status === 'FAILED') {
-            clearInterval(poll);
-            setError(res.project.error || 'Transcription failed');
+            clearInterval(poll); transcribePollRef.current = null;
+            const metaErr = (res.project.segments as any)?._meta?.last_error;
+            setError(metaErr ? `Transcription failed: ${metaErr}` : (res.project.error || 'Transcription failed. Please retry.'));
+            setTranscribeFailed(true);
             setIsProcessing(false); setProcessingMsg('');
           }
-        } catch (e) { 
-          console.warn('Status check failed, retrying...', e); 
+        } catch (e) {
+          console.warn('Status check failed, retrying...', e);
           // Do not clear interval on transient network errors
         }
       }, 2000);
+      transcribePollRef.current = poll;
     } catch (err: any) {
-      setError(err.message); setIsProcessing(false); setProcessingMsg('');
+      setError(err.message); setIsProcessing(false); setProcessingMsg(''); setTranscribeFailed(true);
     }
   };
 
@@ -375,13 +404,16 @@ export function StudioWorkflow() {
               {isProcessing ? (
                 <div className="flex flex-col items-center gap-3">
                   <ShiningText text={processingMsg || 'Analyzing...'} className="font-editorial text-2xl font-medium tracking-tight text-primary" />
+                  <span className="font-grotesk text-[10px] text-muted-foreground tracking-widest uppercase">
+                    {transcribeElapsed}s elapsed — you can leave this tab open
+                  </span>
                 </div>
               ) : (
                 <button
                   onClick={handleTranscribe}
                   className="w-full px-8 py-4 font-grotesk font-medium text-sm bg-on-surface text-surface-container-lowest tracking-wide hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors rounded-md"
                 >
-                  Generate Captions
+                  {transcribeFailed ? 'Retry Transcription' : 'Generate Captions'}
                 </button>
               )}
             </div>

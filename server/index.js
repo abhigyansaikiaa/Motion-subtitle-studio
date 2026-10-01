@@ -264,16 +264,13 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
     if (project.userId !== req.user.id) return res.status(403).json({ error: 'Unauthorized project access' });
 
     // Duplicate transcription protection
-    if (project.status === 'QUEUED_TRANSCRIPTION' || project.status === 'TRANSCRIBING') {
+    if (project.status === 'QUEUED_RENDER_TRANS' || project.status === 'TRANSCRIBING') {
       return res.json({ success: true, projectId: project.id, status: project.status });
     }
     if (project.status === 'TRANSCRIBED' || project.status === 'READY_TO_EDIT' || project.status === 'COMPLETED') {
       return res.json({ success: true, projectId: project.id, status: project.status });
     }
 
-    const b2Key = project.videoId;
-    const inputFilename = path.basename(b2Key);
-    const videoPath = path.join(uploadDir, inputFilename);
     const language = req.body.language || null;
 
     // Delegate transcription to the HF Python Worker polling for QUEUED_RENDER_TRANS
@@ -282,7 +279,9 @@ app.post('/api/transcribe', authMiddleware, async (req, res) => {
 
     // Wake up the HF Space if a URL is provided
     const hfWorkerUrl = process.env.HF_TRANSCRIPTION_WORKER_URL;
-    if (hfWorkerUrl) {
+    if (!hfWorkerUrl) {
+      console.warn('[HF WAKE] HF_TRANSCRIPTION_WORKER_URL is not set — sleeping workers will NOT be woken; queued transcriptions may stall until the worker polls.');
+    } else {
       setImmediate(() => {
         console.log(`[HF WAKE] ping requested`);
         const controller = new AbortController();
