@@ -468,12 +468,17 @@ const { getJob, getActiveJobForUser, createJob, processJob, COST } = require('./
 
 app.post('/api/render', authMiddleware, heavyLimiter, async (req, res) => {
   try {
-    const { projectId, template, resolution = 'original' } = req.body;
+    const { projectId, template, resolution = 'original', segments: bodySegments } = req.body;
     
     const project = await getProject(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     if (project.userId !== req.user.id) return res.status(403).json({ error: 'Unauthorized project access' });
-    if (!project.segments || !template) return res.status(400).json({ error: 'Project is missing composition state or template' });
+    // Prefer the freshly-edited segments sent by the client (word-editor edits
+    // live only in frontend state) over the copy stored at transcription time.
+    const segments = (Array.isArray(bodySegments) && bodySegments.length > 0)
+      ? bodySegments
+      : project.segments;
+    if (!segments || !template) return res.status(400).json({ error: 'Project is missing composition state or template' });
 
     template.resolution = resolution;
 
@@ -498,9 +503,18 @@ app.post('/api/render', authMiddleware, heavyLimiter, async (req, res) => {
     }
 
     await updateProjectStatus(projectId, 'RENDERING', { customOverrides: JSON.stringify(template) });
+
+    // Persist the edited segments so the project, the job row, and the worker
+    // all render the same (edited) captions.
+    try {
+      const { saveComposition } = require('./engine/ProjectEngine');
+      await saveComposition(projectId, segments, template.id || template.styleId || 'custom');
+    } catch (saveErr) {
+      console.warn('[API] saveComposition before render failed (continuing with job segments):', saveErr.message);
+    }
     
     // We pass videoUuid to createJob instead of filename
-    job = await createJob(req.user.id, projectId, project.videoUuid, project.segments, template);
+    job = await createJob(req.user.id, projectId, project.videoUuid, segments, template);
     
     await attachRenderJob(projectId, job.id, null, null);
     
@@ -533,6 +547,29 @@ app.post('/api/render', authMiddleware, heavyLimiter, async (req, res) => {
           });
       });
     }
+
+    // FALLBACK: if the HF worker hasn't claimed the job within 45s (service
+    // down, asleep, or URL not configured), dispatch the GitHub Actions backup
+    // renderer. Both workers claim atomically (status must be QUEUED), so at
+    // most one of them ever processes the job. No-op unless GITHUB_PAT and
+    // GITHUB_REPO are configured.
+    const fallbackJobId = job.id;
+    setTimeout(async () => {
+      try {
+        const { supabase: sb } = require('./supabase');
+        const { data: j } = await sb.from('jobs').select('status').eq('id', fallbackJobId).single();
+        if (j && j.status === 'QUEUED') {
+          console.log(`[RENDER FALLBACK] job ${fallbackJobId} still QUEUED after 45s — dispatching GitHub Action backup`);
+          await sb.from('jobs').update({
+            message: 'Primary render worker unreachable — starting backup renderer (takes a few minutes)…',
+            updated_at: new Date().toISOString()
+          }).eq('id', fallbackJobId);
+          await dispatchGitHubAction(fallbackJobId, 'render');
+        }
+      } catch (e) {
+        console.error('[RENDER FALLBACK] check failed:', e.message);
+      }
+    }, 45000).unref();
 
     res.json({ job });
   } catch (err) {
