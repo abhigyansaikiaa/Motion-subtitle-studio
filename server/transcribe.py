@@ -10,6 +10,9 @@ def main():
             sys.exit(1)
 
         import argparse
+        import numpy as np
+        from scipy.io import wavfile
+
         parser = argparse.ArgumentParser()
         parser.add_argument("input_path")
         parser.add_argument("--language", default=None)
@@ -43,14 +46,20 @@ def main():
         transcribe_args = {
             "word_timestamps": True,
             "beam_size": 5,
-            "vad_filter": True,
-            "vad_parameters": {"min_silence_duration_ms": 2000},
             "condition_on_previous_text": True,
         }
         if language and language.lower() != "auto":
             transcribe_args["language"] = language
             
-        segments, info = model.transcribe(input_path, **transcribe_args)
+        # Bypass PyAV completely by loading the WAV file manually
+        # ffmpeg already ensured it's 16kHz, mono, s16le
+        sample_rate, data = wavfile.read(input_path)
+        
+        # Convert to float32 in range [-1.0, 1.0] as expected by Whisper
+        if data.dtype != np.float32:
+            data = data.astype(np.float32) / 32768.0
+
+        segments, info = model.transcribe(data, **transcribe_args)
         
         output = {"segments": []}
         word_count = 0

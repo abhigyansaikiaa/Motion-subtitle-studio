@@ -1,0 +1,42 @@
+{
+  "id": "minimal",
+  "name": "Minimal",
+  "description": "One clean line, soft shadow, no animation at all. The caption that never distracts.",
+  "tags": [
+    "single-line",
+    "clean",
+    "subtle"
+  ],
+  "bestFor": "Cinematic edits, travel films, aesthetic reels",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "92%",
+    "textAlign": "center",
+    "wordsPerLine": 8,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 400,
+    "fontSize": "clamp(17px, 4.2vmin, 34px)",
+    "lineHeight": 1.5,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.02em",
+    "stroke": null,
+    "shadow": "0 1px 6px rgba(0,0,0,0.7)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": null,
+    "past": null,
+    "upcoming": null,
+    "animation": null
+  },
+  "cssClass": "cap-tpl-minimal"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "hype",
+  "name": "Hype",
+  "description": "Maximum energy: the active word explodes bigger in a hot orange-red flash.",
+  "tags": [
+    "word-by-word",
+    "energetic",
+    "bold"
+  ],
+  "bestFor": "Gym clips, sports edits, motivational cuts",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "90%",
+    "textAlign": "center",
+    "wordsPerLine": 2,
+    "window": {
+      "wordsBefore": 1,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Anton', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+    "fontWeight": 400,
+    "fontSize": "clamp(34px, 10vmin, 90px)",
+    "lineHeight": 1.15,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.02em",
+    "stroke": {
+      "width": "2px",
+      "color": "#000000"
+    },
+    "shadow": "0 5px 0 rgba(0,0,0,0.9)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FF4D00",
+      "scale": 1.35
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capPop",
+      "duration": "0.22s",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-hype"
+}

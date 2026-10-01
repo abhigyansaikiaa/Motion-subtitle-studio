@@ -1,0 +1,55 @@
+{
+  "id": "karaoke",
+  "name": "Karaoke",
+  "description": "Teleprompter style: the full line sits on a dark rounded pill, past words dim out and the current word glows.",
+  "tags": [
+    "karaoke",
+    "line",
+    "read-along"
+  ],
+  "bestFor": "Tutorials, sing-alongs, explainers",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "92%",
+    "textAlign": "center",
+    "wordsPerLine": 5,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 600,
+    "fontSize": "clamp(20px, 5.5vmin, 44px)",
+    "lineHeight": 1.4,
+    "color": "#f5f5f5",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 2px 8px rgba(0,0,0,0.6)",
+    "background": "rgba(10,10,14,0.72)",
+    "borderRadius": "16px",
+    "padding": "0.45em 0.8em"
+  },
+  "behavior": {
+    "mode": "karaoke",
+    "active": {
+      "color": "#7DF9FF",
+      "scale": 1.06
+    },
+    "past": {
+      "color": "#f5f5f5",
+      "opacity": 0.35
+    },
+    "upcoming": {
+      "color": "#f5f5f5",
+      "opacity": 0.85
+    },
+    "animation": {
+      "keyframes": "capFadeIn",
+      "duration": "0.25s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-karaoke"
+}

@@ -1,0 +1,61 @@
+{
+  "id": "spring",
+  "name": "Spring",
+  "description": "Playful bounce: every word springs up from below the baseline into the caption window.",
+  "tags": [
+    "word-by-word",
+    "bouncy",
+    "playful"
+  ],
+  "bestFor": "Fun vlogs, upbeat reels, challenges",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 800,
+    "fontSize": "clamp(28px, 8vmin, 72px)",
+    "lineHeight": 1.25,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.01em",
+    "stroke": {
+      "width": "2px",
+      "color": "#000000"
+    },
+    "shadow": "0 4px 0 rgba(0,0,0,0.85)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#A3E635",
+      "scale": 1.15
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capSpringUp",
+      "duration": "0.45s",
+      "easing": "cubic-bezier(0.34, 1.8, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-spring"
+}

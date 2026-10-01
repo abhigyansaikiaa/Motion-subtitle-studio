@@ -1,0 +1,58 @@
+{
+  "id": "gradient",
+  "name": "Gradient",
+  "description": "Living gradient text that shimmers through pink, violet and mint while the active word pops.",
+  "tags": [
+    "word-by-word",
+    "gradient",
+    "colorful"
+  ],
+  "bestFor": "Fashion, aesthetics, creative portfolios",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Anton', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+    "fontWeight": 400,
+    "fontSize": "clamp(30px, 8.5vmin, 78px)",
+    "lineHeight": 1.2,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.02em",
+    "stroke": null,
+    "shadow": "0 3px 12px rgba(0,0,0,0.6)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#ffffff",
+      "scale": 1.18
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capPop",
+      "duration": "0.28s",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-gradient"
+}

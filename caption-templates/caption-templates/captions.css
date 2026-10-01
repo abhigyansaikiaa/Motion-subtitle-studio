@@ -1,0 +1,281 @@
+/* ============================================================
+   Caption Template Pack — captions.css
+   videocaption.ai-style animated caption templates.
+   Dependency-free. vmin-based clamp() font sizes scale to any video.
+   ------------------------------------------------------------
+   Expected HTML structure:
+
+     <div class="cap-stage cap-tpl-<id>">
+       <div class="cap-line">
+         <span class="cap-word">Hello</span>
+         <span class="cap-word is-past">beautiful</span>
+         <span class="cap-word is-active">world</span>
+       </div>
+     </div>
+
+   Drive the animation by toggling .is-past / .is-active on .cap-word
+   (or .is-active on .cap-line for block-mode templates like fade
+   and caption-bar). Set style="--i:N" on each word for per-word
+   animation delays (used by the wave template).
+   ============================================================ */
+
+/* ---------- base ---------- */
+.cap-stage{
+  position:relative;
+  width:100%;
+  aspect-ratio:9/16;
+  overflow:hidden;
+  background:#0b0b10;
+  border-radius:12px;
+}
+.cap-line{
+  position:absolute;
+  text-align:center;
+}
+.cap-word{
+  display:inline-block;
+  transform-origin:center;
+  transition:color .18s ease, opacity .18s ease, transform .18s ease,
+             background-color .18s ease, text-shadow .18s ease;
+  margin:0 .14em;
+  white-space:nowrap;
+}
+.cap-word.is-past{ }
+.cap-word.is-active{ }
+
+
+/* ----- Word by Word (word-by-word) ----- */
+.cap-tpl-word-by-word .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:800;font-size:clamp(28px, 8vmin, 72px);line-height:1.25;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 3px 0 rgba(0,0,0,0.85);text-align:center;}
+.cap-tpl-word-by-word .cap-word{}
+.cap-tpl-word-by-word .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-word-by-word .cap-word.is-active{color:#FFE500;transform:scale(1.18);animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Karaoke (karaoke) ----- */
+.cap-tpl-karaoke .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:92%;font-family:'Inter', sans-serif;font-weight:600;font-size:clamp(20px, 5.5vmin, 44px);line-height:1.4;color:#f5f5f5;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.6);background:rgba(10,10,14,0.72);border-radius:16px;padding:0.45em 0.8em;text-align:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.12);}
+.cap-tpl-karaoke .cap-word{}
+.cap-tpl-karaoke .cap-word.is-past{color:#f5f5f5;opacity:0.35;}
+.cap-tpl-karaoke .cap-word.is-active{color:#7DF9FF;transform:scale(1.06);text-shadow:0 0 12px rgba(125,249,255,0.8);animation:capFadeIn 0.25s ease-out;}
+
+/* ----- Karaoke Fill (karaoke-fill) ----- */
+.cap-tpl-karaoke-fill .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:92%;font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(22px, 6vmin, 48px);line-height:1.4;color:rgba(255,255,255,0.45);text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 6px rgba(0,0,0,0.55);background:rgba(10,10,14,0.6);border-radius:14px;padding:0.4em 0.7em;text-align:center;}
+.cap-tpl-karaoke-fill .cap-word{}
+.cap-tpl-karaoke-fill .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-karaoke-fill .cap-word.is-active{color:#FFE500;transform:scale(1.0);animation:capFillSweep 0.45s linear;}
+.cap-tpl-karaoke-fill .cap-word.is-active{background:linear-gradient(to right,#FFE500 50%,rgba(255,255,255,0.45) 50%);background-size:200% 100%;background-position:100% 0;-webkit-background-clip:text;background-clip:text;color:transparent;animation:capFillSweep 0.45s linear forwards;}
+
+/* ----- Fade (fade) ----- */
+.cap-tpl-fade .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:90%;font-family:'Inter', sans-serif;font-weight:500;font-size:clamp(19px, 5vmin, 40px);line-height:1.45;color:#ffffff;text-transform:none;letter-spacing:0.015em;text-shadow:0 2px 10px rgba(0,0,0,0.65);text-align:center;}
+.cap-tpl-fade .cap-word{}
+.cap-tpl-fade .cap-word.is-past{}
+.cap-tpl-fade .cap-word.is-active{animation:capFadeIn 0.5s ease-out;}
+.cap-tpl-fade .cap-line{opacity:0;}.cap-tpl-fade .cap-line.is-active{animation:capFadeIn 0.5s ease-out forwards;}
+
+/* ----- Spring (spring) ----- */
+.cap-tpl-spring .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:800;font-size:clamp(28px, 8vmin, 72px);line-height:1.25;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 4px 0 rgba(0,0,0,0.85);text-align:center;}
+.cap-tpl-spring .cap-word{}
+.cap-tpl-spring .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-spring .cap-word.is-active{color:#A3E635;transform:scale(1.15);animation:capSpringUp 0.45s cubic-bezier(0.34, 1.8, 0.64, 1);}
+
+/* ----- Hype (hype) ----- */
+.cap-tpl-hype .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(34px, 10vmin, 90px);line-height:1.15;color:#ffffff;text-transform:uppercase;letter-spacing:0.02em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 5px 0 rgba(0,0,0,0.9);text-align:center;}
+.cap-tpl-hype .cap-word{}
+.cap-tpl-hype .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-hype .cap-word.is-active{color:#FF4D00;transform:scale(1.35);text-shadow:0 5px 0 rgba(0,0,0,0.9), 0 0 24px rgba(255,77,0,0.65);animation:capPop 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Hormozi (hormozi) ----- */
+.cap-tpl-hormozi .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(28px, 8vmin, 72px);line-height:1.15;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 4px 0 rgba(0,0,0,0.9);text-align:center;}
+.cap-tpl-hormozi .cap-word{}
+.cap-tpl-hormozi .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-hormozi .cap-word.is-active{color:#FFE500;transform:scale(1.18);animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Minimal (minimal) ----- */
+.cap-tpl-minimal .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:92%;font-family:'Inter', sans-serif;font-weight:400;font-size:clamp(17px, 4.2vmin, 34px);line-height:1.5;color:#ffffff;text-transform:none;letter-spacing:0.02em;text-shadow:0 1px 6px rgba(0,0,0,0.7);text-align:center;}
+.cap-tpl-minimal .cap-word{}
+.cap-tpl-minimal .cap-word.is-past{}
+.cap-tpl-minimal .cap-word.is-active{}
+
+/* ----- Box Highlight (box-highlight) ----- */
+.cap-tpl-box-highlight .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:800;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.35;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 3px 0 rgba(0,0,0,0.85);text-align:center;}
+.cap-tpl-box-highlight .cap-word{}
+.cap-tpl-box-highlight .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-box-highlight .cap-word.is-active{color:#111111;transform:scale(1.12);background:#FFE500;padding:0.02em 0.22em;border-radius:0.18em;-webkit-text-stroke:0;text-shadow:none;box-decoration-break:clone;-webkit-box-decoration-break:clone;animation:capPop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Comic (comic) ----- */
+.cap-tpl-comic .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Bangers', cursive;font-weight:400;font-size:clamp(32px, 9vmin, 80px);line-height:1.2;color:#111111;text-transform:uppercase;letter-spacing:0.03em;text-shadow:4px 4px 0 rgba(0,0,0,1);background:#ffffff;border-radius:18px;padding:0.15em 0.5em;text-align:center;transform:translate(-50%,-50%) rotate(-2deg);border:4px solid #111111;}
+.cap-tpl-comic .cap-word{}
+.cap-tpl-comic .cap-word.is-past{color:#111111;opacity:1.0;}
+.cap-tpl-comic .cap-word.is-active{color:#FF3D00;transform:scale(1.25);animation:capStickerIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Pill (pill) ----- */
+.cap-tpl-pill .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(24px, 7vmin, 64px);line-height:1.5;color:#ffffff;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.7);text-align:center;}
+.cap-tpl-pill .cap-word{}
+.cap-tpl-pill .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-pill .cap-word.is-active{color:#111111;transform:scale(1.1);background:#ffffff;padding:0.02em 0.4em;border-radius:999px;text-shadow:none;box-decoration-break:clone;-webkit-box-decoration-break:clone;animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Script (script) ----- */
+.cap-tpl-script .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;font-family:'Pacifico', cursive;font-weight:400;font-size:clamp(30px, 8.5vmin, 76px);line-height:1.35;color:#ffffff;text-transform:none;letter-spacing:0.01em;text-shadow:0 3px 10px rgba(0,0,0,0.75);text-align:center;}
+.cap-tpl-script .cap-word{}
+.cap-tpl-script .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-script .cap-word.is-active{color:#FFC2D4;transform:scale(1.15);animation:capFadeIn 0.3s ease-out;}
+
+/* ----- Handwritten (handwritten) ----- */
+.cap-tpl-handwritten .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:90%;font-family:'Caveat', cursive;font-weight:700;font-size:clamp(30px, 8.5vmin, 76px);line-height:1.25;color:#FFF8E7;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 6px rgba(0,0,0,0.7);text-align:center;transform:translateX(-50%) rotate(-1.5deg);}
+.cap-tpl-handwritten .cap-word{}
+.cap-tpl-handwritten .cap-word.is-past{color:#FFF8E7;opacity:1.0;}
+.cap-tpl-handwritten .cap-word.is-active{color:#FFD166;transform:scale(1.18);animation:capPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Single Word (single-word) ----- */
+.cap-tpl-single-word .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:92%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(48px, 14vmin, 120px);line-height:1.1;color:#ffffff;text-transform:uppercase;letter-spacing:0.02em;-webkit-text-stroke:3px #000000;paint-order:stroke fill;text-shadow:0 6px 0 rgba(0,0,0,0.9);text-align:center;}
+.cap-tpl-single-word .cap-word{display:none;}
+.cap-tpl-single-word .cap-word.is-past{}
+.cap-tpl-single-word .cap-word.is-active{color:#FFE500;transform:scale(1.0);display:inline-block;animation:capZoomIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);}
+.cap-tpl-single-word .cap-word.is-active{animation:capZoomIn 0.32s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* ----- Neon Glow (neon-glow) ----- */
+.cap-tpl-neon-glow .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:92%;font-family:'Space Grotesk', sans-serif;font-weight:700;font-size:clamp(22px, 6vmin, 52px);line-height:1.4;color:#e8faff;text-transform:uppercase;letter-spacing:0.06em;background:rgba(2,6,12,0.78);border-radius:14px;padding:0.45em 0.8em;text-align:center;border:1px solid rgba(0,245,255,0.28);box-shadow:0 0 24px rgba(0,245,255,0.12), inset 0 0 18px rgba(0,245,255,0.05);}
+.cap-tpl-neon-glow .cap-word{}
+.cap-tpl-neon-glow .cap-word.is-past{color:#e8faff;opacity:0.45;}
+.cap-tpl-neon-glow .cap-word.is-active{color:#00F5FF;transform:scale(1.12);text-shadow:0 0 8px rgba(0,245,255,0.9), 0 0 24px rgba(0,245,255,0.6), 0 0 48px rgba(0,245,255,0.35);animation:capNeonFlicker 0.5s linear;}
+
+/* ----- Gradient (gradient) ----- */
+.cap-tpl-gradient .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(30px, 8.5vmin, 78px);line-height:1.2;color:#ffffff;text-transform:uppercase;letter-spacing:0.02em;text-shadow:0 3px 12px rgba(0,0,0,0.6);text-align:center;}
+.cap-tpl-gradient .cap-word{}
+.cap-tpl-gradient .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-gradient .cap-word.is-active{color:#ffffff;transform:scale(1.18);animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+.cap-tpl-gradient .cap-word{background:linear-gradient(100deg,#ff6ec4,#a855f7,#4ade80,#22d3ee,#ff6ec4);background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:capGradientShift 5s linear infinite;}.cap-tpl-gradient .cap-word.is-active{animation:capGradientShift 5s linear infinite, capPop 0.28s cubic-bezier(0.34,1.56,0.64,1);}
+
+/* ----- Highlighter (highlighter) ----- */
+.cap-tpl-highlighter .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:800;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.5;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 3px 0 rgba(0,0,0,0.85);text-align:center;}
+.cap-tpl-highlighter .cap-word{}
+.cap-tpl-highlighter .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-highlighter .cap-word.is-active{color:#ffffff;transform:scale(1.1);animation:capHighlighterSwipe 0.35s ease-out;}
+.cap-tpl-highlighter .cap-word.is-active{position:relative;z-index:0;}.cap-tpl-highlighter .cap-word.is-active::before{content:"";position:absolute;left:-6%;right:-6%;top:12%;bottom:8%;background:rgba(255,229,0,0.75);z-index:-1;transform:skewX(-8deg);transform-origin:left center;animation:capHighlighterSwipe 0.35s ease-out;}
+
+/* ----- Underline (underline) ----- */
+.cap-tpl-underline .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.6;color:#ffffff;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.7);text-align:center;}
+.cap-tpl-underline .cap-word{}
+.cap-tpl-underline .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-underline .cap-word.is-active{color:#FF6B6B;transform:scale(1.12);animation:capUnderlineSweep 0.3s ease-out;}
+.cap-tpl-underline .cap-word.is-active{position:relative;}.cap-tpl-underline .cap-word.is-active::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-0.12em;height:0.14em;background:#FF6B6B;border-radius:999px;transform-origin:left center;animation:capUnderlineSweep 0.3s ease-out;}
+
+/* ----- Glide (glide) ----- */
+.cap-tpl-glide .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.3;color:#ffffff;text-transform:uppercase;letter-spacing:0.02em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 3px 0 rgba(0,0,0,0.85);text-align:center;overflow:visible;}
+.cap-tpl-glide .cap-word{}
+.cap-tpl-glide .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-glide .cap-word.is-active{color:#7DF9FF;transform:scale(1.1);animation:capGlideIn 0.35s cubic-bezier(0.22, 1, 0.36, 1);}
+
+/* ----- Caption Bar (caption-bar) ----- */
+.cap-tpl-caption-bar .cap-line{position:absolute;bottom:7%;left:50%;transform:translateX(-50%);width:100%;font-family:'Inter', sans-serif;font-weight:600;font-size:clamp(18px, 4.5vmin, 36px);line-height:1.45;color:#ffffff;text-transform:none;letter-spacing:0.01em;background:#000000;border-radius:0;padding:0.55em 1em;text-align:center;left:0;transform:none;bottom:0;width:100%;border-top:3px solid #FFE500;}
+.cap-tpl-caption-bar .cap-word{}
+.cap-tpl-caption-bar .cap-word.is-past{}
+.cap-tpl-caption-bar .cap-word.is-active{animation:capFadeIn 0.4s ease-out;}
+.cap-tpl-caption-bar .cap-line{opacity:0;}.cap-tpl-caption-bar .cap-line.is-active{animation:capFadeIn 0.4s ease-out forwards;}
+
+/* ----- Outline (outline) ----- */
+.cap-tpl-outline .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(30px, 8.5vmin, 78px);line-height:1.2;color:transparent;text-transform:uppercase;letter-spacing:0.03em;-webkit-text-stroke:2px #ffffff;paint-order:stroke fill;text-align:center;}
+.cap-tpl-outline .cap-word{}
+.cap-tpl-outline .cap-word.is-past{color:transparent;opacity:1.0;}
+.cap-tpl-outline .cap-word.is-active{color:#FFE500;transform:scale(1.15);-webkit-text-stroke:2px #FFE500;animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Glitch (glitch) ----- */
+.cap-tpl-glitch .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Space Mono', monospace;font-weight:700;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.3;color:#ffffff;text-transform:uppercase;letter-spacing:0.04em;text-shadow:0 2px 0 rgba(0,0,0,0.8);text-align:center;}
+.cap-tpl-glitch .cap-word{}
+.cap-tpl-glitch .cap-word.is-past{color:#ffffff;opacity:0.85;}
+.cap-tpl-glitch .cap-word.is-active{color:#ffffff;transform:scale(1.1);text-shadow:-3px 0 #ff00ff, 3px 0 #00ffff, 0 2px 0 rgba(0,0,0,0.8);animation:capGlitch 0.4s steps(2, end);}
+
+/* ----- Wave (wave) ----- */
+.cap-tpl-wave .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:90%;font-family:'Inter', sans-serif;font-weight:800;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.6;color:#ffffff;text-transform:uppercase;letter-spacing:0.01em;-webkit-text-stroke:2px #000000;paint-order:stroke fill;text-shadow:0 3px 0 rgba(0,0,0,0.85);text-align:center;}
+.cap-tpl-wave .cap-word{}
+.cap-tpl-wave .cap-word.is-past{color:#ffffff;opacity:1.0;}
+.cap-tpl-wave .cap-word.is-active{color:#FFE500;transform:scale(1.15);animation:capWave 1.4s ease-in-out;}
+.cap-tpl-wave .cap-word{animation:capWave 1.4s ease-in-out infinite;animation-delay:calc(var(--i, 0) * 130ms);}.cap-tpl-wave .cap-word.is-active{animation:capWave 1.4s ease-in-out infinite, capPop 0.28s cubic-bezier(0.34,1.56,0.64,1);animation-delay:calc(var(--i, 0) * 130ms), 0ms;}
+
+/* ----- Sticker (sticker) ----- */
+.cap-tpl-sticker .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Anton', sans-serif;font-weight:400;font-size:clamp(30px, 9vmin, 80px);line-height:1.25;color:#FF4D8D;text-transform:uppercase;letter-spacing:0.02em;-webkit-text-stroke:10px #ffffff;paint-order:stroke fill;text-shadow:6px 6px 0 rgba(0,0,0,1);text-align:center;transform:translate(-50%,-50%) rotate(-3deg);}
+.cap-tpl-sticker .cap-word{}
+.cap-tpl-sticker .cap-word.is-past{color:#FF4D8D;opacity:1.0;}
+.cap-tpl-sticker .cap-word.is-active{color:#FFD400;transform:scale(1.22);animation:capStickerIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Focus Card (focus-card) ----- */
+.cap-tpl-focus-card .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:86%;font-family:'Inter', sans-serif;font-weight:600;font-size:clamp(22px, 6vmin, 52px);line-height:1.5;color:#ffffff;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 8px rgba(0,0,0,0.5);background:rgba(255,255,255,0.1);border-radius:20px;padding:0.6em 0.9em;text-align:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.22);box-shadow:0 12px 40px rgba(0,0,0,0.35);}
+.cap-tpl-focus-card .cap-word{}
+.cap-tpl-focus-card .cap-word.is-past{color:#ffffff;opacity:0.4;}
+.cap-tpl-focus-card .cap-word.is-active{color:#FFE500;transform:scale(1.12);animation:capPop 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);}
+
+/* ----- Pulse (pulse) ----- */
+.cap-tpl-pulse .cap-line{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:88%;font-family:'Inter', sans-serif;font-weight:700;font-size:clamp(26px, 7.5vmin, 68px);line-height:1.4;color:#ffffff;text-transform:none;letter-spacing:0.01em;text-shadow:0 2px 10px rgba(0,0,0,0.65);text-align:center;}
+.cap-tpl-pulse .cap-word{}
+.cap-tpl-pulse .cap-word.is-past{color:#ffffff;opacity:0.9;}
+.cap-tpl-pulse .cap-word.is-active{color:#C4B5FD;transform:scale(1.1);text-shadow:0 0 18px rgba(196,181,253,0.7);animation:capPulse 1.6s ease-in-out;}
+.cap-tpl-pulse .cap-word.is-active{animation:capPulse 1.6s ease-in-out infinite;}
+
+/* ---------- keyframes ---------- */
+@keyframes capPop{
+  0%{transform:scale(0.6);}
+  60%{transform:scale(1.22);}
+  100%{transform:scale(1.18);}
+}
+@keyframes capSpringUp{
+  0%{transform:translateY(0.9em) scale(0.7);opacity:0;}
+  60%{transform:translateY(-0.12em) scale(1.12);opacity:1;}
+  80%{transform:translateY(0.04em) scale(0.98);}
+  100%{transform:translateY(0) scale(1.15);}
+}
+@keyframes capFadeIn{
+  0%{opacity:0;transform:translateY(0.25em);}
+  100%{opacity:1;transform:translateY(0);}
+}
+@keyframes capGlideIn{
+  0%{transform:translateX(1.4em);opacity:0;}
+  100%{transform:translateX(0) scale(1.1);opacity:1;}
+}
+@keyframes capWave{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-0.32em);}
+}
+@keyframes capGlitch{
+  0%{transform:translate(0);clip-path:inset(0 0 0 0);}
+  20%{transform:translate(-3px,2px);clip-path:inset(10% 0 55% 0);}
+  40%{transform:translate(3px,-2px);clip-path:inset(60% 0 5% 0);}
+  60%{transform:translate(-2px,-1px);clip-path:inset(30% 0 40% 0);}
+  80%{transform:translate(2px,1px);clip-path:inset(5% 0 75% 0);}
+  100%{transform:translate(0) scale(1.1);clip-path:inset(0 0 0 0);}
+}
+@keyframes capNeonFlicker{
+  0%{opacity:0.2;}
+  15%{opacity:1;}
+  30%{opacity:0.4;}
+  45%{opacity:1;}
+  60%{opacity:0.7;}
+  100%{opacity:1;}
+}
+@keyframes capGradientShift{
+  0%{background-position:0% 50%;}
+  100%{background-position:300% 50%;}
+}
+@keyframes capHighlighterSwipe{
+  0%{transform:skewX(-8deg) scaleX(0);}
+  100%{transform:skewX(-8deg) scaleX(1);}
+}
+@keyframes capUnderlineSweep{
+  0%{transform:scaleX(0);}
+  100%{transform:scaleX(1);}
+}
+@keyframes capPulse{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.14);}
+}
+@keyframes capStickerIn{
+  0%{transform:scale(0.5) rotate(6deg);opacity:0;}
+  100%{transform:scale(1.22) rotate(0deg);opacity:1;}
+}
+@keyframes capFillSweep{
+  0%{background-position:100% 0;}
+  100%{background-position:0% 0;}
+}
+@keyframes capZoomIn{
+  0%{transform:scale(0.4);opacity:0;}
+  60%{transform:scale(1.12);opacity:1;}
+  100%{transform:scale(1);opacity:1;}
+}
+

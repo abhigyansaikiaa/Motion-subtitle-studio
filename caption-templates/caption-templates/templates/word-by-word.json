@@ -1,0 +1,61 @@
+{
+  "id": "word-by-word",
+  "name": "Word by Word",
+  "description": "The classic viral caption: white words with a black stroke, the active word flashes yellow and pops.",
+  "tags": [
+    "word-by-word",
+    "bold",
+    "viral"
+  ],
+  "bestFor": "Talking-head reels, TikToks, Shorts",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 800,
+    "fontSize": "clamp(28px, 8vmin, 72px)",
+    "lineHeight": 1.25,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.01em",
+    "stroke": {
+      "width": "2px",
+      "color": "#000000"
+    },
+    "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FFE500",
+      "scale": 1.18
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capPop",
+      "duration": "0.28s",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-word-by-word"
+}

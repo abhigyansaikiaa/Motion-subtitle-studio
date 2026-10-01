@@ -1,6 +1,8 @@
 import sys
 import json
 import traceback
+import numpy as np
+from scipy.io import wavfile
 import faster_whisper
 import time
 
@@ -40,8 +42,6 @@ def main():
             transcribe_args = {
                 "word_timestamps": True,
                 "beam_size": 5,
-                "vad_filter": True,
-                "vad_parameters": {"min_silence_duration_ms": 2000},
                 "condition_on_previous_text": True,
             }
             
@@ -49,7 +49,16 @@ def main():
                 transcribe_args["language"] = language
 
             t0 = time.time()
-            segments_iter, info = model.transcribe(input_path, **transcribe_args)
+            
+            try:
+                sample_rate, data = wavfile.read(input_path)
+                if data.dtype != np.float32:
+                    data = data.astype(np.float32) / 32768.0
+            except Exception as e:
+                print(json.dumps({"id": job_id, "error": f"Failed to read WAV file: {str(e)}"}), flush=True)
+                continue
+
+            segments_iter, info = model.transcribe(data, **transcribe_args)
             
             segments = []
             word_count = 0

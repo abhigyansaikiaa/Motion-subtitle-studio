@@ -1,0 +1,61 @@
+{
+  "id": "wave",
+  "name": "Wave",
+  "description": "Every word rides a continuous bouncing wave across the caption line. Impossible to ignore.",
+  "tags": [
+    "word-by-word",
+    "wave",
+    "playful"
+  ],
+  "bestFor": "Party clips, kids content, energetic intros",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "90%",
+    "textAlign": "center",
+    "wordsPerLine": 4,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 800,
+    "fontSize": "clamp(26px, 7.5vmin, 68px)",
+    "lineHeight": 1.6,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.01em",
+    "stroke": {
+      "width": "2px",
+      "color": "#000000"
+    },
+    "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FFE500",
+      "scale": 1.15
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capWave",
+      "duration": "1.4s",
+      "easing": "ease-in-out"
+    }
+  },
+  "cssClass": "cap-tpl-wave"
+}

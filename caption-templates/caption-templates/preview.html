@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Caption Template Pack — Preview</title>
+<link rel="stylesheet" href="captions.css">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800&family=Pacifico&family=Space+Grotesk:wght@700&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0e0e13;color:#f2f2f5;font-family:'Inter',system-ui,sans-serif;padding:32px 20px}
+  header{max-width:1200px;margin:0 auto 28px}
+  header h1{font-size:clamp(24px,4vmin,40px);font-weight:800;letter-spacing:-0.02em}
+  header h1 span{color:#FFE500}
+  header p{color:#a1a1aa;margin-top:8px;max-width:640px;line-height:1.6}
+  .grid{max-width:1200px;margin:0 auto;display:grid;gap:22px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+  .card{background:#16161d;border:1px solid #26262e;border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+  .card .stage-wrap{padding:14px 14px 0}
+  .card .cap-stage{max-height:330px;border-radius:10px;background:
+    radial-gradient(circle at 50% 30%, #1d1d28 0%, #0b0b10 70%)}
+  .card .meta{padding:14px 16px 18px}
+  .card .meta h2{font-size:17px;font-weight:700}
+  .card .meta .best{font-size:12px;color:#a1a1aa;margin-top:4px}
+  .card .meta p{font-size:13px;color:#c9c9d1;margin-top:8px;line-height:1.55}
+  .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .tags span{font-size:11px;background:#23232c;color:#d4d4d8;border-radius:999px;padding:3px 10px}
+  footer{max-width:1200px;margin:36px auto 0;color:#71717a;font-size:12px;line-height:1.7}
+  footer code{background:#1c1c24;padding:2px 6px;border-radius:6px;color:#e4e4e7}
+</style>
+</head>
+<body>
+<header>
+  <h1>Caption Template Pack <span>— 26 styles</span></h1>
+  <p>Live preview of every template. Each card cycles the sample caption
+  <em>&ldquo;Create viral captions for every video you post&rdquo;</em> so you can see the animation in motion.</p>
+</header>
+<div class="grid" id="grid"></div>
+<footer>
+  Styles come from <code>captions.css</code> and metadata from <code>templates.json</code>.
+  To use a template on your site, copy its <code>cssClass</code> onto a
+  <code>.cap-stage</code> element and toggle <code>.is-active</code> /
+  <code>.is-past</code> on the word spans — see <code>README.md</code>.
+</footer>
+<script>
+let TEMPLATES = null;
+async function loadTemplates(){
+  try{
+    const r = await fetch('templates.json');
+    if(!r.ok) throw new Error('fetch failed');
+    TEMPLATES = await r.json();
+  }catch(e){
+    TEMPLATES = EMBEDDED_TEMPLATES; /* file:// fallback */
+  }
+  render();
+}
+const SAMPLE = "Create viral captions for every video you post".split(" ");
+function render(){
+  const grid = document.getElementById('grid');
+  TEMPLATES.forEach((t, ti) => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const stage = document.createElement('div');
+    stage.className = 'cap-stage ' + t.cssClass;
+    const perLine = t.layout.wordsPerLine || SAMPLE.length;
+    const mode = t.behavior.mode;
+    const lineEls = [];
+    if(mode === 'single-word'){
+      const line = document.createElement('div');
+      line.className = 'cap-line';
+      SAMPLE.forEach((w,i)=>{
+        const s = document.createElement('span');
+        s.className = 'cap-word'; s.textContent = w; s.style.setProperty('--i', i);
+        line.appendChild(s);
+      });
+      stage.appendChild(line); lineEls.push(line);
+    }else{
+      for(let s=0; s<SAMPLE.length; s+=perLine){
+        const line = document.createElement('div');
+        line.className = 'cap-line';
+        /* stack multiple lines: offset each extra line downward */
+        if(s>0) line.style.marginTop = ((s/perLine)*2.4) + 'em';
+        SAMPLE.slice(s, s+perLine).forEach((w,i)=>{
+          const sp = document.createElement('span');
+          sp.className = 'cap-word'; sp.textContent = w;
+          sp.style.setProperty('--i', s+i);
+          line.appendChild(sp);
+        });
+        stage.appendChild(line); lineEls.push(line);
+      }
+    }
+    const wrap = document.createElement('div');
+    wrap.className = 'stage-wrap'; wrap.appendChild(stage); card.appendChild(wrap);
+    const meta = document.createElement('div');
+    meta.className = 'meta';
+    meta.innerHTML = '<h2>'+t.name+'</h2><div class="best">'+t.bestFor+'</div><p>'+
+      t.description+'</p><div class="tags">'+t.tags.map(x=>'<span>'+x+'</span>').join('')+'</div>';
+    card.appendChild(meta);
+    grid.appendChild(card);
+
+    const words = Array.from(stage.querySelectorAll('.cap-word'));
+    let idx = 0;
+    function tick(){
+      if(mode === 'single-word'){
+        words.forEach((w,i)=> w.classList.toggle('is-active', i===idx));
+      }else if(mode === 'block'){
+        lineEls.forEach(l=>l.classList.add('is-active'));
+        words.forEach((w,i)=>{ w.classList.toggle('is-active', i===idx); w.classList.toggle('is-past', i<idx); });
+      }else{
+        /* word-by-word + karaoke: cycle active/past across all words */
+        words.forEach((w,i)=>{
+          w.classList.toggle('is-active', i===idx);
+          w.classList.toggle('is-past', i<idx);
+        });
+        lineEls.forEach(l=>l.classList.add('is-active'));
+      }
+      idx = (idx+1) % words.length;
+    }
+    tick();
+    setInterval(tick, 550);
+  });
+}
+document.addEventListener('DOMContentLoaded', loadTemplates);
+</script>
+<script>
+const EMBEDDED_TEMPLATES = [
+  {
+    "id": "word-by-word",
+    "name": "Word by Word",
+    "description": "The classic viral caption: white words with a black stroke, the active word flashes yellow and pops.",
+    "tags": [
+      "word-by-word",
+      "bold",
+      "viral"
+    ],
+    "bestFor": "Talking-head reels, TikToks, Shorts",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 800,
+      "fontSize": "clamp(28px, 8vmin, 72px)",
+      "lineHeight": 1.25,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.18
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-word-by-word"
+  },
+  {
+    "id": "karaoke",
+    "name": "Karaoke",
+    "description": "Teleprompter style: the full line sits on a dark rounded pill, past words dim out and the current word glows.",
+    "tags": [
+      "karaoke",
+      "line",
+      "read-along"
+    ],
+    "bestFor": "Tutorials, sing-alongs, explainers",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "92%",
+      "textAlign": "center",
+      "wordsPerLine": 5,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 600,
+      "fontSize": "clamp(20px, 5.5vmin, 44px)",
+      "lineHeight": 1.4,
+      "color": "#f5f5f5",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 8px rgba(0,0,0,0.6)",
+      "background": "rgba(10,10,14,0.72)",
+      "borderRadius": "16px",
+      "padding": "0.45em 0.8em"
+    },
+    "behavior": {
+      "mode": "karaoke",
+      "active": {
+        "color": "#7DF9FF",
+        "scale": 1.06
+      },
+      "past": {
+        "color": "#f5f5f5",
+        "opacity": 0.35
+      },
+      "upcoming": {
+        "color": "#f5f5f5",
+        "opacity": 0.85
+      },
+      "animation": {
+        "keyframes": "capFadeIn",
+        "duration": "0.25s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-karaoke"
+  },
+  {
+    "id": "karaoke-fill",
+    "name": "Karaoke Fill",
+    "description": "The active word fills with a bright color that sweeps left to right, like a karaoke highlighter.",
+    "tags": [
+      "karaoke",
+      "fill",
+      "highlight"
+    ],
+    "bestFor": "Lyric videos, language learning, kids content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "92%",
+      "textAlign": "center",
+      "wordsPerLine": 5,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(22px, 6vmin, 48px)",
+      "lineHeight": 1.4,
+      "color": "rgba(255,255,255,0.45)",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 6px rgba(0,0,0,0.55)",
+      "background": "rgba(10,10,14,0.6)",
+      "borderRadius": "14px",
+      "padding": "0.4em 0.7em"
+    },
+    "behavior": {
+      "mode": "karaoke",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.0
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "rgba(255,255,255,0.45)",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capFillSweep",
+        "duration": "0.45s",
+        "easing": "linear"
+      }
+    },
+    "cssClass": "cap-tpl-karaoke-fill"
+  },
+  {
+    "id": "fade",
+    "name": "Fade",
+    "description": "Clean and calm: each caption block gently fades in as a whole. No word popping, just smooth.",
+    "tags": [
+      "block",
+      "minimal",
+      "smooth"
+    ],
+    "bestFor": "Interviews, documentaries, calm narration",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "90%",
+      "textAlign": "center",
+      "wordsPerLine": 6,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 500,
+      "fontSize": "clamp(19px, 5vmin, 40px)",
+      "lineHeight": 1.45,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.015em",
+      "stroke": null,
+      "shadow": "0 2px 10px rgba(0,0,0,0.65)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "block",
+      "active": null,
+      "past": null,
+      "upcoming": null,
+      "animation": {
+        "keyframes": "capFadeIn",
+        "duration": "0.5s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-fade"
+  },
+  {
+    "id": "spring",
+    "name": "Spring",
+    "description": "Playful bounce: every word springs up from below the baseline into the caption window.",
+    "tags": [
+      "word-by-word",
+      "bouncy",
+      "playful"
+    ],
+    "bestFor": "Fun vlogs, upbeat reels, challenges",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 800,
+      "fontSize": "clamp(28px, 8vmin, 72px)",
+      "lineHeight": 1.25,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 4px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#A3E635",
+        "scale": 1.15
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capSpringUp",
+        "duration": "0.45s",
+        "easing": "cubic-bezier(0.34, 1.8, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-spring"
+  },
+  {
+    "id": "hype",
+    "name": "Hype",
+    "description": "Maximum energy: the active word explodes bigger in a hot orange-red flash.",
+    "tags": [
+      "word-by-word",
+      "energetic",
+      "bold"
+    ],
+    "bestFor": "Gym clips, sports edits, motivational cuts",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "90%",
+      "textAlign": "center",
+      "wordsPerLine": 2,
+      "window": {
+        "wordsBefore": 1,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(34px, 10vmin, 90px)",
+      "lineHeight": 1.15,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.02em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 5px 0 rgba(0,0,0,0.9)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FF4D00",
+        "scale": 1.35
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.22s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-hype"
+  },
+  {
+    "id": "hormozi",
+    "name": "Hormozi",
+    "description": "Large stacked uppercase captions in Alex Hormozi's style \u2014 the active word pops in yellow.",
+    "tags": [
+      "word-by-word",
+      "bold",
+      "viral"
+    ],
+    "bestFor": "Talking-head reels, business content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(28px, 8vmin, 72px)",
+      "lineHeight": 1.15,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 4px 0 rgba(0,0,0,0.9)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.18
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-hormozi"
+  },
+  {
+    "id": "minimal",
+    "name": "Minimal",
+    "description": "One clean line, soft shadow, no animation at all. The caption that never distracts.",
+    "tags": [
+      "single-line",
+      "clean",
+      "subtle"
+    ],
+    "bestFor": "Cinematic edits, travel films, aesthetic reels",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "92%",
+      "textAlign": "center",
+      "wordsPerLine": 8,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(17px, 4.2vmin, 34px)",
+      "lineHeight": 1.5,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.02em",
+      "stroke": null,
+      "shadow": "0 1px 6px rgba(0,0,0,0.7)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": null,
+      "past": null,
+      "upcoming": null,
+      "animation": null
+    },
+    "cssClass": "cap-tpl-minimal"
+  },
+  {
+    "id": "box-highlight",
+    "name": "Box Highlight",
+    "description": "The spoken word gets stamped inside a solid yellow box with black text \u2014 impossible to miss.",
+    "tags": [
+      "word-by-word",
+      "highlight",
+      "bold"
+    ],
+    "bestFor": "Key takeaways, listicles, sales videos",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 800,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.35,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#111111",
+        "background": "#FFE500",
+        "scale": 1.12
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.25s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-box-highlight"
+  },
+  {
+    "id": "comic",
+    "name": "Comic",
+    "description": "Chunky comic-book lettering on a white speech bubble, tilted for attitude. POW!",
+    "tags": [
+      "word-by-word",
+      "playful",
+      "bubble"
+    ],
+    "bestFor": "Comedy skits, memes, kid-friendly videos",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Bangers', cursive",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Bangers&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(32px, 9vmin, 80px)",
+      "lineHeight": 1.2,
+      "color": "#111111",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.03em",
+      "stroke": null,
+      "shadow": "4px 4px 0 rgba(0,0,0,1)",
+      "background": "#ffffff",
+      "borderRadius": "18px",
+      "padding": "0.15em 0.5em"
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FF3D00",
+        "scale": 1.25
+      },
+      "past": {
+        "color": "#111111",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#111111",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capStickerIn",
+        "duration": "0.3s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-comic"
+  },
+  {
+    "id": "pill",
+    "name": "Pill",
+    "description": "The active word slips into a clean white pill badge while the rest stays ghosted white.",
+    "tags": [
+      "word-by-word",
+      "badge",
+      "modern"
+    ],
+    "bestFor": "Tech explainers, product demos, SaaS reels",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(24px, 7vmin, 64px)",
+      "lineHeight": 1.5,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 8px rgba(0,0,0,0.7)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#111111",
+        "background": "#ffffff",
+        "scale": 1.1
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.6
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-pill"
+  },
+  {
+    "id": "script",
+    "name": "Script",
+    "description": "Elegant flowing script lettering \u2014 lifestyle, beauty and vlog captions with a personal touch.",
+    "tags": [
+      "word-by-word",
+      "elegant",
+      "lifestyle"
+    ],
+    "bestFor": "Vlogs, beauty, wedding & lifestyle content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "90%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Pacifico', cursive",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Pacifico&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(30px, 8.5vmin, 76px)",
+      "lineHeight": 1.35,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 3px 10px rgba(0,0,0,0.75)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFC2D4",
+        "scale": 1.15
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.75
+      },
+      "animation": {
+        "keyframes": "capFadeIn",
+        "duration": "0.3s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-script"
+  },
+  {
+    "id": "handwritten",
+    "name": "Handwritten",
+    "description": "Casual marker handwriting, like a friend scribbled notes over your video.",
+    "tags": [
+      "word-by-word",
+      "casual",
+      "personal"
+    ],
+    "bestFor": "Day-in-my-life, journaling, study content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "90%",
+      "textAlign": "center",
+      "wordsPerLine": 4,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Caveat', cursive",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(30px, 8.5vmin, 76px)",
+      "lineHeight": 1.25,
+      "color": "#FFF8E7",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 6px rgba(0,0,0,0.7)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFD166",
+        "scale": 1.18
+      },
+      "past": {
+        "color": "#FFF8E7",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#FFF8E7",
+        "opacity": 0.7
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.3s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-handwritten"
+  },
+  {
+    "id": "single-word",
+    "name": "Single Word",
+    "description": "One giant word at a time, dead center \u2014 the punchiest caption style on the internet.",
+    "tags": [
+      "single-word",
+      "bold",
+      "punchy"
+    ],
+    "bestFor": "Hooks, motivational quotes, rapid-fire facts",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "92%",
+      "textAlign": "center",
+      "wordsPerLine": 1,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(48px, 14vmin, 120px)",
+      "lineHeight": 1.1,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.02em",
+      "stroke": {
+        "width": "3px",
+        "color": "#000000"
+      },
+      "shadow": "0 6px 0 rgba(0,0,0,0.9)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "single-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.0
+      },
+      "past": null,
+      "upcoming": null,
+      "animation": {
+        "keyframes": "capZoomIn",
+        "duration": "0.32s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-single-word"
+  },
+  {
+    "id": "neon-glow",
+    "name": "Neon Glow",
+    "description": "Midnight pill with electric neon words \u2014 the current word flickers on in cyan.",
+    "tags": [
+      "word-by-word",
+      "neon",
+      "night"
+    ],
+    "bestFor": "Gaming clips, nightlife, music edits",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "92%",
+      "textAlign": "center",
+      "wordsPerLine": 4,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Space Grotesk', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(22px, 6vmin, 52px)",
+      "lineHeight": 1.4,
+      "color": "#e8faff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.06em",
+      "stroke": null,
+      "shadow": null,
+      "background": "rgba(2,6,12,0.78)",
+      "borderRadius": "14px",
+      "padding": "0.45em 0.8em"
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#00F5FF",
+        "scale": 1.12
+      },
+      "past": {
+        "color": "#e8faff",
+        "opacity": 0.45
+      },
+      "upcoming": {
+        "color": "#e8faff",
+        "opacity": 0.45
+      },
+      "animation": {
+        "keyframes": "capNeonFlicker",
+        "duration": "0.5s",
+        "easing": "linear"
+      }
+    },
+    "cssClass": "cap-tpl-neon-glow"
+  },
+  {
+    "id": "gradient",
+    "name": "Gradient",
+    "description": "Living gradient text that shimmers through pink, violet and mint while the active word pops.",
+    "tags": [
+      "word-by-word",
+      "gradient",
+      "colorful"
+    ],
+    "bestFor": "Fashion, aesthetics, creative portfolios",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(30px, 8.5vmin, 78px)",
+      "lineHeight": 1.2,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.02em",
+      "stroke": null,
+      "shadow": "0 3px 12px rgba(0,0,0,0.6)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#ffffff",
+        "scale": 1.18
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-gradient"
+  },
+  {
+    "id": "highlighter",
+    "name": "Highlighter",
+    "description": "A translucent yellow marker swipes behind the spoken word, like you studied your own video.",
+    "tags": [
+      "word-by-word",
+      "highlight",
+      "study"
+    ],
+    "bestFor": "Educational content, book summaries, tips",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 800,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.5,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#ffffff",
+        "scale": 1.1
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capHighlighterSwipe",
+        "duration": "0.35s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-highlighter"
+  },
+  {
+    "id": "underline",
+    "name": "Underline",
+    "description": "A thick hand-drawn underline sweeps beneath each spoken word in hot coral.",
+    "tags": [
+      "word-by-word",
+      "underline",
+      "emphasis"
+    ],
+    "bestFor": "Storytelling, emphasis-heavy narration",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.6,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 8px rgba(0,0,0,0.7)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FF6B6B",
+        "scale": 1.12
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.8
+      },
+      "animation": {
+        "keyframes": "capUnderlineSweep",
+        "duration": "0.3s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-underline"
+  },
+  {
+    "id": "glide",
+    "name": "Glide",
+    "description": "Words glide in smoothly from the right as they are spoken \u2014 sleek and modern.",
+    "tags": [
+      "word-by-word",
+      "smooth",
+      "modern"
+    ],
+    "bestFor": "Tech reviews, modern brand content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.3,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.02em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#7DF9FF",
+        "scale": 1.1
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.55
+      },
+      "animation": {
+        "keyframes": "capGlideIn",
+        "duration": "0.35s",
+        "easing": "cubic-bezier(0.22, 1, 0.36, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-glide"
+  },
+  {
+    "id": "caption-bar",
+    "name": "Caption Bar",
+    "description": "Solid full-width bottom strip, podcast style \u2014 maximum readability on any footage.",
+    "tags": [
+      "block",
+      "bar",
+      "podcast"
+    ],
+    "bestFor": "Podcasts, interviews, talking heads with busy backgrounds",
+    "version": "1.0.0",
+    "layout": {
+      "position": "bottom",
+      "maxWidth": "100%",
+      "textAlign": "center",
+      "wordsPerLine": 7,
+      "window": null
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 600,
+      "fontSize": "clamp(18px, 4.5vmin, 36px)",
+      "lineHeight": 1.45,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": null,
+      "background": "#000000",
+      "borderRadius": "0",
+      "padding": "0.55em 1em"
+    },
+    "behavior": {
+      "mode": "block",
+      "active": null,
+      "past": null,
+      "upcoming": null,
+      "animation": {
+        "keyframes": "capFadeIn",
+        "duration": "0.4s",
+        "easing": "ease-out"
+      }
+    },
+    "cssClass": "cap-tpl-caption-bar"
+  },
+  {
+    "id": "outline",
+    "name": "Outline",
+    "description": "Hollow outline type where the spoken word fills solid yellow \u2014 striking on dark footage.",
+    "tags": [
+      "word-by-word",
+      "outline",
+      "bold"
+    ],
+    "bestFor": "Music videos, fashion edits, bold statements",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(30px, 8.5vmin, 78px)",
+      "lineHeight": 1.2,
+      "color": "transparent",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.03em",
+      "stroke": {
+        "width": "2px",
+        "color": "#ffffff"
+      },
+      "shadow": null,
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.15
+      },
+      "past": {
+        "color": "transparent",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "transparent",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-outline"
+  },
+  {
+    "id": "glitch",
+    "name": "Glitch",
+    "description": "RGB-split digital glitch tears across the active word \u2014 pure cyberpunk energy.",
+    "tags": [
+      "word-by-word",
+      "glitch",
+      "cyberpunk"
+    ],
+    "bestFor": "Gaming, tech, cyberpunk & AI content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Space Mono', monospace",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.3,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.04em",
+      "stroke": null,
+      "shadow": "0 2px 0 rgba(0,0,0,0.8)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#ffffff",
+        "scale": 1.1
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 0.85
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.85
+      },
+      "animation": {
+        "keyframes": "capGlitch",
+        "duration": "0.4s",
+        "easing": "steps(2, end)"
+      }
+    },
+    "cssClass": "cap-tpl-glitch"
+  },
+  {
+    "id": "wave",
+    "name": "Wave",
+    "description": "Every word rides a continuous bouncing wave across the caption line. Impossible to ignore.",
+    "tags": [
+      "word-by-word",
+      "wave",
+      "playful"
+    ],
+    "bestFor": "Party clips, kids content, energetic intros",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "90%",
+      "textAlign": "center",
+      "wordsPerLine": 4,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 800,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.6,
+      "color": "#ffffff",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.01em",
+      "stroke": {
+        "width": "2px",
+        "color": "#000000"
+      },
+      "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.15
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capWave",
+        "duration": "1.4s",
+        "easing": "ease-in-out"
+      }
+    },
+    "cssClass": "cap-tpl-wave"
+  },
+  {
+    "id": "sticker",
+    "name": "Sticker",
+    "description": "Die-cut sticker text with a thick white border, tilted -3 degrees and a hard offset shadow.",
+    "tags": [
+      "word-by-word",
+      "sticker",
+      "bold"
+    ],
+    "bestFor": "Memes, reaction videos, sticker-style edits",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Anton', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+      "fontWeight": 400,
+      "fontSize": "clamp(30px, 9vmin, 80px)",
+      "lineHeight": 1.25,
+      "color": "#FF4D8D",
+      "textTransform": "uppercase",
+      "letterSpacing": "0.02em",
+      "stroke": {
+        "width": "10px",
+        "color": "#ffffff"
+      },
+      "shadow": "6px 6px 0 rgba(0,0,0,1)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFD400",
+        "scale": 1.22
+      },
+      "past": {
+        "color": "#FF4D8D",
+        "opacity": 1.0
+      },
+      "upcoming": {
+        "color": "#FF4D8D",
+        "opacity": 1.0
+      },
+      "animation": {
+        "keyframes": "capStickerIn",
+        "duration": "0.3s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-sticker"
+  },
+  {
+    "id": "focus-card",
+    "name": "Focus Card",
+    "description": "A frosted-glass card spotlights the active phrase while the rest of the line recedes.",
+    "tags": [
+      "word-by-word",
+      "card",
+      "glass"
+    ],
+    "bestFor": "Quotes, affirmations, premium brand content",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "86%",
+      "textAlign": "center",
+      "wordsPerLine": 4,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 600,
+      "fontSize": "clamp(22px, 6vmin, 52px)",
+      "lineHeight": 1.5,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 8px rgba(0,0,0,0.5)",
+      "background": "rgba(255,255,255,0.1)",
+      "borderRadius": "20px",
+      "padding": "0.6em 0.9em"
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#FFE500",
+        "scale": 1.12
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 0.4
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.4
+      },
+      "animation": {
+        "keyframes": "capPop",
+        "duration": "0.28s",
+        "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+      }
+    },
+    "cssClass": "cap-tpl-focus-card"
+  },
+  {
+    "id": "pulse",
+    "name": "Pulse",
+    "description": "The spoken word gently pulses with a soft glow \u2014 calm emphasis that breathes with your voice.",
+    "tags": [
+      "word-by-word",
+      "pulse",
+      "calm"
+    ],
+    "bestFor": "Meditation, affirmations, slow storytelling",
+    "version": "1.0.0",
+    "layout": {
+      "position": "center",
+      "maxWidth": "88%",
+      "textAlign": "center",
+      "wordsPerLine": 3,
+      "window": {
+        "wordsBefore": 2,
+        "wordsAfter": 2
+      }
+    },
+    "text": {
+      "fontFamily": "'Inter', sans-serif",
+      "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+      "fontWeight": 700,
+      "fontSize": "clamp(26px, 7.5vmin, 68px)",
+      "lineHeight": 1.4,
+      "color": "#ffffff",
+      "textTransform": "none",
+      "letterSpacing": "0.01em",
+      "stroke": null,
+      "shadow": "0 2px 10px rgba(0,0,0,0.65)",
+      "background": null,
+      "borderRadius": null,
+      "padding": null
+    },
+    "behavior": {
+      "mode": "word-by-word",
+      "active": {
+        "color": "#C4B5FD",
+        "scale": 1.1
+      },
+      "past": {
+        "color": "#ffffff",
+        "opacity": 0.9
+      },
+      "upcoming": {
+        "color": "#ffffff",
+        "opacity": 0.9
+      },
+      "animation": {
+        "keyframes": "capPulse",
+        "duration": "1.6s",
+        "easing": "ease-in-out"
+      }
+    },
+    "cssClass": "cap-tpl-pulse"
+  }
+];
+</script>
+</body>
+</html>

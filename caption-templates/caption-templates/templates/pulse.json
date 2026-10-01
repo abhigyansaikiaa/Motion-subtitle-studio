@@ -1,0 +1,58 @@
+{
+  "id": "pulse",
+  "name": "Pulse",
+  "description": "The spoken word gently pulses with a soft glow \u2014 calm emphasis that breathes with your voice.",
+  "tags": [
+    "word-by-word",
+    "pulse",
+    "calm"
+  ],
+  "bestFor": "Meditation, affirmations, slow storytelling",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(26px, 7.5vmin, 68px)",
+    "lineHeight": 1.4,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 2px 10px rgba(0,0,0,0.65)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#C4B5FD",
+      "scale": 1.1
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 0.9
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 0.9
+    },
+    "animation": {
+      "keyframes": "capPulse",
+      "duration": "1.6s",
+      "easing": "ease-in-out"
+    }
+  },
+  "cssClass": "cap-tpl-pulse"
+}

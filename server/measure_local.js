@@ -104,17 +104,9 @@ async function measureLive() {
         console.log(`GitHub Queue/Startup Time (2-4): ${t1 - t0}ms`);
         console.log(`Worker Execution Time (4-9): ${t2 - t1}ms`);
         
-        if (metrics.audioExtTime) {
-          console.log(`R2/FFmpeg streaming time (5-6): ${metrics.audioExtTime}ms`);
-        } else {
-          console.log(`R2/FFmpeg streaming time (5-6): Not found in metrics`);
-        }
-        
-        if (metrics.whisperTime) {
-          console.log(`Whisper Inference time (7-8): ${metrics.whisperTime}ms`);
-          console.log(`Python/Model init time: ${t2 - t1 - metrics.audioExtTime - metrics.whisperTime}ms`);
-        } else {
-           console.log(`Whisper Inference time (7-8): Not found in metrics`);
+        console.log(`\n--- HF-WORKER METRICS ---`);
+        for (const [k, v] of Object.entries(metrics)) {
+          if (k !== 'hf_worker') console.log(`[TRANSCRIBE] ${k}: ${v}ms`);
         }
       }
       break;

@@ -1,0 +1,58 @@
+{
+  "id": "handwritten",
+  "name": "Handwritten",
+  "description": "Casual marker handwriting, like a friend scribbled notes over your video.",
+  "tags": [
+    "word-by-word",
+    "casual",
+    "personal"
+  ],
+  "bestFor": "Day-in-my-life, journaling, study content",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "90%",
+    "textAlign": "center",
+    "wordsPerLine": 4,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Caveat', cursive",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(30px, 8.5vmin, 76px)",
+    "lineHeight": 1.25,
+    "color": "#FFF8E7",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 2px 6px rgba(0,0,0,0.7)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FFD166",
+      "scale": 1.18
+    },
+    "past": {
+      "color": "#FFF8E7",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#FFF8E7",
+      "opacity": 0.7
+    },
+    "animation": {
+      "keyframes": "capPop",
+      "duration": "0.3s",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-handwritten"
+}

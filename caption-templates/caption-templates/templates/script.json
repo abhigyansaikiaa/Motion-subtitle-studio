@@ -1,0 +1,58 @@
+{
+  "id": "script",
+  "name": "Script",
+  "description": "Elegant flowing script lettering \u2014 lifestyle, beauty and vlog captions with a personal touch.",
+  "tags": [
+    "word-by-word",
+    "elegant",
+    "lifestyle"
+  ],
+  "bestFor": "Vlogs, beauty, wedding & lifestyle content",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "90%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Pacifico', cursive",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Pacifico&display=swap",
+    "fontWeight": 400,
+    "fontSize": "clamp(30px, 8.5vmin, 76px)",
+    "lineHeight": 1.35,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 3px 10px rgba(0,0,0,0.75)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FFC2D4",
+      "scale": 1.15
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 0.75
+    },
+    "animation": {
+      "keyframes": "capFadeIn",
+      "duration": "0.3s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-script"
+}

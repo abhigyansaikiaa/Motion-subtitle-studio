@@ -1,0 +1,58 @@
+{
+  "id": "glitch",
+  "name": "Glitch",
+  "description": "RGB-split digital glitch tears across the active word \u2014 pure cyberpunk energy.",
+  "tags": [
+    "word-by-word",
+    "glitch",
+    "cyberpunk"
+  ],
+  "bestFor": "Gaming, tech, cyberpunk & AI content",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Space Mono', monospace",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Space+Mono:wght@700&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(26px, 7.5vmin, 68px)",
+    "lineHeight": 1.3,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.04em",
+    "stroke": null,
+    "shadow": "0 2px 0 rgba(0,0,0,0.8)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#ffffff",
+      "scale": 1.1
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 0.85
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 0.85
+    },
+    "animation": {
+      "keyframes": "capGlitch",
+      "duration": "0.4s",
+      "easing": "steps(2, end)"
+    }
+  },
+  "cssClass": "cap-tpl-glitch"
+}

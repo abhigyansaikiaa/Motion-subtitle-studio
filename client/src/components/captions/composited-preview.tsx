@@ -58,6 +58,21 @@ interface VideoRect {
 
 const NULL_RECT: VideoRect = { left: 0, top: 0, width: 0, height: 0, scale: 1, nativeW: 0, nativeH: 0 };
 
+const MemoizedVideo = React.memo(({ videoUrl, onLoadedMetadata, onEnded, videoRef }: any) => {
+  return (
+    <video
+      ref={videoRef}
+      src={videoUrl || undefined}
+      className="absolute inset-0 w-full h-full object-contain"
+      onLoadedMetadata={onLoadedMetadata}
+      onEnded={onEnded}
+      playsInline
+      crossOrigin="anonymous"
+    />
+  );
+}, (prev, next) => prev.videoUrl === next.videoUrl);
+
+
 export function CompositedPreview() {
   const currentProject = useAppStore(state => state.currentProject);
   const token = useAppStore(state => state.token) || localStorage.getItem('rt_token');
@@ -111,6 +126,15 @@ export function CompositedPreview() {
     return () => ro.disconnect();
   }, [updateRect]);
 
+  useEffect(() => {
+    console.log("[DEBUG] CompositedPreview MOUNTED");
+    return () => console.log("[DEBUG] CompositedPreview UNMOUNTED");
+  }, []);
+
+  useEffect(() => {
+    console.log("[DEBUG] videoUrl changed:", videoUrl);
+  }, [videoUrl]);
+
   // Segmentation
   const [depthEnabled, setDepthEnabled] = useState(false);
   useEffect(() => {
@@ -131,16 +155,16 @@ export function CompositedPreview() {
     }
   }, [isPlaying]);
 
-  const handleLoadedMetadata = () => {
+  const handleLoadedMetadata = useCallback(() => {
     if (videoRef.current) {
       setDuration(videoRef.current.duration);
       updateRect();
     }
-  };
+  }, [setDuration, updateRect]);
 
-  const handleEnded = () => {
+  const handleEnded = useCallback(() => {
     setIsPlaying(false);
-  };
+  }, [setIsPlaying]);
 
   // Provide exact time to CaptionEngine without React state lag
   const getVideoTime = useCallback(() => {
@@ -195,6 +219,8 @@ export function CompositedPreview() {
 
   const hasRect = videoRect.width > 0 && videoRect.height > 0;
 
+
+
   return (
     // Outer black container - fills whatever space the editor allocates
     <div
@@ -202,14 +228,11 @@ export function CompositedPreview() {
       className="relative w-full h-full bg-black overflow-hidden rounded-xl shadow-2xl ring-1 ring-white/10"
     >
       {/* 1. Base video - fills outer container; object-fit:contain letterboxes it */}
-      <video
-        ref={videoRef}
-        src={videoUrl || undefined}
-        className="absolute inset-0 w-full h-full object-contain"
+      <MemoizedVideo
+        videoRef={videoRef}
+        videoUrl={videoUrl}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={handleEnded}
-        playsInline
-        crossOrigin="anonymous"
       />
 
       {/*

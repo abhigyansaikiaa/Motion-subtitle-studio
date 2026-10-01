@@ -1,7 +1,7 @@
 # Dependencies for server/transcribe.py
 faster-whisper==1.1.1
 requests>=2.31.0
-
+scipy>=1.10.0
 # Dependencies for server/segment.py
 mediapipe==0.10.21
 opencv-python==4.11.0.86

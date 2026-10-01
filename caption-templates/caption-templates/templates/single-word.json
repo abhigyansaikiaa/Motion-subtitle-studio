@@ -1,0 +1,52 @@
+{
+  "id": "single-word",
+  "name": "Single Word",
+  "description": "One giant word at a time, dead center \u2014 the punchiest caption style on the internet.",
+  "tags": [
+    "single-word",
+    "bold",
+    "punchy"
+  ],
+  "bestFor": "Hooks, motivational quotes, rapid-fire facts",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "92%",
+    "textAlign": "center",
+    "wordsPerLine": 1,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Anton', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Anton&display=swap",
+    "fontWeight": 400,
+    "fontSize": "clamp(48px, 14vmin, 120px)",
+    "lineHeight": 1.1,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.02em",
+    "stroke": {
+      "width": "3px",
+      "color": "#000000"
+    },
+    "shadow": "0 6px 0 rgba(0,0,0,0.9)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "single-word",
+    "active": {
+      "color": "#FFE500",
+      "scale": 1.0
+    },
+    "past": null,
+    "upcoming": null,
+    "animation": {
+      "keyframes": "capZoomIn",
+      "duration": "0.32s",
+      "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)"
+    }
+  },
+  "cssClass": "cap-tpl-single-word"
+}

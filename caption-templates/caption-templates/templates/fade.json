@@ -1,0 +1,46 @@
+{
+  "id": "fade",
+  "name": "Fade",
+  "description": "Clean and calm: each caption block gently fades in as a whole. No word popping, just smooth.",
+  "tags": [
+    "block",
+    "minimal",
+    "smooth"
+  ],
+  "bestFor": "Interviews, documentaries, calm narration",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "90%",
+    "textAlign": "center",
+    "wordsPerLine": 6,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 500,
+    "fontSize": "clamp(19px, 5vmin, 40px)",
+    "lineHeight": 1.45,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.015em",
+    "stroke": null,
+    "shadow": "0 2px 10px rgba(0,0,0,0.65)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "block",
+    "active": null,
+    "past": null,
+    "upcoming": null,
+    "animation": {
+      "keyframes": "capFadeIn",
+      "duration": "0.5s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-fade"
+}

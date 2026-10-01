@@ -1,0 +1,58 @@
+{
+  "id": "neon-glow",
+  "name": "Neon Glow",
+  "description": "Midnight pill with electric neon words \u2014 the current word flickers on in cyan.",
+  "tags": [
+    "word-by-word",
+    "neon",
+    "night"
+  ],
+  "bestFor": "Gaming clips, nightlife, music edits",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "92%",
+    "textAlign": "center",
+    "wordsPerLine": 4,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Space Grotesk', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(22px, 6vmin, 52px)",
+    "lineHeight": 1.4,
+    "color": "#e8faff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.06em",
+    "stroke": null,
+    "shadow": null,
+    "background": "rgba(2,6,12,0.78)",
+    "borderRadius": "14px",
+    "padding": "0.45em 0.8em"
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#00F5FF",
+      "scale": 1.12
+    },
+    "past": {
+      "color": "#e8faff",
+      "opacity": 0.45
+    },
+    "upcoming": {
+      "color": "#e8faff",
+      "opacity": 0.45
+    },
+    "animation": {
+      "keyframes": "capNeonFlicker",
+      "duration": "0.5s",
+      "easing": "linear"
+    }
+  },
+  "cssClass": "cap-tpl-neon-glow"
+}

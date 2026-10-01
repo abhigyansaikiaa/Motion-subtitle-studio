@@ -88,6 +88,12 @@ export function StudioWorkflow() {
   const activeTemplate = getActiveTemplate();
   const inStudio = currentStep >= 3 && currentStep <= 7 && !!currentProject;
 
+  // Wake the server as soon as the Studio mounts so it's ready for upload
+  useEffect(() => {
+    const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
+    fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(40_000) }).catch(() => {});
+  }, []);
+
   // Note: Video events and playback sync are now entirely handled by CompositedPreview.
 
   // ─── UPLOAD ───────────────────────────────────────────────────────────────
@@ -95,16 +101,7 @@ export function StudioWorkflow() {
     if (!file.type.startsWith('video/')) { setError('Unsupported format. Please upload MP4, MOV, or WebM.'); return; }
     if (file.size > 200 * 1024 * 1024) { setError('Video exceeds 200 MB. Please compress and retry.'); return; }
     try {
-      setIsProcessing(true); setError(null); setProcessingMsg('WAKING SERVER...');
-
-      // Wake Render's free-tier instance before the upload XHR fires.
-      // The /health endpoint is unauthenticated and fast — this avoids the
-      // cold-start timeout that previously caused "Network error during upload".
-      const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
-      try {
-        await fetch(`${BACKEND_URL}/health`, { signal: AbortSignal.timeout(40_000) });
-      } catch { /* ignore — upload will still try */ }
-
+      setIsProcessing(true); setError(null);
       setProcessingMsg('UPLOADING 0%');
       const res = await api.uploadVideo(file, p => { setUploadProgress(p); setProcessingMsg(`UPLOADING ${p}%`); });
       setProcessingMsg('UPLOADED');

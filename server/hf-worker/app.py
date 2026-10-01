@@ -5,16 +5,8 @@ import boto3
 import asyncio
 import traceback
 import subprocess
-
-# PyAV >= 12.0.0 removed the metadata_errors argument from av.open()
-# faster-whisper < 1.1.0 passes metadata_errors="ignore" unconditionally.
-# We patch av.open to ignore it.
-import av
-original_av_open = av.open
-def patched_av_open(*args, **kwargs):
-    kwargs.pop("metadata_errors", None)
-    return original_av_open(*args, **kwargs)
-av.open = patched_av_open
+import numpy as np
+from scipy.io import wavfile
 
 import faster_whisper
 from datetime import datetime, timezone
@@ -224,8 +216,6 @@ async def process_job(project: dict):
         transcribe_args = {
             "word_timestamps": True,
             "beam_size": 5,
-            "vad_filter": True,
-            "vad_parameters": {"min_silence_duration_ms": 2000},
             "condition_on_previous_text": True,
         }
         if language and language.lower() != "auto":
@@ -236,7 +226,16 @@ async def process_job(project: dict):
             file=sys.stderr,
         )
         t_whisper_start = time.monotonic()
-        segments_iter, info = model.transcribe(tmp_audio, **transcribe_args)
+        
+        try:
+            sample_rate, data = wavfile.read(tmp_audio)
+            if data.dtype != np.float32:
+                data = data.astype(np.float32) / 32768.0
+        except Exception as e:
+            print(f"[HF-Worker] Error reading WAV: {e}", file=sys.stderr)
+            raise
+
+        segments_iter, info = model.transcribe(data, **transcribe_args)
 
         # FIX #2: Normalise to EXACT production word schema.
         words_raw = normalize_words(segments_iter)

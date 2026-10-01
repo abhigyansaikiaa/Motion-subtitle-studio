@@ -1,0 +1,46 @@
+{
+  "id": "caption-bar",
+  "name": "Caption Bar",
+  "description": "Solid full-width bottom strip, podcast style \u2014 maximum readability on any footage.",
+  "tags": [
+    "block",
+    "bar",
+    "podcast"
+  ],
+  "bestFor": "Podcasts, interviews, talking heads with busy backgrounds",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "100%",
+    "textAlign": "center",
+    "wordsPerLine": 7,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 600,
+    "fontSize": "clamp(18px, 4.5vmin, 36px)",
+    "lineHeight": 1.45,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": null,
+    "background": "#000000",
+    "borderRadius": "0",
+    "padding": "0.55em 1em"
+  },
+  "behavior": {
+    "mode": "block",
+    "active": null,
+    "past": null,
+    "upcoming": null,
+    "animation": {
+      "keyframes": "capFadeIn",
+      "duration": "0.4s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-caption-bar"
+}

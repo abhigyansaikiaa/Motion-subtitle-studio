@@ -1,0 +1,61 @@
+{
+  "id": "highlighter",
+  "name": "Highlighter",
+  "description": "A translucent yellow marker swipes behind the spoken word, like you studied your own video.",
+  "tags": [
+    "word-by-word",
+    "highlight",
+    "study"
+  ],
+  "bestFor": "Educational content, book summaries, tips",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 800,
+    "fontSize": "clamp(26px, 7.5vmin, 68px)",
+    "lineHeight": 1.5,
+    "color": "#ffffff",
+    "textTransform": "uppercase",
+    "letterSpacing": "0.01em",
+    "stroke": {
+      "width": "2px",
+      "color": "#000000"
+    },
+    "shadow": "0 3px 0 rgba(0,0,0,0.85)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#ffffff",
+      "scale": 1.1
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capHighlighterSwipe",
+      "duration": "0.35s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-highlighter"
+}

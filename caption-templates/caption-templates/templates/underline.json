@@ -1,0 +1,58 @@
+{
+  "id": "underline",
+  "name": "Underline",
+  "description": "A thick hand-drawn underline sweeps beneath each spoken word in hot coral.",
+  "tags": [
+    "word-by-word",
+    "underline",
+    "emphasis"
+  ],
+  "bestFor": "Storytelling, emphasis-heavy narration",
+  "version": "1.0.0",
+  "layout": {
+    "position": "center",
+    "maxWidth": "88%",
+    "textAlign": "center",
+    "wordsPerLine": 3,
+    "window": {
+      "wordsBefore": 2,
+      "wordsAfter": 2
+    }
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(26px, 7.5vmin, 68px)",
+    "lineHeight": 1.6,
+    "color": "#ffffff",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 2px 8px rgba(0,0,0,0.7)",
+    "background": null,
+    "borderRadius": null,
+    "padding": null
+  },
+  "behavior": {
+    "mode": "word-by-word",
+    "active": {
+      "color": "#FF6B6B",
+      "scale": 1.12
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "#ffffff",
+      "opacity": 0.8
+    },
+    "animation": {
+      "keyframes": "capUnderlineSweep",
+      "duration": "0.3s",
+      "easing": "ease-out"
+    }
+  },
+  "cssClass": "cap-tpl-underline"
+}

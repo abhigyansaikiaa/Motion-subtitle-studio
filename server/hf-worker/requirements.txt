@@ -2,6 +2,7 @@ fastapi
 uvicorn
 supabase
 boto3
-faster-whisper
+faster-whisper==1.1.1
 ffmpeg-python
 python-multipart
+scipy>=1.10.0

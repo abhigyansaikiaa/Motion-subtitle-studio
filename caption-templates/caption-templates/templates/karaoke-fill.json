@@ -1,0 +1,55 @@
+{
+  "id": "karaoke-fill",
+  "name": "Karaoke Fill",
+  "description": "The active word fills with a bright color that sweeps left to right, like a karaoke highlighter.",
+  "tags": [
+    "karaoke",
+    "fill",
+    "highlight"
+  ],
+  "bestFor": "Lyric videos, language learning, kids content",
+  "version": "1.0.0",
+  "layout": {
+    "position": "bottom",
+    "maxWidth": "92%",
+    "textAlign": "center",
+    "wordsPerLine": 5,
+    "window": null
+  },
+  "text": {
+    "fontFamily": "'Inter', sans-serif",
+    "fontUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap",
+    "fontWeight": 700,
+    "fontSize": "clamp(22px, 6vmin, 48px)",
+    "lineHeight": 1.4,
+    "color": "rgba(255,255,255,0.45)",
+    "textTransform": "none",
+    "letterSpacing": "0.01em",
+    "stroke": null,
+    "shadow": "0 2px 6px rgba(0,0,0,0.55)",
+    "background": "rgba(10,10,14,0.6)",
+    "borderRadius": "14px",
+    "padding": "0.4em 0.7em"
+  },
+  "behavior": {
+    "mode": "karaoke",
+    "active": {
+      "color": "#FFE500",
+      "scale": 1.0
+    },
+    "past": {
+      "color": "#ffffff",
+      "opacity": 1.0
+    },
+    "upcoming": {
+      "color": "rgba(255,255,255,0.45)",
+      "opacity": 1.0
+    },
+    "animation": {
+      "keyframes": "capFillSweep",
+      "duration": "0.45s",
+      "easing": "linear"
+    }
+  },
+  "cssClass": "cap-tpl-karaoke-fill"
+}
