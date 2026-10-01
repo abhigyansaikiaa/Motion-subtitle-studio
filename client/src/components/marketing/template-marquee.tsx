@@ -2,7 +2,7 @@ import React from 'react';
 import { TEMPLATES } from '../../lib/templates';
 
 /**
- * Infinite marquee of the 26 viral template names in huge outlined type.
+ * Infinite marquee of the viral template names in huge outlined type.
  * Pure CSS animation (animate-marquee), pauses on hover.
  */
 export function TemplateMarquee() {

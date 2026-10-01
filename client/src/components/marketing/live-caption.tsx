@@ -36,6 +36,7 @@ export function LiveCaptionPreview({
   const isPop = t.wordActivation === 'pop';
   const isJump = t.wordActivation === 'jump';
   const isWave = t.wordActivation === 'wave';
+  const isHighlight = t.wordActivation === 'highlight';
   // For 'pop' templates the punch peaks at activeScale (capped 1.15); for
   // 'scale-up' templates the hero scale is the held emphasis size.
   const heroScale = isPop
@@ -65,6 +66,7 @@ export function LiveCaptionPreview({
       {words.map((w, i) => {
         const isActive = i === active;
         const scaleActive = t.wordActivation === 'scale-up' || isPop || isJump;
+        const hlActive = isActive && isHighlight;
         // Compensate the pop scale with side margins so the enlarged hero word
         // pushes its neighbours aside instead of mashing into their glyphs.
         const pushEm =
@@ -87,6 +89,11 @@ export function LiveCaptionPreview({
               zIndex: isActive ? 10 : undefined,
               color: isActive ? t.heroColor : t.baseColor,
               opacity: isActive ? 1 : t.baseOpacity,
+              backgroundColor: hlActive ? (t.highlightColor ?? '#F5D020') : undefined,
+              padding: hlActive
+                ? `${t.highlightPadY ?? 3}px ${t.highlightPadX ?? 10}px`
+                : undefined,
+              borderRadius: hlActive ? `${t.highlightRadius ?? 5}px` : undefined,
               fontFamily: isActive ? heroFamily : undefined,
               fontWeight: isActive ? heroWeight : undefined,
               fontStyle: (isActive ? heroStyle : undefined) as React.CSSProperties['fontStyle'],

@@ -45,6 +45,16 @@ function SectionHead({
 
 const wrap = 'max-w-[100rem] mx-auto px-6 md:px-10';
 
+/** Spell out small counts for the editorial headline ("twenty-seven ways…"). */
+function numberToWords(n: number): string {
+  const ones = ['zero','one','two','three','four','five','six','seven','eight','nine','ten',
+    'eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen'];
+  const tens = ['','','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'];
+  if (n < 20) return ones[n];
+  if (n < 100) return tens[Math.floor(n / 10)] + (n % 10 ? '-' + ones[n % 10] : '');
+  return String(n);
+}
+
 /* ─── 01 · Principles ─── */
 const PRINCIPLES = [
   {
@@ -149,7 +159,7 @@ export function HowItWorksSection() {
   );
 }
 
-/* ─── 03 · Template index — all 26 viral styles, live ─── */
+/* ─── 03 · Template index — all viral styles, live ─── */
 export function TemplateShowcase() {
   const viral = TEMPLATES.filter(t => t.category === 'Viral');
   return (
@@ -158,7 +168,7 @@ export function TemplateShowcase() {
         <SectionHead
           index="03"
           kicker="style index"
-          title={<>Twenty-six ways<br />to <span className="text-stroke">go viral.</span></>}
+          title={<>{numberToWords(viral.length)} ways<br />to <span className="text-stroke">go viral.</span></>}
         />
         <motion.p
           initial={{ opacity: 0 }}
