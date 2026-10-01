@@ -61,28 +61,45 @@ export const api = {
       xhr.open('PUT', presignedRes.url, true);
       // Don't set Authorization header for R2, it uses the presigned URL credentials
       xhr.setRequestHeader('Content-Type', file.type || 'video/mp4');
-      
-      // Render free tier doesn't apply to R2 directly, but large files might still take time
-      xhr.timeout = 180_000; 
 
-      if (onProgress) {
-        xhr.upload.addEventListener('progress', (e) => {
-          if (e.lengthComputable) {
-            onProgress(Math.round((e.loaded / e.total) * 100));
-          }
-        });
-      }
+      // No fixed timeout: large videos on slow connections legitimately take
+      // many minutes (a 200MB file needs ~9 Mbps sustained to fit in 3 min).
+      // The presigned URL itself expires after 1 hour, which bounds the upload.
+      // Instead, abort only if the connection stalls with zero progress.
+      const STALL_LIMIT_MS = 60_000;
+      let lastProgressAt = Date.now();
+      let settled = false;
+      let stallTimer: ReturnType<typeof setInterval>;
+      const settle = (fn: () => void) => {
+        if (settled) return;
+        settled = true;
+        clearInterval(stallTimer);
+        fn();
+      };
+      stallTimer = setInterval(() => {
+        if (Date.now() - lastProgressAt > STALL_LIMIT_MS) {
+          xhr.abort();
+          settle(() => reject(new Error('Upload stalled — your connection dropped. Please retry.')));
+        }
+      }, 5_000);
 
-      xhr.onload = () => {
+      xhr.upload.addEventListener('progress', (e) => {
+        lastProgressAt = Date.now();
+        if (e.lengthComputable && onProgress) {
+          onProgress(Math.round((e.loaded / e.total) * 100));
+        }
+      });
+
+      xhr.onload = () => settle(() => {
         if (xhr.status >= 200 && xhr.status < 300) {
           resolve();
         } else {
           reject(new Error('Direct upload failed'));
         }
-      };
+      });
 
-      xhr.onerror = () => reject(new Error('Network error during upload'));
-      xhr.ontimeout = () => reject(new Error('Upload timed out'));
+      xhr.onerror = () => settle(() => reject(new Error('Network error during upload')));
+      xhr.onabort = () => settle(() => reject(new Error('Upload cancelled')));
 
       xhr.send(file); // Send file directly, not as FormData
     });
