@@ -24,10 +24,14 @@ RUN pip install --no-cache-dir -r requirements.txt
 # This downloads the weights exactly once at build time and stores them in
 # ~/.cache/huggingface/hub/ inside the image. On every container start the
 # model loads from the local cache — no network download, no cold-start delay.
+# Both base (default quality) and tiny (WHISPER_MODEL=tiny speed option) are
+# baked so switching models never triggers a download at runtime.
 RUN python -c "\
 from faster_whisper import WhisperModel; \
 print('Downloading faster-whisper base (int8) weights...'); \
 WhisperModel('base', device='cpu', compute_type='int8'); \
+print('Downloading faster-whisper tiny (int8) weights...'); \
+WhisperModel('tiny', device='cpu', compute_type='int8'); \
 print('Model weights cached successfully.') \
 "
 

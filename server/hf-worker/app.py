@@ -24,6 +24,21 @@ R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY")
 R2_BUCKET = os.environ.get("R2_BUCKET", "motion-subtitle-media")
 
 # ---------------------------------------------------------------------------
+# Speed config — inference knobs (env-overridable; no code change needed to tune).
+#   WHISPER_MODEL         tiny | base | small | medium | large-v3 | distil-*
+#   WHISPER_COMPUTE_TYPE  int8 (fastest on CPU) | float16 | float32
+#   WHISPER_BEAM_SIZE     1 = greedy, fastest (default) | 5 = beam, slightly better
+#   WHISPER_VAD_FILTER    true = skip silence via Silero VAD (default) | false
+#   WHISPER_CPU_THREADS / WHISPER_NUM_WORKERS  parallelism (default 4 / 2)
+# ---------------------------------------------------------------------------
+WHISPER_MODEL = os.environ.get("WHISPER_MODEL", "base")
+WHISPER_COMPUTE_TYPE = os.environ.get("WHISPER_COMPUTE_TYPE", "int8")
+WHISPER_BEAM_SIZE = int(os.environ.get("WHISPER_BEAM_SIZE", "1"))
+WHISPER_VAD_FILTER = os.environ.get("WHISPER_VAD_FILTER", "true").lower() in ("1", "true", "yes")
+WHISPER_CPU_THREADS = int(os.environ.get("WHISPER_CPU_THREADS", "4"))
+WHISPER_NUM_WORKERS = int(os.environ.get("WHISPER_NUM_WORKERS", "2"))
+
+# ---------------------------------------------------------------------------
 # Reliability config — transcription must never wedge or silently die.
 # ---------------------------------------------------------------------------
 MAX_ATTEMPTS = 3               # total tries before a job is marked FAILED
@@ -86,23 +101,29 @@ else:
 
 # ---------------------------------------------------------------------------
 # Model is loaded ONCE at process startup and stays warm.
-# Production spec: base / cpu / int8 / cpu_threads=4 / num_workers=2
-# (matches server/transcribe_daemon.py)
-# The model weights are baked into the Docker image; this call loads from disk.
+# Config comes from the WHISPER_* env knobs above (defaults: base / cpu /
+# int8 / 4 threads / 2 workers). The model weights are baked into the Docker
+# image; this call loads from disk — no network download, no cold-start delay.
 # ---------------------------------------------------------------------------
 MODEL_READY = False
 model = None
 global_model_load_ms = 0
 
-print("[HF-Worker] Loading faster-whisper base model (int8, cpu)...", file=sys.stderr)
+print(
+    f"[HF-Worker] Loading faster-whisper model={WHISPER_MODEL} "
+    f"({WHISPER_COMPUTE_TYPE}, cpu, threads={WHISPER_CPU_THREADS}, "
+    f"workers={WHISPER_NUM_WORKERS}, beam={WHISPER_BEAM_SIZE}, "
+    f"vad={WHISPER_VAD_FILTER})...",
+    file=sys.stderr,
+)
 try:
     t_model_start = time.monotonic()
     model = faster_whisper.WhisperModel(
-        "base",
+        WHISPER_MODEL,
         device="cpu",
-        compute_type="int8",
-        cpu_threads=4,
-        num_workers=2
+        compute_type=WHISPER_COMPUTE_TYPE,
+        cpu_threads=WHISPER_CPU_THREADS,
+        num_workers=WHISPER_NUM_WORKERS,
     )
     global_model_load_ms = (time.monotonic() - t_model_start) * 1000
     MODEL_READY = True
@@ -160,7 +181,7 @@ def read_root():
 
 @app.get("/health")
 def health_check():
-    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v6_reliable"}
+    return {"status": "healthy", "model_ready": MODEL_READY, "version": "v7_fast"}
 
 
 # ---------------------------------------------------------------------------
@@ -365,16 +386,30 @@ async def process_job(project: dict):
         meta = segments_meta.get("_meta") or {}
         language = meta.get("language") or "auto"
 
+        # Speed-tuned inference args:
+        # - beam_size=1 (greedy) is ~2-4x faster than beam 5 with minimal
+        #   accuracy loss on clean speech; override with WHISPER_BEAM_SIZE.
+        # - condition_on_previous_text=False pairs safely with greedy decoding
+        #   (avoids repetition loops) and is slightly faster.
+        # - vad_filter skips silence via Silero VAD — big win on talking-head
+        #   videos with pauses; disable with WHISPER_VAD_FILTER=false.
         transcribe_args = {
             "word_timestamps": True,
-            "beam_size": 5,
-            "condition_on_previous_text": True,
+            "beam_size": WHISPER_BEAM_SIZE,
+            "condition_on_previous_text": False,
+            "vad_filter": WHISPER_VAD_FILTER,
         }
+        if WHISPER_VAD_FILTER:
+            transcribe_args["vad_parameters"] = {
+                "min_silence_duration_ms": 500,
+                "speech_pad_ms": 200,
+            }
         if language and language.lower() != "auto":
             transcribe_args["language"] = language
 
         print(
-            f"[HF-Worker] Transcribing (lang={language}, word_timestamps=True)...",
+            f"[HF-Worker] Transcribing (model={WHISPER_MODEL}, lang={language}, "
+            f"beam={WHISPER_BEAM_SIZE}, vad={WHISPER_VAD_FILTER}, word_timestamps=True)...",
             file=sys.stderr,
         )
         t_whisper_start = time.monotonic()
