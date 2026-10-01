@@ -17,6 +17,72 @@ interface CaptionEngineProps {
 
 import { clamp, easeOutCubic, easeOutBack, generateAnimationState } from './animation-primitives';
 
+// ─── PER-CHARACTER EFFECTS ───────────────────────────────────────────────────
+// 'scramble' (Decode) and 'wave' need per-character spans driven by the shared
+// time MotionValue. useTransform keeps this re-render-free: only the motion
+// driver reads the value, exactly like AnimatedWord itself.
+
+const SCRAMBLE_GLYPHS = '█▓▒░<>/\\|[]{}=+*#@$%&?01';
+
+function ScrambleChar({ ch, charIndex, charCount, word, time, lockedColor, scrambleColor }: {
+  ch: string; charIndex: number; charCount: number; word: Word; time: any;
+  lockedColor: string; scrambleColor: string;
+}) {
+  const lockAt = (t: number) => {
+    const dur = Math.max(0.08, word.end - word.start);
+    return word.start + (charIndex / Math.max(1, charCount)) * dur * 0.7;
+  };
+  const glyph = useTransform(time, (t: number) => {
+    if (t >= lockAt(t)) return ch;
+    const gi = Math.abs(Math.floor(t * 28 + charIndex * 17.3)) % SCRAMBLE_GLYPHS.length;
+    return SCRAMBLE_GLYPHS[gi];
+  });
+  const cColor = useTransform(time, (t: number) => (t >= lockAt(t) ? lockedColor : scrambleColor));
+  return (
+    <motion.span className="inline-block" style={{ color: cColor }}>
+      {glyph}
+    </motion.span>
+  );
+}
+
+function ScrambleWord({ word, time, lockedColor, scrambleColor }: {
+  word: Word; time: any; lockedColor: string; scrambleColor: string;
+}) {
+  const chars = word.text.split('');
+  return (
+    <span className="inline-block whitespace-nowrap">
+      {chars.map((ch, i) => (
+        <ScrambleChar key={i} ch={ch === ' ' ? ' ' : ch} charIndex={i} charCount={chars.length}
+          word={word} time={time} lockedColor={lockedColor} scrambleColor={scrambleColor} />
+      ))}
+    </span>
+  );
+}
+
+function WaveChar({ ch, charIndex, time, ampPx }: {
+  ch: string; charIndex: number; time: any; ampPx: number;
+}) {
+  // Looping sinusoidal vertical oscillation, phase travelling left → right.
+  const y = useTransform(time, (t: number) => Math.sin(t * 5.5 + charIndex * 0.6) * ampPx);
+  return (
+    <motion.span className="inline-block" style={{ y }}>
+      {ch === ' ' ? ' ' : ch}
+    </motion.span>
+  );
+}
+
+function WaveWord({ word, time, fontSizePx }: { word: Word; time: any; fontSizePx: number }) {
+  const chars = word.text.split('');
+  const amp = Math.max(2, fontSizePx * 0.13);
+  return (
+    <span className="inline-block whitespace-nowrap">
+      {chars.map((ch, i) => (
+        <WaveChar key={i} ch={ch} charIndex={i} time={time} ampPx={amp} />
+      ))}
+    </span>
+  );
+}
+
 // ─── ANIMATED WORD ───────────────────────────────────────────────────────────
 // Each word animates independently using the shared MotionValue `time`.
 // This avoids React re-renders — only the Framer Motion driver reads the value.
@@ -57,6 +123,11 @@ export const AnimatedWord = ({
 }) => {
   const speed = templateConfig.animationSpeed ?? 1.0;
   const entranceDuration = 0.35 * speed;
+
+  // Approximate rendered font size (matches the layout's dynamicBaseSize when
+  // no forced size is given). Used for px-scaled motion like the jump height.
+  const approxFontSize =
+    (forceFontSize ?? templateConfig.baseSize * (compositionHeight / 1920)) * videoScale * (word.scale || 1.0);
   
   // If animationLevel is segment, all words animate together (no stagger)
   const staggerDelay = templateConfig.animationLevel === 'segment' ? 0 : index * 0.06 * speed;
@@ -116,6 +187,7 @@ export const AnimatedWord = ({
 
     let finalScaleX = baseScaleX;
     let finalScaleY = baseScaleY;
+    let finalTranslateY = translateY;
 
     if (!forceColor && isActive && templateConfig.wordActivation === 'scale-up') {
       finalScaleX *= 1.08;
@@ -142,10 +214,21 @@ export const AnimatedWord = ({
       opacity = Math.max(opacity, eased);
     }
 
+    // 'jump' — the karaoke Bounce sub-style (videocaption.ai): the spoken word
+    // jumps vertically on a spring envelope (~0.32s, 0 → up → 0) while taking
+    // the accent color. Distinct from 'pop', which punches scale instead.
+    if (!forceColor && isActive && templateConfig.wordActivation === 'jump') {
+      const jumpDur = 0.32 * speed;
+      const at = clamp((t - word.start) / jumpDur, 0, 1);
+      finalTranslateY -= Math.sin(Math.PI * at) * approxFontSize * 0.34;
+      color = !isHero ? (templateConfig.accentColor || '#ffffff') : color;
+      opacity = Math.max(opacity, eased);
+    }
+
     return {
       opacity,
       color,
-      transform: `translate(${translateX}px, ${translateY}px) scale(${finalScaleX}, ${finalScaleY}) rotateZ(${rotation}deg)`,
+      transform: `translate(${translateX}px, ${finalTranslateY}px) scale(${finalScaleX}, ${finalScaleY}) rotateZ(${rotation}deg)`,
       filter: blur > 0 ? `blur(${blur * videoScale}px)` : 'none',
     };
   });
@@ -162,13 +245,26 @@ export const AnimatedWord = ({
     fontStyle: forceFontStyle ?? undefined,
   };
 
+  const activation = templateConfig.wordActivation;
+
   return (
     <motion.span
       data-testid="caption-word"
       style={{ opacity, color, transform, filter, ...style, transformOrigin: 'center bottom', willChange: 'transform, opacity' }}
       className="inline-block relative"
     >
-      {word.text}
+      {activation === 'scramble' ? (
+        <ScrambleWord
+          word={word}
+          time={time}
+          lockedColor={forceColor ?? templateConfig.accentColor ?? '#FFE500'}
+          scrambleColor={templateConfig.baseColor ?? '#ffffff'}
+        />
+      ) : activation === 'wave' ? (
+        <WaveWord word={word} time={time} fontSizePx={approxFontSize} />
+      ) : (
+        word.text
+      )}
     </motion.span>
   );
 };
