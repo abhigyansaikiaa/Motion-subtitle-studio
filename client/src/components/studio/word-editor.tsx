@@ -94,8 +94,8 @@ function WordChip({
         }}
       />
 
-      {/* Hover tooltip actions */}
-      <span className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover:flex items-center gap-1 bg-surface-container-low border border-border/10 rounded-md shadow-lg shadow-black/30 p-1 z-30 transition-all duration-300">
+      {/* Hover tooltip actions (also shows on focus for touch devices) */}
+      <span className="absolute -top-12 left-1/2 -translate-x-1/2 hidden group-hover:flex group-focus-within:flex items-center gap-1 bg-surface-container-low border border-border/10 rounded-md shadow-lg shadow-black/30 p-1 z-30 transition-all duration-300">
         
         {/* Timing Inputs */}
         <div className="flex items-center gap-0.5 bg-surface-container/50 rounded px-1.5 text-[10px] font-grotesk text-muted-foreground mr-1">
@@ -120,7 +120,7 @@ function WordChip({
           title={isHero ? 'Remove Hero' : 'Set as Hero'}
           onClick={cycleEmphasis}
           className={cn(
-            'p-1.5 rounded-sm transition-colors',
+            'p-2 rounded-sm transition-colors',
             isHero ? 'text-surface-container-lowest bg-on-surface' : 'text-muted-foreground hover:text-on-surface hover:bg-surface-container'
           )}
         >
@@ -140,7 +140,7 @@ function WordChip({
             );
           }}
           className={cn(
-            'p-1.5 rounded-sm transition-colors',
+            'p-2 rounded-sm transition-colors',
             isAccent ? 'text-surface-container-lowest bg-on-surface/80' : 'text-muted-foreground hover:text-on-surface hover:bg-surface-container'
           )}
         >
@@ -148,15 +148,15 @@ function WordChip({
         </button>
         <div className="w-px h-3 bg-border/20 mx-1" />
         <div className="flex items-center gap-0.5 bg-surface-container/50 rounded-sm px-1">
-          <button title="Decrease Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.max(0.5, current - 0.1) } : w) })); }} className="p-1 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A-</button>
+          <button title="Decrease Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.max(0.5, current - 0.1) } : w) })); }} className="p-2 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A-</button>
           <span className="text-[9px] font-grotesk text-muted-foreground min-w-[2ch] text-center">{word.scale ? word.scale.toFixed(1) : "1.0"}</span>
-          <button title="Increase Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.min(3.0, current + 0.1) } : w) })); }} className="p-1 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A+</button>
+          <button title="Increase Size" onClick={() => { const current = word.scale || 1; setEditorSegments(editorSegments.map(s => s.id !== segmentId ? s : { ...s, words: s.words.map(w => w.id === word.id ? { ...w, scale: Math.min(3.0, current + 0.1) } : w) })); }} className="p-2 text-[10px] font-grotesk text-muted-foreground hover:text-primary transition-colors">A+</button>
         </div>
         <div className="w-px h-3 bg-border/20 mx-1" />
         <button
           title="Split segment before word"
           onClick={handleSplitBefore}
-          className="p-1.5 rounded-sm transition-colors text-muted-foreground hover:text-on-surface hover:bg-surface-container"
+          className="p-2 rounded-sm transition-colors text-muted-foreground hover:text-on-surface hover:bg-surface-container"
         >
           <Scissors className="w-3 h-3" />
         </button>

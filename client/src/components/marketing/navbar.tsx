@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAppStore } from '../../lib/store';
-import { ArrowUpRight } from 'lucide-react';
-import { motion } from 'motion/react';
+import { ArrowUpRight, Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
 import { supabase } from '../../lib/supabase';
 
 const LINKS = [
@@ -15,6 +15,7 @@ export function Navbar() {
   const user = useAppStore(state => state.user);
   const setToken = useAppStore(state => state.setToken);
   const setUser = useAppStore(state => state.setUser);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   async function handleLogout() {
     await supabase.auth.signOut();
@@ -48,7 +49,15 @@ export function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
+          {/* Mobile menu toggle */}
+          <button
+            onClick={() => setMenuOpen(o => !o)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+            className="md:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-foreground/70 hover:text-foreground transition-colors"
+          >
+            {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
           {user ? (
             <>
               <span className="hidden sm:inline-flex items-center gap-2 font-mono text-[11px] tracking-widest text-foreground/60 border border-foreground/20 px-3 py-2">
@@ -86,6 +95,33 @@ export function Navbar() {
           )}
         </div>
       </div>
+
+      {/* Mobile dropdown menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.nav
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="md:hidden overflow-hidden border-t border-foreground/10"
+          >
+            <div className="px-6 py-4 flex flex-col">
+              {LINKS.map(l => (
+                <a
+                  key={l.n}
+                  href={l.href}
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center justify-between py-4 border-b border-foreground/10 last:border-0 font-grotesk font-semibold text-sm uppercase tracking-widest text-foreground/70 active:text-foreground"
+                >
+                  <span>{l.label}</span>
+                  <span className="font-mono text-[11px] text-foreground/30">{l.n}</span>
+                </a>
+              ))}
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
     </motion.header>
   );
 }

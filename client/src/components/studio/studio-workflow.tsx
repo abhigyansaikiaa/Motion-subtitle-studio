@@ -13,7 +13,7 @@ import { DesignWheel, type ToolId } from './design-wheel';
 import { RenderSnakeGame } from './render-snake-game';
 import {
   Upload, Play, Pause, Download, AlertCircle, RefreshCw,
-  Sliders, LayoutGrid, Type, RotateCcw,
+  Sliders, LayoutGrid, Type, RotateCcw, X,
 } from 'lucide-react';
 
 // ─── CONSTANTS ────────────────────────────────────────────────────────────────
@@ -79,6 +79,7 @@ export function StudioWorkflow() {
   const [error, setError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [activeTool, setActiveTool] = useState<ToolId>('templates');
+  const [sheetOpen, setSheetOpen] = useState(false); // mobile bottom-sheet for the right panel
   const [resolution, setResolution] = useState('original');
   const [transcribeElapsed, setTranscribeElapsed] = useState(0);
   const [transcribeFailed, setTranscribeFailed] = useState(false);
@@ -255,6 +256,18 @@ export function StudioWorkflow() {
     useAppStore.getState().setSeekRequest(targetTime);
   }, [duration, setCurrentTime]);
 
+  // Touch scrubbing for the seek bar (mobile/tablet)
+  const handleTouchSeek = useCallback((e: React.TouchEvent<HTMLDivElement>) => {
+    if (!seekBarRef.current) return;
+    const touch = e.touches[0];
+    if (!touch) return;
+    const rect = seekBarRef.current.getBoundingClientRect();
+    const pct = Math.max(0, Math.min(1, (touch.clientX - rect.left) / rect.width));
+    const targetTime = pct * duration;
+    setCurrentTime(targetTime);
+    useAppStore.getState().setSeekRequest(targetTime);
+  }, [duration, setCurrentTime]);
+
   const fmt = (s: number) => `${Math.floor(s / 60)}:${Math.floor(s % 60).toString().padStart(2, '0')}`;
 
   const videoSrc = currentProject
@@ -269,7 +282,7 @@ export function StudioWorkflow() {
     <div className="flex-1 flex min-h-0 bg-transparent text-on-surface overflow-hidden z-10 relative">
       {/* ERROR TOAST */}
       {error && (
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-red-950/90 text-red-200 px-4 py-2.5 rounded-xl border border-red-500/40 shadow-xl max-w-sm text-sm">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 bg-red-950/90 text-red-200 px-4 py-2.5 rounded-xl border border-red-500/40 shadow-xl w-[calc(100%-2rem)] max-w-sm text-sm">
           <AlertCircle className="w-4 h-4 flex-shrink-0" />
           <span className="flex-1">{error}</span>
           <button onClick={() => setError(null)} className="text-red-300 hover:text-white text-xs underline">×</button>
@@ -278,10 +291,12 @@ export function StudioWorkflow() {
 
       {/* ── LEFT COLUMN: ASYMMETRIC NAV ── */}
       {inStudio && (
-        <aside className="w-[80px] lg:w-[260px] flex-shrink-0 flex flex-col border-r border-border/10 bg-surface-container-lowest relative z-20 overflow-hidden">
-          <div className="p-6 lg:p-10 flex flex-col gap-12 h-full">
+        <aside className="w-16 lg:w-[260px] flex-shrink-0 flex flex-col border-r border-border/10 bg-surface-container-lowest relative z-20 overflow-hidden">
+          <div className="p-4 lg:p-10 flex flex-col gap-8 lg:gap-12 h-full">
             <div className="flex flex-col gap-2">
-              <span className="font-editorial font-medium text-2xl lg:text-3xl tracking-tight leading-none text-on-surface">Motion<br/><span className="text-primary-fixed">Subtitle</span></span>
+              {/* Compact mark on mobile, full wordmark on desktop */}
+              <span className="lg:hidden font-editorial font-extrabold text-xl tracking-tight leading-none text-on-surface text-center">M<span className="text-primary-fixed">—</span>S</span>
+              <span className="hidden lg:block font-editorial font-medium text-2xl lg:text-3xl tracking-tight leading-none text-on-surface">Motion<br/><span className="text-primary-fixed">Subtitle</span></span>
             </div>
             
             <nav className="flex-1 flex flex-col gap-4 lg:gap-8 overflow-y-auto custom-scrollbar pt-4" data-lenis-prevent="true">
@@ -297,11 +312,12 @@ export function StudioWorkflow() {
               ].map((tool, i) => (
                 <button
                   key={tool.id}
-                  onClick={() => setActiveTool(tool.id as ToolId)}
-                  className={`flex flex-col items-start gap-2 transition-all duration-500 group ${activeTool === tool.id ? 'opacity-100 translate-x-2' : 'opacity-40 hover:opacity-100'}`}
+                  onClick={() => { setActiveTool(tool.id as ToolId); setSheetOpen(true); }}
+                  aria-label={tool.label}
+                  className={`flex flex-col items-center lg:items-start gap-2 py-1 transition-all duration-500 group ${activeTool === tool.id ? 'opacity-100 lg:translate-x-2' : 'opacity-40 hover:opacity-100'}`}
                 >
                   <span className={`text-[10px] font-grotesk tracking-widest transition-colors uppercase ${activeTool === tool.id ? 'text-primary' : 'text-muted-foreground group-hover:text-primary'}`}>0{i+1}</span>
-                  <span className={`font-grotesk font-medium text-sm lg:text-xl tracking-tight text-left ${activeTool === tool.id ? 'text-on-surface' : 'text-muted-foreground group-hover:text-on-surface'}`}>{tool.label}</span>
+                  <span className={`hidden lg:block font-grotesk font-medium text-sm lg:text-xl tracking-tight text-left ${activeTool === tool.id ? 'text-on-surface' : 'text-muted-foreground group-hover:text-on-surface'}`}>{tool.label}</span>
                 </button>
               ))}
             </nav>
@@ -311,7 +327,8 @@ export function StudioWorkflow() {
                 <div className="flex flex-col gap-3">
                   <button
                     onClick={() => { setStep(1); setCurrentProject(null as any); setEditorSegments([]); }}
-                    className="flex items-center gap-3 p-2 lg:px-4 lg:py-3 text-xs font-medium text-muted-foreground hover:text-on-surface hover:bg-surface-container-low transition-all rounded-md"
+                    aria-label="Reset project"
+                    className="flex items-center justify-center lg:justify-start gap-3 p-2 lg:px-4 lg:py-3 text-xs font-medium text-muted-foreground hover:text-on-surface hover:bg-surface-container-low transition-all rounded-md"
                   >
                     <RotateCcw className="w-4 h-4" />
                     <span className="hidden lg:inline tracking-wide">Reset Project</span>
@@ -319,7 +336,8 @@ export function StudioWorkflow() {
                   <button
                     onClick={handleRender}
                     disabled={isProcessing || editorSegments.length === 0}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-4 bg-on-surface text-surface-container-lowest font-medium text-xs lg:text-sm tracking-wide hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
+                    aria-label="Export video"
+                    className="flex-1 flex items-center justify-center gap-2 px-2 lg:px-4 py-4 bg-on-surface text-surface-container-lowest font-medium text-xs lg:text-sm tracking-wide hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors disabled:opacity-30 disabled:cursor-not-allowed rounded-md"
                   >
                     <Download className="w-4 h-4" />
                     <span className="hidden lg:inline">Export Video</span>
@@ -343,9 +361,9 @@ export function StudioWorkflow() {
               onDragOver={e => { e.preventDefault(); setIsDragging(true); }}
               onDragLeave={() => setIsDragging(false)}
               onDrop={handleDrop}
-              className={`relative z-10 flex flex-col items-center w-full max-w-2xl p-16 border border-border/10 bg-surface-container-lowest transition-all duration-700 ease-out ${isDragging ? 'scale-[1.02] bg-surface-container-low border-primary/50' : 'hover:border-border/30 hover:bg-surface-container-low'}`}
+              className={`relative z-10 flex flex-col items-center w-full max-w-2xl p-6 sm:p-10 lg:p-16 border border-border/10 bg-surface-container-lowest transition-all duration-700 ease-out ${isDragging ? 'scale-[1.02] bg-surface-container-low border-primary/50' : 'hover:border-border/30 hover:bg-surface-container-low'}`}
             >
-              <h3 className="font-editorial text-4xl font-medium tracking-tight mb-4 text-on-surface">Upload Video</h3>
+              <h3 className="font-editorial text-3xl sm:text-4xl font-medium tracking-tight mb-4 text-on-surface text-center">Upload Video</h3>
               <p className="text-muted-foreground text-center text-sm mb-12 max-w-sm font-grotesk">
                 Drag and drop your footage or click to browse. MP4, MOV, WebM.
               </p>
@@ -382,7 +400,7 @@ export function StudioWorkflow() {
           <div className="flex-1 flex flex-col items-center justify-center relative">
             {/* Background elements removed for cleaner professional look */}
             
-            <div className="relative z-10 flex flex-col items-center w-full max-w-lg p-12 border border-border/10 bg-surface-container-lowest">
+            <div className="relative z-10 flex flex-col items-center w-full max-w-lg p-6 sm:p-10 lg:p-12 border border-border/10 bg-surface-container-lowest">
               {currentProject?.videoUrl && (
                 <div className="w-full mb-8 overflow-hidden bg-black border border-border/10 rounded-md">
                   <video
@@ -403,7 +421,7 @@ export function StudioWorkflow() {
                 value={transcribeLang}
                 onChange={e => setTranscribeLang(e.target.value)}
                 disabled={isProcessing}
-                className="w-full p-4 mb-8 bg-surface-container-low font-grotesk text-sm text-on-surface border border-border/10 outline-none focus:border-primary/50 transition-colors appearance-none text-center tracking-wide cursor-pointer rounded-md"
+                className="w-full p-4 mb-8 bg-surface-container-low font-grotesk text-base sm:text-sm text-on-surface border border-border/10 outline-none focus:border-primary/50 transition-colors appearance-none text-center tracking-wide cursor-pointer rounded-md"
               >
                 <option value="auto">Auto-Detect Language</option>
                 <option value="en">English</option>
@@ -462,20 +480,23 @@ export function StudioWorkflow() {
 
             {/* Player Controls */}
             {currentStep !== 6 && currentStep !== 7 && (
-              <div className="flex-shrink-0 h-16 mt-2 border border-border/10 flex items-center gap-6 px-6 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg shadow-black/20">
+              <div className="flex-shrink-0 h-16 mt-2 border border-border/10 flex items-center gap-3 px-4 sm:gap-6 sm:px-6 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg shadow-black/20">
                 <button
                   onClick={() => setIsPlaying(!isPlaying)}
+                  aria-label={isPlaying ? 'Pause' : 'Play'}
                   className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-on-surface text-surface-container-lowest hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors"
                 >
                   {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 ml-1" />}
                 </button>
 
-                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-12 text-right">{fmt(currentTime)}</span>
+                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-10 sm:w-12 text-right tabular-nums">{fmt(currentTime)}</span>
 
                 <div
                   ref={seekBarRef}
-                  className="flex-1 relative h-2 cursor-pointer group flex items-center"
+                  className="flex-1 relative h-8 cursor-pointer group flex items-center touch-none"
                   onClick={handleSeek}
+                  onTouchStart={handleTouchSeek}
+                  onTouchMove={handleTouchSeek}
                 >
                   <div className="absolute top-1/2 left-0 w-full h-px bg-border/20 -translate-y-1/2" />
                   <div
@@ -488,13 +509,13 @@ export function StudioWorkflow() {
                   />
                 </div>
 
-                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-12">{fmt(duration)}</span>
+                <span className="text-[10px] font-grotesk tracking-widest text-muted-foreground w-10 sm:w-12 tabular-nums">{fmt(duration)}</span>
               </div>
             )}
             
             {/* Step 7 Download */}
             {currentStep === 7 && currentProject && (
-                <div className="flex-shrink-0 mt-4 flex items-center justify-between p-6 border border-border/10 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg">
+                <div className="flex-shrink-0 mt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 border border-border/10 mx-auto w-full max-w-3xl bg-surface-container-lowest rounded-md shadow-lg">
                   <div>
                     <h4 className="font-editorial text-2xl font-medium tracking-tight text-on-surface capitalize">Render Complete</h4>
                   </div>
@@ -524,22 +545,44 @@ export function StudioWorkflow() {
         )}
       </main>
 
-      {/* ── RIGHT COLUMN: CONTEXTUAL CONTROLS ── */}
+      {/* ── RIGHT COLUMN: CONTEXTUAL CONTROLS ──
+          Desktop: fixed side panel. Mobile/tablet portrait: bottom sheet
+          that slides up when a tool is tapped in the left rail. */}
       {inStudio && activeTool && (
-        <aside className="w-[320px] lg:w-[420px] flex-shrink-0 flex flex-col border-l border-border/5 bg-surface-container-low relative z-20">
-          <div className="p-8 lg:p-12 pb-6 flex justify-between items-end relative overflow-hidden">
-             <h2 className="font-editorial font-medium text-3xl lg:text-5xl tracking-tight text-on-surface capitalize leading-none relative z-10">{activeTool}</h2>
-          </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar p-0" data-lenis-prevent="true">
+        <>
+          <div
+            onClick={() => setSheetOpen(false)}
+            aria-hidden="true"
+            className={`lg:hidden fixed inset-0 z-30 bg-black/60 transition-opacity duration-300 ${sheetOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+          />
+          <aside className={`flex flex-col bg-surface-container-low pb-safe
+            fixed inset-x-0 bottom-0 z-40 max-h-sheet rounded-t-2xl border-t border-border/20 shadow-2xl shadow-black/60
+            transition-transform duration-300 ease-out ${sheetOpen ? 'translate-y-0' : 'translate-y-full'}
+            lg:static lg:z-20 lg:translate-y-0 lg:rounded-none lg:border-t-0 lg:border-l lg:border-border/5 lg:w-[420px] lg:max-h-none lg:shadow-none lg:flex-shrink-0`}>
+            {/* drag handle — mobile only */}
+            <div className="lg:hidden flex justify-center pt-3 pb-1" aria-hidden="true">
+              <div className="w-10 h-1 rounded-full bg-border/70" />
+            </div>
+            <div className="px-5 sm:px-8 lg:px-12 pt-2 lg:pt-12 pb-4 lg:pb-6 flex justify-between items-end relative overflow-hidden flex-shrink-0">
+              <h2 className="font-editorial font-medium text-2xl sm:text-3xl lg:text-5xl tracking-tight text-on-surface capitalize leading-none relative z-10">{activeTool}</h2>
+              <button
+                onClick={() => setSheetOpen(false)}
+                aria-label="Close panel"
+                className="lg:hidden w-10 h-10 -mr-2 inline-flex items-center justify-center text-muted-foreground hover:text-on-surface transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto custom-scrollbar p-0 min-h-0" data-lenis-prevent="true">
               {activeTool === 'clips' && (
-                <div className="px-8 lg:px-12 pb-8">
+                <div className="px-5 sm:px-8 lg:px-12 pb-8">
                   <p className="font-grotesk font-medium text-sm text-on-surface mb-2">Editor</p>
                   <p className="text-sm text-muted-foreground leading-relaxed font-grotesk">
                     Click any word to select. Hover to spotlight, hide, or change case.
                   </p>
                 </div>
               )}
-              <div className="px-8 lg:px-12 pb-12">
+              <div className="px-5 sm:px-8 lg:px-12 pb-12">
                 {activeTool === 'clips' && <WordEditor />}
                 {activeTool === 'templates' && <TemplateBrowser />}
                 {activeTool === 'typography' && <TypographyPanel />}
@@ -549,11 +592,12 @@ export function StudioWorkflow() {
                 {activeTool === 'numbers' && <NumbersPanel />}
                 {activeTool === 'depth' && <DepthPanel />}
               </div>
-          </div>
-          <div className="p-8 lg:px-12 pt-4 bg-surface-container-low">
-            {activeTool !== 'clips' && activeTool !== 'templates' && <ResetControlsButton />}
-          </div>
-        </aside>
+            </div>
+            <div className="px-5 sm:px-8 lg:px-12 pt-4 bg-surface-container-low flex-shrink-0">
+              {activeTool !== 'clips' && activeTool !== 'templates' && <ResetControlsButton />}
+            </div>
+          </aside>
+        </>
       )}
     </div>
   );

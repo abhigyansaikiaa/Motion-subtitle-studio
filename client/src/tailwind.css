@@ -89,7 +89,7 @@
 
 @layer base {
   html, body {
-    width: 100vw;
+    width: 100%;
     margin: 0;
     padding: 0;
     background-color: var(--color-background);
@@ -97,14 +97,37 @@
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Remove the grey tap flash on mobile Safari/Chrome */
+    -webkit-tap-highlight-color: transparent;
   }
   body {
     overscroll-behavior: none;
-    min-height: max(884px, 100dvh);
+    /* Dynamic viewport height: iOS Safari's toolbar no longer hides content.
+       Plain vh first for browsers without dvh support. */
+    min-height: 100vh;
+    min-height: 100dvh;
+    /* Clip horizontal overflow (100vw elements, marquees) without creating
+       a scroll container that would break position: sticky. */
+    overflow-x: clip;
   }
   .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
   .pt-safe { padding-top: env(safe-area-inset-top, 0px); }
   ::selection { background: #EFEFEF; color: #0A0A0A; }
+}
+
+/* Viewport-height utilities: vh fallback for older browsers, dvh where supported.
+   Plain CSS + @supports (not @utility) so LightningCSS can't drop the fallback. */
+@layer utilities {
+  .h-screen-safe { height: 100vh; }
+  .min-h-screen-safe { min-height: 100vh; }
+  .max-h-screen-safe { max-height: 100vh; }
+  .max-h-sheet { max-height: 78vh; }
+  @supports (height: 100dvh) {
+    .h-screen-safe { height: 100dvh; }
+    .min-h-screen-safe { min-height: 100dvh; }
+    .max-h-screen-safe { max-height: 100dvh; }
+    .max-h-sheet { max-height: 78dvh; }
+  }
 }
 
 ::-webkit-scrollbar { display: none; }

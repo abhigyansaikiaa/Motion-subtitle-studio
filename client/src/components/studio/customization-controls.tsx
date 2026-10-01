@@ -29,7 +29,7 @@ function Select({ value, onChange, children }: any) {
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-surface-container-low border border-border/10 p-4 font-grotesk text-sm font-medium text-on-surface outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer rounded-md shadow-sm"
+        className="w-full bg-surface-container-low border border-border/10 p-4 font-grotesk text-base sm:text-sm font-medium text-on-surface outline-none focus:border-primary/50 transition-colors appearance-none cursor-pointer rounded-md shadow-sm"
       >
         {children}
       </select>
@@ -45,18 +45,21 @@ function Slider({ label, min, max, step, value, onChange, display }: any) {
         <label className="text-[10px] font-grotesk font-medium tracking-widest text-muted-foreground uppercase">{label}</label>
         <span className="font-grotesk text-sm font-bold tracking-wide text-on-surface leading-none">{display}</span>
       </div>
-      <div className="relative h-1 bg-border/10 rounded-full cursor-pointer flex items-center group">
-        <div className="absolute left-0 h-full bg-primary/20 rounded-full group-hover:bg-primary transition-colors" style={{ width: `${((value - min) / (max - min)) * 100}%` }} />
+      <div className="relative h-7 cursor-pointer flex items-center group touch-none">
+        <div className="relative w-full h-1 bg-border/10 rounded-full">
+          <div className="absolute left-0 top-0 h-full bg-primary/20 rounded-full group-hover:bg-primary transition-colors" style={{ width: `${((value - min) / (max - min)) * 100}%` }} />
+          <div 
+            className="absolute w-3 h-3 bg-primary rounded-full shadow-md -translate-x-1/2 -translate-y-1/2 top-1/2 pointer-events-none transition-transform group-hover:scale-125"
+            style={{ left: `${((value - min) / (max - min)) * 100}%` }}
+          />
+        </div>
         <input
           type="range"
           min={min} max={max} step={step}
           value={value}
           onChange={e => onChange(Number(e.target.value))}
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-        />
-        <div 
-          className="absolute w-3 h-3 bg-primary rounded-full shadow-md -translate-x-1/2 pointer-events-none transition-transform group-hover:scale-125"
-          style={{ left: `${((value - min) / (max - min)) * 100}%` }}
+          aria-label={label}
         />
       </div>
     </div>

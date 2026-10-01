@@ -15,7 +15,7 @@ import { FooterSection } from '../components/ui/footer-section';
 
 export function HomePage() {
   return (
-    <div className="min-h-screen bg-background text-foreground antialiased">
+    <div className="min-h-screen-safe bg-background text-foreground antialiased">
       <Navbar />
       <main>
         <LenisHero />
