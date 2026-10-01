@@ -2890,6 +2890,7 @@ export const CURATED_DYNAMIC_IDS: string[] = [
   'karaoke',        // Box Karaoke — yellow box karaoke
   'karaoke-fill',   // Karaoke Fill — true text flood, no box
   'dynamic-marker', // Dynamic Marker — handwritten ink, yellow marker sweeps the spoken word
+  'crimson-solo',   // Crimson Solo — giant red serif-italic, one word at a time
   'neon-arcade',    // Neon Arcade — blur-in neon pop
   'spring',         // Spring — spring-up pop
   'butter-up',      // Butter — spring-up, color only (smooth, no pop)
@@ -3079,6 +3080,43 @@ TEMPLATES.push(
     animationSpeed: 1.0,
     captionDepth: 'front',
     position: 'bottom',
+  },
+);
+
+// ─── ROUND 6 — solo-word shout captions (sourced Oct 2026) ───────────────────
+// Giant red serif-italic, one word at a time across the top — the punchy
+// editorial shout style. Uses the new 'solo-word' layout: only the spoken
+// word renders, popping in fresh on every word change.
+TEMPLATES.push(
+  {
+    id: 'crimson-solo',
+    name: 'Crimson Solo',
+    description: 'One giant red serif-italic word at a time across the top — the punchy editorial shout.',
+    category: 'Viral',
+    fontFamily: '"Playfair Display", serif',
+    fontWeight: 800,
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    baseColor: '#d42b2b',
+    baseSize: 180,
+    baseOpacity: 1,
+    heroColor: '#d42b2b',
+    heroScale: 1.0,
+    heroFontFamily: '"Playfair Display", serif',
+    heroFontWeight: 800,
+    heroFontStyle: 'italic',
+    accentColor: '#d42b2b',
+    alignment: 'center',
+    layoutType: 'solo-word',
+    letterSpacing: '0.02em',
+    lineHeight: 1.0,
+    shadow: '0 4px 24px rgba(0,0,0,0.45)',
+    entranceAnimation: 'pop',
+    animationLevel: 'word',
+    wordActivation: 'none',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'top',
   },
 );
 
