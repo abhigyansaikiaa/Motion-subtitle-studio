@@ -6,3 +6,4 @@ faster-whisper==1.1.1
 ffmpeg-python
 python-multipart
 scipy>=1.10.0
+requests
