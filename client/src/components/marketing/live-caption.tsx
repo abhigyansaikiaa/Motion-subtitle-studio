@@ -37,6 +37,7 @@ export function LiveCaptionPreview({
   const isJump = t.wordActivation === 'jump';
   const isWave = t.wordActivation === 'wave';
   const isHighlight = t.wordActivation === 'highlight';
+  const isSolo = t.layoutType === 'solo-word';
   // For 'pop' templates the punch peaks at activeScale (capped 1.15); for
   // 'scale-up' templates the hero scale is the held emphasis size.
   const heroScale = isPop
@@ -48,6 +49,38 @@ export function LiveCaptionPreview({
 
   const origin =
     t.alignment === 'left' ? 'left center' : t.alignment === 'right' ? 'right center' : 'center';
+
+  // Solo-word templates show ONLY the active word, huge — like the real layout.
+  if (isSolo) {
+    const w = words[active % words.length];
+    const soloFam = t.heroFontFamily || t.fontFamily;
+    const soloWt = t.heroFontWeight ?? t.fontWeight;
+    const soloSt = t.heroFontStyle || t.fontStyle;
+    return (
+      <div
+        className={`flex items-center justify-center ${className}`}
+        aria-label={`Animated preview of the ${t.name} caption style`}
+      >
+        <span
+          key={`solo-${active}`}
+          className="animate-caption-pop inline-block whitespace-nowrap"
+          style={{
+            fontFamily: soloFam,
+            fontWeight: soloWt,
+            fontStyle: soloSt as React.CSSProperties['fontStyle'],
+            color: t.heroColor,
+            textTransform: t.textTransform,
+            letterSpacing: t.letterSpacing,
+            lineHeight: t.lineHeight,
+            textShadow: t.shadow && t.shadow !== 'none' ? t.shadow : undefined,
+            fontSize: '2.2em',
+          }}
+        >
+          {w}
+        </span>
+      </div>
+    );
+  }
 
   return (
     <div

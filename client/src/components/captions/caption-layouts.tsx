@@ -539,6 +539,58 @@ export const BoldBehindLayout = ({
   // 'all' mode preview � show hero
   return <div className="flex justify-center pointer-events-none" style={{ paddingTop: '4%' }}><HeroWordEl /></div>;
 };
+
+// ─── SOLO WORD LAYOUT ────────────────────────────────────────────────────────
+// One word at a time, huge and centered — the punchy single-word caption
+// style (e.g. giant red serif-italic shouts across the top). Only the
+// currently-spoken word is rendered; each word pops in fresh because the
+// element is keyed by word id, restarting the caption-pop keyframes.
+export const SoloWordLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const [activeId, setActiveId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    const unsub = time.on('change', (t: number) => {
+      const active = segment.words.find(w => t >= w.start && t < w.end);
+      setActiveId(active?.id ?? null);
+    });
+    return unsub;
+  }, [time, segment.words]);
+
+  const word = segment.words.find(w => w.id === activeId);
+  if (!word) return null;
+
+  const size = dynamicBaseSize * (templateConfig.heroScale ?? 1);
+  const fam = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
+  const wt = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
+  const st = templateConfig.heroFontStyle ?? templateConfig.fontStyle;
+
+  return (
+    <div className="flex justify-center items-center w-full pointer-events-none px-[4%]">
+      <span
+        key={word.id}
+        className="animate-caption-pop inline-block"
+        style={{
+          fontFamily: fam,
+          fontWeight: wt,
+          fontStyle: st as React.CSSProperties['fontStyle'],
+          fontSize: `${size}px`,
+          color: templateConfig.heroColor,
+          textTransform: templateConfig.textTransform as React.CSSProperties['textTransform'],
+          letterSpacing: templateConfig.letterSpacing,
+          lineHeight: templateConfig.lineHeight,
+          textShadow: templateConfig.shadow && templateConfig.shadow !== 'none' ? templateConfig.shadow : undefined,
+          WebkitTextStroke: templateConfig.outline && templateConfig.outline !== 'none'
+            ? templateConfig.outline.replace('solid ', '') : undefined,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {word.text}
+      </span>
+    </div>
+  );
+};
 // Export a registry map to be used by CaptionEngine
 export const LayoutRegistry: Record<string, React.FC<any>> = {
   'hero-interruption': HeroInterruptionLayout,
@@ -557,4 +609,5 @@ export const LayoutRegistry: Record<string, React.FC<any>> = {
   'multi-position': MultiPositionLayout,
   'difference-text': DifferenceTextLayout,
   'bold-behind': BoldBehindLayout,
+  'solo-word': SoloWordLayout,
 };
