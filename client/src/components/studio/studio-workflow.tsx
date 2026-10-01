@@ -140,12 +140,23 @@ export function StudioWorkflow() {
   // instead of an eternal spinner.
   const TRANSCRIBE_TIMEOUT_MS = 20 * 60 * 1000;
 
-  const handleTranscribe = async () => {
+  const handleTranscribe = async (force = false) => {
     if (!currentProject) return;
+    // Auto-force when resuming a stale job: if the project has been sitting in
+    // TRANSCRIBING/QUEUED for over 10 min (e.g. page refresh on a wedged job),
+    // a plain click would hit the server's duplicate-protection and change
+    // nothing — so reset it. Fresh jobs (<10 min) are left alone.
+    let effectiveForce = force;
+    if (!effectiveForce && (currentProject.status === 'TRANSCRIBING' || (currentProject.status as string) === 'QUEUED_RENDER_TRANS')) {
+      const updatedMs = currentProject.updatedAt ? new Date(currentProject.updatedAt).getTime() : 0;
+      if (Date.now() - updatedMs > 10 * 60 * 1000) {
+        effectiveForce = true;
+      }
+    }
     try {
       setIsProcessing(true); setError(null); setTranscribeFailed(false);
       setTranscribeElapsed(0); setProcessingMsg('PREPARING AUDIO...');
-      await api.transcribe(currentProject.id, transcribeLang);
+      await api.transcribe(currentProject.id, transcribeLang, effectiveForce);
       const startedAt = Date.now();
       if (transcribePollRef.current) clearInterval(transcribePollRef.current);
       const poll = setInterval(async () => {
@@ -410,7 +421,7 @@ export function StudioWorkflow() {
                 </div>
               ) : (
                 <button
-                  onClick={handleTranscribe}
+                  onClick={() => handleTranscribe(transcribeFailed)}
                   className="w-full px-8 py-4 font-grotesk font-medium text-sm bg-on-surface text-surface-container-lowest tracking-wide hover:bg-primary-fixed hover:text-surface-container-lowest transition-colors rounded-md"
                 >
                   {transcribeFailed ? 'Retry Transcription' : 'Generate Captions'}

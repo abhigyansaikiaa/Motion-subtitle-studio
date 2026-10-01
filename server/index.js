@@ -256,19 +256,26 @@ app.post('/api/upload/finalize', authMiddleware, async (req, res) => {
 // Step 2: Trigger Transcription
 app.post('/api/transcribe', authMiddleware, async (req, res) => {
   try {
-    const { projectId } = req.body;
+    const { projectId, force } = req.body;
     if (!projectId) return res.status(400).json({ error: 'projectId required' });
 
     const project = await getProject(projectId);
     if (!project) return res.status(404).json({ error: 'Project not found' });
     if (project.userId !== req.user.id) return res.status(403).json({ error: 'Unauthorized project access' });
 
-    // Duplicate transcription protection
-    if (project.status === 'QUEUED_RENDER_TRANS' || project.status === 'TRANSCRIBING') {
-      return res.json({ success: true, projectId: project.id, status: project.status });
-    }
-    if (project.status === 'TRANSCRIBED' || project.status === 'READY_TO_EDIT' || project.status === 'COMPLETED') {
-      return res.json({ success: true, projectId: project.id, status: project.status });
+    // Duplicate transcription protection — unless the user explicitly forces a
+    // retry. A row wedged in TRANSCRIBING/QUEUED_RENDER_TRANS by a dead worker
+    // would otherwise be un-retryable from the UI (the early return below
+    // treats it as "already in progress" forever).
+    if (!force) {
+      if (project.status === 'QUEUED_RENDER_TRANS' || project.status === 'TRANSCRIBING') {
+        return res.json({ success: true, projectId: project.id, status: project.status });
+      }
+      if (project.status === 'TRANSCRIBED' || project.status === 'READY_TO_EDIT' || project.status === 'COMPLETED') {
+        return res.json({ success: true, projectId: project.id, status: project.status });
+      }
+    } else {
+      console.log(`[API] /api/transcribe force-retry: resetting project ${project.id} from ${project.status} to QUEUED_RENDER_TRANS`);
     }
 
     const language = req.body.language || null;

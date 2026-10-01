@@ -101,12 +101,12 @@ export const api = {
     return { projectId: finalizeRes.projectId, videoId: finalizeRes.b2Key };
   },
 
-  // Transcribe
-  transcribe: (projectId: string, language: string) =>
+  // Transcribe — force=true resets a row wedged in TRANSCRIBING/QUEUED by a dead worker
+  transcribe: (projectId: string, language: string, force = false) =>
     fetchApi<{ project: Project }>('/api/transcribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ projectId, language: language === 'auto' ? null : language })
+      body: JSON.stringify({ projectId, language: language === 'auto' ? null : language, force })
     }),
 
   // Compose
