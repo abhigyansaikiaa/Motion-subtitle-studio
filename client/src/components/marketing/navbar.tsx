@@ -32,11 +32,11 @@ export function Navbar() {
       className="fixed top-0 left-0 w-full z-50 bg-background/85 backdrop-blur-md border-b border-foreground/15"
     >
       <div className="max-w-[100rem] mx-auto px-6 md:px-10 h-16 flex items-center justify-between">
-        <a href="#/" className="font-editorial font-extrabold text-lg tracking-tight uppercase leading-none">
+        <a href="#/" className="font-editorial font-extrabold text-base sm:text-lg tracking-tight uppercase leading-none">
           Motion<span className="text-foreground/40">—</span>Subtitle
         </a>
 
-        <nav className="hidden md:flex items-center gap-8">
+        <nav className="hidden lg:flex items-center gap-8">
           {LINKS.map(l => (
             <a
               key={l.n}
@@ -54,7 +54,7 @@ export function Navbar() {
           <button
             onClick={() => setMenuOpen(o => !o)}
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            className="md:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-foreground/70 hover:text-foreground transition-colors"
+            className="lg:hidden inline-flex items-center justify-center w-10 h-10 -mr-1 text-foreground/70 hover:text-foreground transition-colors"
           >
             {menuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
           </button>
@@ -66,13 +66,13 @@ export function Navbar() {
               </span>
               <a
                 href="#/studio"
-                className="inline-flex items-center gap-2 bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-5 py-2.5 hover:bg-foreground/85 transition-colors"
+                className="inline-flex items-center gap-2 bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 sm:px-5 py-2.5 hover:bg-foreground/85 transition-colors"
               >
                 Studio <ArrowUpRight className="w-3.5 h-3.5" />
               </a>
               <button
                 onClick={handleLogout}
-                className="font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/45 hover:text-foreground transition-colors px-2"
+                className="hidden sm:block font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/45 hover:text-foreground transition-colors px-2"
               >
                 Out
               </button>
@@ -81,13 +81,13 @@ export function Navbar() {
             <>
               <a
                 href="#/auth?mode=login"
-                className="font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 hover:text-foreground transition-colors px-2"
+                className="hidden sm:block font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 hover:text-foreground transition-colors px-2"
               >
                 Log in
               </a>
               <a
                 href="#/auth?mode=signup"
-                className="bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-5 py-2.5 hover:bg-foreground/85 transition-colors"
+                className="bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 sm:px-5 py-2.5 hover:bg-foreground/85 transition-colors"
               >
                 Get started
               </a>
@@ -104,7 +104,7 @@ export function Navbar() {
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-            className="md:hidden overflow-hidden border-t border-foreground/10"
+            className="lg:hidden overflow-hidden border-t border-foreground/10"
           >
             <div className="px-6 py-4 flex flex-col">
               {LINKS.map(l => (
@@ -112,12 +112,49 @@ export function Navbar() {
                   key={l.n}
                   href={l.href}
                   onClick={() => setMenuOpen(false)}
-                  className="flex items-center justify-between py-4 border-b border-foreground/10 last:border-0 font-grotesk font-semibold text-sm uppercase tracking-widest text-foreground/70 active:text-foreground"
+                  className="flex items-center justify-between py-4 border-b border-foreground/10 font-grotesk font-semibold text-sm uppercase tracking-widest text-foreground/70 active:text-foreground"
                 >
                   <span>{l.label}</span>
                   <span className="font-mono text-[11px] text-foreground/30">{l.n}</span>
                 </a>
               ))}
+              {/* Auth actions — hidden from the bar on small phones */}
+              <div className="sm:hidden flex items-center gap-3 pt-4 pb-2">
+                {user ? (
+                  <>
+                    <a
+                      href="#/studio"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 py-3"
+                    >
+                      Studio
+                    </a>
+                    <button
+                      onClick={() => { setMenuOpen(false); handleLogout(); }}
+                      className="flex-1 font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/55 border border-foreground/20 px-4 py-3"
+                    >
+                      Log out
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <a
+                      href="#/auth?mode=login"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center font-mono text-[11px] tracking-[0.2em] uppercase text-foreground/70 border border-foreground/20 px-4 py-3"
+                    >
+                      Log in
+                    </a>
+                    <a
+                      href="#/auth?mode=signup"
+                      onClick={() => setMenuOpen(false)}
+                      className="flex-1 text-center bg-foreground text-background font-grotesk font-semibold text-xs uppercase tracking-widest px-4 py-3"
+                    >
+                      Get started
+                    </a>
+                  </>
+                )}
+              </div>
             </div>
           </motion.nav>
         )}

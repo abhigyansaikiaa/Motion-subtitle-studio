@@ -50,7 +50,7 @@ export function LenisHero() {
             initial={{ opacity: 0, y: 60 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
-            className="font-editorial font-extrabold uppercase leading-[0.88] tracking-tight text-[13.5vw] md:text-[11vw]"
+            className="font-editorial font-extrabold uppercase leading-[0.88] tracking-tight text-[11.5vw] md:text-[11vw]"
           >
             Make every<br />
             <span className="text-stroke">word move</span>

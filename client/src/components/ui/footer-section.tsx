@@ -74,7 +74,7 @@ export function FooterSection() {
 
       {/* Giant wordmark */}
       <div className="px-2 select-none" aria-hidden>
-        <div className="font-editorial font-extrabold uppercase leading-[0.8] tracking-tight text-center whitespace-nowrap text-[11.5vw] text-foreground/[0.92]">
+        <div className="font-editorial font-extrabold uppercase leading-[0.8] tracking-tight text-center whitespace-nowrap text-[8.5vw] text-foreground/[0.92]">
           Motion Subtitle
         </div>
       </div>

@@ -35,7 +35,7 @@ function SectionHead({
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-5xl md:text-7xl lg:text-8xl"
+        className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-[9.5vw] md:text-7xl lg:text-8xl"
       >
         {title}
       </motion.h2>
@@ -122,11 +122,11 @@ export function HowItWorksSection() {
             <span className="font-mono text-[11px] tracking-[0.25em] text-background/60 uppercase">02</span>
             <span className="font-mono text-[11px] tracking-[0.25em] text-background/60 uppercase">[ workflow ]</span>
           </div>
-          <h2 className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-5xl md:text-7xl lg:text-8xl">
+          <h2 className="font-editorial font-extrabold uppercase tracking-tight leading-[0.9] text-[9.5vw] md:text-7xl lg:text-8xl">
             Raw to rendered<br />in minutes.
           </h2>
         </div>
-        <div className="grid md:grid-cols-4 border-t border-l border-background/20">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 border-t border-l border-background/20">
           {STEPS.map((s, i) => (
             <motion.div
               key={s.n}
