@@ -3039,3 +3039,45 @@ export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];
 }
 
+// ─── ROUND 5 — invideo.ai dynamic marker captions (sourced Oct 2026) ─────────
+// Handwritten ink + a yellow marker that highlights each spoken word as it
+// lands (dark ink on the marker, white everywhere else), soft shadow for
+// readability, lower-third placement. Original recreation of the viral
+// "dynamic captions" look: word-by-word reveal, marker emphasis on keywords.
+TEMPLATES.push(
+  {
+    id: 'dynamic-marker',
+    name: 'Dynamic Marker',
+    description: 'Handwritten captions with a yellow marker sweeping over each spoken word — dark ink on the marker, white everywhere else.',
+    category: 'Viral',
+    fontFamily: "'Caveat', cursive",
+    fontWeight: 700,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 84,
+    baseOpacity: 1,
+    heroColor: '#161616',
+    heroScale: 1.0,
+    heroFontFamily: "'Caveat', cursive",
+    heroFontWeight: 700,
+    heroFontStyle: 'normal',
+    accentColor: '#FFD60A',
+    alignment: 'center',
+    layoutType: 'subtitle-highlight',
+    letterSpacing: '0.01em',
+    lineHeight: 1.35,
+    shadow: '0 2px 10px rgba(0,0,0,0.55)',
+    entranceAnimation: 'fade',
+    animationLevel: 'word',
+    wordActivation: 'highlight',
+    highlightColor: '#FFD60A',
+    highlightRadius: 6,
+    highlightPadX: 14,
+    highlightPadY: 4,
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'bottom',
+  },
+);
+
