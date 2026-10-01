@@ -2900,6 +2900,10 @@ export const CURATED_DYNAMIC_IDS: string[] = [
   'depth-titan',    // Titan Behind — giant type behind subject
   'paper-cut',      // Paper Cut — editorial rise
   'syne-surge',     // Syne Surge — stacked spring
+  'decode',         // Decode — scrambling glyphs lock left to right
+  'wave-dance',     // Wave Dance — perpetual per-character sine wave
+  'flip-card',      // Flip Card — departures-board 3D flip
+  'karaoke-bounce', // Karaoke Bounce — spoken word jumps on a spring
   'minimal',        // Minimal — calm, near-static
 ];
 
@@ -2907,6 +2911,129 @@ export function getCuratedTemplates(): TemplateDefinition[] {
   const byId = new Map(TEMPLATES.map(t => [t.id, t]));
   return CURATED_DYNAMIC_IDS.map(id => byId.get(id)).filter((t): t is TemplateDefinition => !!t);
 }
+
+
+// ─── ROUND 4 — videocaption.ai motion behaviors (sourced Oct 2026) ──────────
+// Decode/Scramble, true per-character Wave, Flip Card entrance, and the
+// karaoke Bounce (jump) sub-style. Each is a genuinely new motion behavior,
+// not a color/font swap.
+TEMPLATES.push(
+  {
+    id: 'decode',
+    name: 'Decode',
+    description: 'Matrix-style decode: words arrive as scrambling glyphs that lock into letters left to right.',
+    category: 'Viral',
+    fontFamily: "'Space Mono', monospace",
+    fontWeight: 700,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#8b8b8b',
+    baseSize: 120,
+    baseOpacity: 1,
+    heroColor: '#00FF4C',
+    heroScale: 1.0,
+    heroFontWeight: 700,
+    accentColor: '#00FF4C',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.02em',
+    lineHeight: 1.25,
+    shadow: '0 0 18px rgba(0,255,76,0.35)',
+    entranceAnimation: 'fade',
+    animationLevel: 'word',
+    wordActivation: 'scramble',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'center',
+  },
+  {
+    id: 'wave-dance',
+    name: 'Wave Dance',
+    description: 'Characters dance in a perpetual sine wave, phase travelling left to right.',
+    category: 'Viral',
+    fontFamily: "'Inter', sans-serif",
+    fontWeight: 800,
+    fontStyle: 'normal',
+    textTransform: 'none',
+    baseColor: '#ffffff',
+    baseSize: 140,
+    baseOpacity: 1,
+    heroColor: '#FFEB00',
+    heroScale: 1.0,
+    heroFontWeight: 800,
+    accentColor: '#FFEB00',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0em',
+    lineHeight: 1.3,
+    shadow: '0 4px 0 rgba(0,0,0,0.9)',
+    outline: '2px #000000',
+    entranceAnimation: 'fade-up',
+    animationLevel: 'word',
+    wordActivation: 'wave',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'center',
+  },
+  {
+    id: 'flip-card',
+    name: 'Flip Card',
+    description: 'Departures-board flip: each word swings into view on a 3D flip with a punch.',
+    category: 'Viral',
+    fontFamily: "'Anton', sans-serif",
+    fontWeight: 400,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#ffffff',
+    baseSize: 145,
+    baseOpacity: 1,
+    heroColor: '#FFEB00',
+    heroScale: 1.0,
+    accentColor: '#FFEB00',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.02em',
+    lineHeight: 1.15,
+    shadow: '0 4px 0 rgba(0,0,0,0.9)',
+    outline: '2px #000000',
+    entranceAnimation: 'flip-in',
+    animationLevel: 'word',
+    wordActivation: 'pop',
+    activeScale: 1.1,
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'center',
+  },
+  {
+    id: 'karaoke-bounce',
+    name: 'Karaoke Bounce',
+    description: 'The karaoke Bounce sub-style: the spoken word jumps on a spring.',
+    category: 'Viral',
+    fontFamily: "'Inter', sans-serif",
+    fontWeight: 800,
+    fontStyle: 'normal',
+    textTransform: 'uppercase',
+    baseColor: '#ffffff',
+    baseSize: 140,
+    baseOpacity: 1,
+    heroColor: '#FFEB00',
+    heroScale: 1.0,
+    heroFontWeight: 800,
+    accentColor: '#FFEB00',
+    alignment: 'center',
+    layoutType: 'inline',
+    letterSpacing: '0.01em',
+    lineHeight: 1.2,
+    shadow: '0 4px 0 rgba(0,0,0,0.9)',
+    outline: '2px #000000',
+    entranceAnimation: 'fade-up',
+    animationLevel: 'word',
+    wordActivation: 'jump',
+    animationSpeed: 1.0,
+    captionDepth: 'front',
+    position: 'center',
+  },
+);
 
 export function getTemplate(id: string): TemplateDefinition {
   return TEMPLATES.find(t => t.id === id) || TEMPLATES[0];

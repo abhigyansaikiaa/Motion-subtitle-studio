@@ -34,6 +34,8 @@ export function LiveCaptionPreview({
   }, [words.length, wordMs]);
 
   const isPop = t.wordActivation === 'pop';
+  const isJump = t.wordActivation === 'jump';
+  const isWave = t.wordActivation === 'wave';
   // For 'pop' templates the punch peaks at activeScale (capped 1.15); for
   // 'scale-up' templates the hero scale is the held emphasis size.
   const heroScale = isPop
@@ -62,7 +64,7 @@ export function LiveCaptionPreview({
     >
       {words.map((w, i) => {
         const isActive = i === active;
-        const scaleActive = t.wordActivation === 'scale-up' || isPop;
+        const scaleActive = t.wordActivation === 'scale-up' || isPop || isJump;
         // Compensate the pop scale with side margins so the enlarged hero word
         // pushes its neighbours aside instead of mashing into their glyphs.
         const pushEm =
@@ -94,7 +96,25 @@ export function LiveCaptionPreview({
               willChange: 'transform',
             }}
           >
-            {w}
+            {isWave ? (
+              <>
+                <style>{`@keyframes vc-wave { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-0.28em); } }`}</style>
+                {w.split('').map((ch, ci) => (
+                  <span
+                    key={ci}
+                    style={{
+                      display: 'inline-block',
+                      animation: 'vc-wave 1.1s ease-in-out infinite',
+                      animationDelay: `${(ci * 0.09).toFixed(2)}s`,
+                    }}
+                  >
+                    {ch}
+                  </span>
+                ))}
+              </>
+            ) : (
+              w
+            )}
           </span>
         );
       })}
