@@ -831,6 +831,7 @@ export const SoloWordLayout = ({
 };
 // Export a registry map to be used by CaptionEngine
 export const LayoutRegistry: Record<string, React.FC<any>> = {
+  'editorial-stack': HeroInterruptionLayout,
   'hero-interruption': HeroInterruptionLayout,
   'corner-hero': CornerHeroLayout,
   'split-hero': SplitHeroLayout,

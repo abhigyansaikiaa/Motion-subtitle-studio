@@ -89,7 +89,7 @@ export interface TemplateDefinition {
   
   // Layout & Composition
   alignment: 'left' | 'center' | 'right';
-  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro' | 'subtitle-highlight' | 'multi-position' | 'difference-text' | 'bold-behind' | 'solo-word' | 'scribble-highlight' | 'layered-editorial' | 'continuous-scroll';
+  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro' | 'subtitle-highlight' | 'multi-position' | 'difference-text' | 'bold-behind' | 'solo-word' | 'scribble-highlight' | 'layered-editorial' | 'continuous-scroll' | 'editorial-stack';
   letterSpacing: string;
   lineHeight: number;
   
