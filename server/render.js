@@ -152,19 +152,20 @@ async function renderDepth(inputPath, outputPath, durationSec, projectId, token,
   console.log(`[RENDER] Compositing (depth mode)...`);
 
   let filterGraph = [
-    `[0:v][1:v]overlay=0:0[base_with_bg]`,
+    `[0:v]split=2[bg1][bg2]`,
+    `[bg1][1:v]overlay=0:0[base_with_bg]`,
     `[2:v]format=gray[mask]`,
-    `[0:v][mask]alphamerge[fg_subject]`,
+    `[bg2][mask]alphamerge[fg_subject]`,
     `[base_with_bg][fg_subject]overlay=0:0[with_fg_subject]`,
     `[with_fg_subject][3:v]overlay=0:0[final_out]`
   ].join(';');
 
   if (targetWidth !== originalWidth || targetHeight !== originalHeight) {
     filterGraph = [
-      `[0:v]scale=${targetWidth}:${targetHeight}[scaled_in]`,
+      `[0:v]scale=${targetWidth}:${targetHeight},split=2[bg1][bg2]`,
       `[2:v]scale=${targetWidth}:${targetHeight},format=gray[mask]`,
-      `[scaled_in][1:v]overlay=0:0[base_with_bg]`,
-      `[scaled_in][mask]alphamerge[fg_subject]`,
+      `[bg1][1:v]overlay=0:0[base_with_bg]`,
+      `[bg2][mask]alphamerge[fg_subject]`,
       `[base_with_bg][fg_subject]overlay=0:0[with_fg_subject]`,
       `[with_fg_subject][3:v]overlay=0:0[final_out]`
     ].join(';');

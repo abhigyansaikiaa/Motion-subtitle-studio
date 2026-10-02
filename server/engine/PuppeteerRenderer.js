@@ -170,7 +170,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const cdpSession = await page.target().createCDPSession();
 
   if (projectData) {
-    await page.evaluate((data) => {
+    await page.evaluateOnNewDocument((data) => {
       window.injectedProject = data;
     }, projectData);
   }
@@ -369,7 +369,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
       cdpSession = await page.target().createCDPSession();
       
       if (projectData) {
-        await page.evaluate((data) => {
+        await page.evaluateOnNewDocument((data) => {
           window.injectedProject = data;
         }, projectData);
       }

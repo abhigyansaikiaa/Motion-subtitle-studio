@@ -89,7 +89,7 @@ export interface TemplateDefinition {
   
   // Layout & Composition
   alignment: 'left' | 'center' | 'right';
-  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro' | 'subtitle-highlight' | 'multi-position' | 'difference-text' | 'bold-behind' | 'solo-word';
+  layoutType: 'inline' | 'stacked' | 'asymmetric' | 'editorial' | 'hero-interruption' | 'corner-hero' | 'split-hero' | 'editorial-offset' | 'giant-bg' | 'vertical-stack' | 'editorial-magazine' | 'word-collision' | 'cinematic' | 'kinetic' | 'sentence-hero' | 'hero-micro' | 'subtitle-highlight' | 'multi-position' | 'difference-text' | 'bold-behind' | 'solo-word' | 'scribble-highlight' | 'layered-editorial' | 'continuous-scroll';
   letterSpacing: string;
   lineHeight: number;
   
@@ -134,5 +134,16 @@ export interface TemplateDefinition {
   secondFontFamily?: string;    // second font family used in multi-font templates
   secondFontStyle?: string;     // italic override for second font
   heroTextTransform?: 'none' | 'uppercase' | 'lowercase' | 'capitalize';
+
+  // Scribble / Highlight System
+  scribbleColor?: string;
+  scribbleType?: 'underline' | 'circle' | 'strike' | 'box';
+
+  // Scroll Text System
+  continuousScroll?: {
+    direction: 'up' | 'down' | 'left' | 'right';
+    speedMultiplier: number;
+    maskGradient: string;
+  };
 }
 
