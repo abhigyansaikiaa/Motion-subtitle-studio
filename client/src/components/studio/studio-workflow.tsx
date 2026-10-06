@@ -93,6 +93,17 @@ export function StudioWorkflow() {
   const activeTemplate = getActiveTemplate();
   const inStudio = currentStep >= 3 && currentStep <= 7 && !!currentProject;
 
+  // Keep the editable caption copy in sync when a project loads (or reloads)
+  // with segments but the editor copy is empty — otherwise Export stays
+  // disabled because it reads editorSegments, not currentProject.segments.
+  // Only backfills when empty so user edits are never clobbered.
+  useEffect(() => {
+    const segs = (currentProject as any)?.segments;
+    if (segs && segs.length > 0 && editorSegments.length === 0) {
+      setEditorSegments(segs);
+    }
+  }, [currentProject, editorSegments.length, setEditorSegments]);
+
   // Wake the server as soon as the Studio mounts so it's ready for upload
   useEffect(() => {
     const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:3000';
