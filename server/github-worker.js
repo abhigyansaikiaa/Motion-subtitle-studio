@@ -198,6 +198,33 @@ async function performSweep() {
   if (staleTranscriptions && staleTranscriptions.length > 0) {
     console.log(`[Worker] Recovered ${staleTranscriptions.length} stale transcription projects to FAILED.`);
   }
+
+  // BACKSTOP: pick up render jobs the primary worker never claimed (e.g. HF
+  // worker down/asleep). Only jobs QUEUED for >10 minutes — a healthy worker
+  // claims within seconds, so these are definitively orphaned. The atomic
+  // claim inside processRenderJob guarantees no double-processing if the
+  // primary worker recovers mid-sweep.
+  const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
+  const { data: orphaned } = await supabase
+    .from('jobs')
+    .select('id')
+    .eq('status', 'QUEUED')
+    .lt('updated_at', tenMinAgo)
+    .order('updated_at', { ascending: true })
+    .limit(5);
+
+  if (orphaned && orphaned.length > 0) {
+    console.log(`[Worker] Found ${orphaned.length} orphaned QUEUED render job(s) — processing...`);
+    for (const j of orphaned) {
+      try {
+        await processRenderJob(j.id);
+      } catch (e) {
+        console.error(`[Worker] Orphaned job ${j.id} failed:`, e.message);
+      }
+    }
+  } else {
+    console.log('[Worker] No orphaned QUEUED render jobs.');
+  }
 }
 
 async function start() {
