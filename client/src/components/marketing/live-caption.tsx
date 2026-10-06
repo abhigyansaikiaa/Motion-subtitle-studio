@@ -102,7 +102,7 @@ export function LiveCaptionPreview({
     };
     return (
       <div
-        className={`relative w-full h-full overflow-hidden ${className}`}
+        className={`relative w-full h-full min-h-[120px] overflow-hidden ${className}`}
         aria-label={`Animated preview of the ${t.name} caption style`}
       >
         {vis.map((w, i) => {

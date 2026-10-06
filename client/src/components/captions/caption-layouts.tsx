@@ -552,13 +552,13 @@ export const SoloWordLayout = ({
 
   React.useEffect(() => {
     const unsub = time.on('change', (t: number) => {
-      const active = segment.words.find(w => t >= w.start && t < w.end);
+      const active = segment?.words?.find(w => t >= w.start && t < w.end);
       setActiveId(active?.id ?? null);
     });
     return unsub;
-  }, [time, segment.words]);
+  }, [time, segment?.words]);
 
-  const word = segment.words.find(w => w.id === activeId);
+  const word = segment?.words?.find(w => w.id === activeId);
   if (!word) return null;
 
   const size = dynamicBaseSize * (templateConfig.heroScale ?? 1);
@@ -621,11 +621,14 @@ export const ScatteredWordsLayout = ({
 }: LayoutProps) => {
   const [, setTick] = React.useState(0);
   const sigRef = React.useRef('');
+  // Guard: a segment without words must render nothing, never throw (a throw
+  // here unmounts the whole caption tree, which fails Puppeteer exports).
+  const words = segment?.words ?? [];
 
   React.useEffect(() => {
     const update = () => {
       const t = typeof time.get === 'function' ? time.get() : 0;
-      const spoken = segment.words.filter(w => t >= w.start);
+      const spoken = words.filter(w => t >= w.start);
       const sig = spoken.slice(-6).map(w => w.id).join('|');
       if (sig !== sigRef.current) {
         sigRef.current = sig;
@@ -635,15 +638,15 @@ export const ScatteredWordsLayout = ({
     update();
     const unsub = time.on('change', update);
     return unsub;
-  }, [time, segment]);
+  }, [time, words]);
 
   const t = typeof time.get === 'function' ? time.get() : 0;
-  const spoken = segment.words.filter(w => t >= w.start);
+  const spoken = words.filter(w => t >= w.start);
   const WINDOW = 5;
   const visible = spoken.slice(-WINDOW);
   if (visible.length === 0) return null;
 
-  const segSeed = hashStr(segment.id || 'seg');
+  const segSeed = hashStr(segment?.id || 'seg');
   const fam = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
   const wt = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
   const st = templateConfig.heroFontStyle ?? templateConfig.fontStyle;
@@ -653,7 +656,7 @@ export const ScatteredWordsLayout = ({
     <div className="absolute inset-0 pointer-events-none overflow-hidden">
       {visible.map((word, i) => {
         const age = visible.length - 1 - i; // 0 = newest
-        const wi = word.index ?? segment.words.indexOf(word);
+        const wi = word.index ?? words.indexOf(word);
         const left = 4 + hashRand(segSeed + wi * 2 + 1) * 64;
         const top = 5 + hashRand(segSeed + wi * 2 + 101) * 72;
         const scale = Math.pow(0.7, age);
