@@ -102,8 +102,14 @@ app.get('/health', (req, res) => {
 const corsOptions = {
   origin: function (origin, callback) {
     const allowedOrigin = process.env.CLIENT_ORIGIN;
-    // Allow if no origin (e.g. server-to-server), or matches CLIENT_ORIGIN, or is localhost for dev
-    if (!origin || (allowedOrigin && origin === allowedOrigin) || origin.startsWith('http://localhost:')) {
+    // Allow if no origin (e.g. server-to-server), or matches CLIENT_ORIGIN,
+    // or is localhost for dev, or is the production Vercel frontend (fallback
+    // if CLIENT_ORIGIN is not configured).
+    const prodFrontend = 'https://motion-subtitle-studio.vercel.app';
+    if (!origin
+        || (allowedOrigin && origin === allowedOrigin)
+        || origin === prodFrontend
+        || origin.startsWith('http://localhost:')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
