@@ -226,6 +226,20 @@ export function CompositedPreview() {
     // Ignore the pause the browser fires when WE swap src for token recovery —
     // playback is resumed on canplay. A genuine pause is never suppressed.
     if (resumeAfterRecoveryRef.current) return;
+    // If the store says the user wants to play but the browser paused on its
+    // own (buffering stall, background tab, extension interference), do NOT
+    // flip the UI to paused — attempt to resume so playback continues
+    // seamlessly. Only if the resume is rejected (e.g. autoplay policy) do we
+    // reflect the truth (paused) so one user click resumes.
+    if (useAppStore.getState().isPlaying) {
+      const video = videoRef.current;
+      if (video && !video.ended) {
+        video.play().catch(() => {
+          setIsPlaying(false);
+        });
+      }
+      return;
+    }
     setIsPlaying(false);
     setIsBuffering(false);
   }, [setIsPlaying]);

@@ -259,6 +259,7 @@ export const api = {
 
   // Job polling
   getJob: (jobId: string) => fetchApi<{ job: Job }>(`/api/jobs/${jobId}`),
+  getRenderStatus: () => fetchApi<{ canRender: boolean, hfWorker: boolean, githubBackup: boolean, message: string }>('/api/render/status'),
 
   // Save specific step without full compose (if needed)
   saveSegments: (projectId: string, segments: any[]) =>

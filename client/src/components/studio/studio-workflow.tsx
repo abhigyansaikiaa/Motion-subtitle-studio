@@ -225,6 +225,18 @@ export function StudioWorkflow() {
   const handleRender = async () => {
     if (!currentProject) return;
     try {
+      // Pre-flight: warn immediately if the backend has no renderer configured,
+      // instead of letting the user wait 45s for a job that can never run.
+      try {
+        const rs = await api.getRenderStatus();
+        if (!rs.canRender) {
+          setError('Export is not set up yet: ' + rs.message);
+          return;
+        }
+      } catch {
+        // If the status check itself fails, proceed — the 45s backend fallback
+        // will surface the real error.
+      }
       setIsProcessing(true); setError(null); setStep(6); setProcessingMsg('RENDERING...');
       const res = await api.render(currentProject.id, editorSegments, activeTemplate, resolution);
       if (renderPollRef.current) clearInterval(renderPollRef.current);

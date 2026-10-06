@@ -595,6 +595,25 @@ app.get('/api/jobs/active', authMiddleware, async (req, res) => {
   res.json({ job });
 });
 
+// Reports whether the backend can actually render a video right now, so the
+// frontend can warn BEFORE the user waits 45s for a job that can never run.
+// - hfWorker: HF_RENDER_WORKER_URL is configured (primary renderer)
+// - githubBackup: GITHUB_PAT + GITHUB_REPO are configured (45s backup renderer)
+app.get('/api/render/status', authMiddleware, async (req, res) => {
+  const hfWorker = !!process.env.HF_RENDER_WORKER_URL;
+  const githubBackup = !!(process.env.GITHUB_PAT && process.env.GITHUB_REPO);
+  res.json({
+    canRender: hfWorker || githubBackup,
+    hfWorker,
+    githubBackup,
+    message: hfWorker
+      ? 'Render worker is configured.'
+      : githubBackup
+        ? 'Backup renderer (GitHub Actions) is configured — export takes a few minutes.'
+        : 'No render worker configured. Set HF_RENDER_WORKER_URL or GITHUB_PAT + GITHUB_REPO in the backend environment, then retry.'
+  });
+});
+
 app.get('/api/jobs/:id', authMiddleware, async (req, res) => {
   const job = await getJob(req.params.id);
   if (!job || job.userId !== req.user.id) {
