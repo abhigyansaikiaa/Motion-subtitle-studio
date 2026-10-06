@@ -82,6 +82,61 @@ export function LiveCaptionPreview({
     );
   }
 
+  // Scattered-words templates: rolling window of recent words at scattered
+  // positions, newest largest — mirrors the real ScatteredWordsLayout.
+  if (t.layoutType === 'scattered-words') {
+    const WIN = 5;
+    const vis: string[] = [];
+    for (let k = WIN - 1; k >= 0; k--) {
+      vis.push(words[(((active - k) % words.length) + words.length) % words.length]);
+    }
+    const scatFam = t.heroFontFamily || t.fontFamily;
+    const scatWt = t.heroFontWeight ?? t.fontWeight;
+    const scatSt = t.heroFontStyle || t.fontStyle;
+    const hashN = (n: number) => {
+      let h = (n * 2654435761) >>> 0;
+      h ^= h >>> 15;
+      h = Math.imul(h, 2246822519);
+      h ^= h >>> 13;
+      return (h >>> 0) / 4294967295;
+    };
+    return (
+      <div
+        className={`relative w-full h-full overflow-hidden ${className}`}
+        aria-label={`Animated preview of the ${t.name} caption style`}
+      >
+        {vis.map((w, i) => {
+          const age = vis.length - 1 - i;
+          const left = 4 + hashN(i * 2 + 1) * 60;
+          const top = 6 + hashN(i * 2 + 101) * 68;
+          const scale = Math.pow(0.7, age);
+          return (
+            <span
+              key={`scat-${active}-${i}`}
+              className="animate-caption-pop absolute whitespace-nowrap"
+              style={{
+                left: `${left.toFixed(1)}%`,
+                top: `${top.toFixed(1)}%`,
+                fontFamily: scatFam,
+                fontWeight: scatWt,
+                fontStyle: scatSt as React.CSSProperties['fontStyle'],
+                color: t.heroColor,
+                opacity: Math.max(0.25, 1 - age * 0.24),
+                zIndex: 20 - age,
+                letterSpacing: t.letterSpacing,
+                lineHeight: t.lineHeight,
+                textShadow: t.shadow && t.shadow !== 'none' ? t.shadow : undefined,
+                fontSize: `${(1.9 * scale).toFixed(2)}em`,
+              }}
+            >
+              {w}
+            </span>
+          );
+        })}
+      </div>
+    );
+  }
+
   return (
     <div
       className={`flex flex-wrap items-baseline justify-center gap-x-[0.28em] gap-y-[0.12em] ${className}`}

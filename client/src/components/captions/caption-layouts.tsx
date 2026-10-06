@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { motion, useTransform } from 'motion/react';
 import type { Segment, Word, TemplateDefinition } from '../../lib/types';
 import { cn } from '../../lib/utils';
 import { AnimatedWord } from './caption-engine';
@@ -541,244 +540,7 @@ export const BoldBehindLayout = ({
   return <div className="flex justify-center pointer-events-none" style={{ paddingTop: '4%' }}><HeroWordEl /></div>;
 };
 
-// --- SCRIBBLE HIGHLIGHT LAYOUT ------------------------------------------------
-const pseudoRandom = (seed: string) => {
-  let h = 0;
-  for(let i=0; i<seed.length; i++) h = Math.imul(31, h) + seed.charCodeAt(i) | 0;
-  return Math.abs(h % 100) / 100;
-};
-
-export const ScribbleHighlightLayout = ({
-  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
-}: LayoutProps) => {
-  const [activeWordId, setActiveWordId] = React.useState<string | null>(null);
-  
-  React.useEffect(() => {
-    const unsub = time.on('change', (t: number) => {
-      const active = segment.words.find(w => t >= w.start && t < w.end);
-      setActiveWordId(active?.id ?? null);
-    });
-    return unsub;
-  }, [time, segment.words]);
-
-  const scribbleColor = templateConfig.scribbleColor ?? '#FFD700';
-
-  return (
-    <div className="flex flex-wrap justify-center items-center gap-[0.4em] max-w-[90%] pointer-events-none"
-      style={{
-        fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
-        fontStyle: templateConfig.fontStyle, fontSize: `${dynamicBaseSize}px`,
-        letterSpacing: templateConfig.letterSpacing, lineHeight: templateConfig.lineHeight,
-      }}
-    >
-      {segment.words.map((word, i) => {
-        const isHero = word.emphasis === 'hero' || word.isNumberGroup;
-        const isActive = word.id === activeWordId;
-        
-        // Deterministic rotation and scale for hero words
-        const rand = isHero ? pseudoRandom(word.text + word.id) : 0;
-        const rotateVal = isHero ? (rand * 6 - 3) : 0; // -3 to 3 degrees
-        // Scale is strictly controlled: 1.8x base
-        const heroScaleSize = dynamicBaseSize * 1.8;
-
-        return (
-          <div key={word.id} className="relative inline-block" 
-               style={{ transform: isHero ? `rotate(${rotateVal}deg)` : 'none' }}>
-            {/* Scribble Underlay (Deterministic Multi-Path) */}
-            {isHero && (
-              <motion.svg
-                className="absolute left-[-10%] bottom-[-20%] w-[120%] h-[80%] z-0"
-                viewBox="0 0 100 30"
-                preserveAspectRatio="none"
-                style={{ opacity: isActive ? 1 : 0 }}
-                animate={isActive ? { pathLength: 1, opacity: 1 } : { pathLength: 0, opacity: 0 }}
-                transition={{ duration: 0.15, ease: "easeOut" }}
-              >
-                {/* 3 slightly offset paths for a hand-drawn marker effect */}
-                <motion.path
-                  d={`M5,${20 + rand*2} Q30,${15 - rand*4} 50,${20 + rand*3} T95,${15 + rand*2}`}
-                  fill="none" stroke={scribbleColor} strokeWidth="6" strokeLinecap="round" opacity="0.8"
-                />
-                <motion.path
-                  d={`M6,${22 - rand*2} Q35,${17 + rand*4} 55,${19 - rand*3} T92,${17 - rand*2}`}
-                  fill="none" stroke={scribbleColor} strokeWidth="5" strokeLinecap="round" opacity="0.6"
-                />
-                <motion.path
-                  d={`M3,${18 + rand*3} Q28,${13 - rand*2} 48,${22 + rand*1} T97,${13 + rand*3}`}
-                  fill="none" stroke={scribbleColor} strokeWidth="4" strokeLinecap="round" opacity="0.9"
-                />
-              </motion.svg>
-            )}
-            
-            <div className="relative z-10">
-              <AnimatedWord 
-                word={word} index={i} segmentStart={segment.start} segmentEnd={segment.end}
-                templateConfig={templateConfig} time={time} videoScale={videoScale}
-                forceColor={isActive ? templateConfig.heroColor : templateConfig.baseColor}
-                forceFontFamily={isHero ? (templateConfig.heroFontFamily ?? templateConfig.fontFamily) : undefined}
-                forceFontSize={isHero ? heroScaleSize : dynamicBaseSize}
-                targetDepth={targetDepth}
-              />
-            </div>
-          </div>
-        );
-      })}
-    </div>
-  );
-};
-
-// --- LAYERED EDITORIAL LAYOUT -------------------------------------------------
-export const LayeredEditorialLayout = ({
-  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
-}: LayoutProps) => {
-  const heroFF = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
-  const heroFW = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
-  const heroWords = segment.words.filter(w => w.emphasis === 'hero' || w.isNumberGroup);
-  const baseWords = segment.words.filter(w => w.emphasis !== 'hero' && !w.isNumberGroup);
-  const displayWord = heroWords[0] ?? segment.words[0];
-  
-  if (!displayWord) return null;
-  
-  // Hero scales massively relative to the frame. We anchor it deliberately.
-  // We allow overflow by removing container constraints on the hero.
-  const heroSize = dynamicBaseSize * 5.5; 
-
-  const HeroWordEl = () => (
-    <AnimatedWord key={"hw-" + displayWord.id} word={displayWord} index={0}
-      // Deterministic persistence: stays on screen until the exact end of the segment.
-      segmentStart={segment.start} segmentEnd={segment.end}
-      templateConfig={{ ...templateConfig, entranceAnimation: 'fade-up' }}
-      time={time} videoScale={videoScale}
-      forceColor={templateConfig.heroColor}
-      forceFontFamily={heroFF} forceFontWeight={heroFW} forceFontStyle={templateConfig.heroFontStyle}
-      forceFontSize={heroSize} targetDepth={targetDepth} />
-  );
-
-  return (
-    <div className="w-full h-full relative pointer-events-none flex flex-col justify-center items-center overflow-visible">
-      {/* Background Layer: Massive Hero Word anchored centrally, allowed to overflow */}
-      {(targetDepth === 'all' || targetDepth === 'behind') && (
-        <div className="absolute inset-0 flex justify-center items-center z-0 overflow-visible" 
-             style={{ paddingTop: '5%', minWidth: '150%' }}>
-          <HeroWordEl />
-        </div>
-      )}
-      
-      {/* Foreground Layer: Supporting Words composed editorially */}
-      {(targetDepth === 'all' || targetDepth === 'front') && (
-        <div className="z-10 absolute bottom-[15%] w-[85%] flex flex-col items-center gap-[0.2em]"
-          style={{ fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight, fontSize: `${dynamicBaseSize}px` }}>
-          
-          {/* Staggered phrases: break baseWords into lines of 2-3 words */}
-          {baseWords.reduce((lines, word, i) => {
-            if (i % 3 === 0) lines.push([]);
-            lines[lines.length - 1].push(word);
-            return lines;
-          }, [] as Word[][]).map((lineWords, lineIndex, arr) => {
-            
-            // Stagger alignment deliberately (left, center, right)
-            let justify = 'center';
-            if (arr.length > 1) {
-                justify = lineIndex % 2 === 0 ? 'flex-start' : 'flex-end';
-            }
-
-            return (
-              <div key={`line-${lineIndex}`} className="flex gap-[0.3em] w-[70%]" style={{ justifyContent: justify }}>
-                {lineWords.map((word, i) => (
-                  <AnimatedWord key={word.id} word={word} index={i}
-                    segmentStart={segment.start} segmentEnd={segment.end}
-                    templateConfig={{ ...templateConfig, entranceAnimation: 'fade' }} 
-                    time={time} videoScale={videoScale}
-                    forceColor={templateConfig.baseColor} forceFontSize={dynamicBaseSize}
-                    targetDepth={targetDepth} />
-                ))}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-};
-// --- CONTINUOUS SCROLL LAYOUT -------------------------------------------------
-export const ContinuousScrollLayout = ({
-  segment, templateConfig, time, dynamicBaseSize, dynamicHeroSize, videoScale, targetDepth = 'all',
-}: LayoutProps) => {
-  const dir = templateConfig.continuousScroll?.direction || 'up';
-  
-  // Composition-driven velocity:
-  const moveOffset = useTransform(time, (t: number) => {
-    // Start scrolling a bit before the segment, end a bit after
-    const duration = segment.end - segment.start;
-    const progress = (t - (segment.start - 0.5)) / (duration + 1.0); 
-    
-    // Smooth deterministic velocity curve: ease-in-out
-    // p = p * p * (3 - 2 * p)
-    const clamped = Math.max(0, Math.min(1, progress));
-    const eased = clamped * clamped * (3 - 2 * clamped);
-    
-    // Move from below screen to above screen
-    const offset = (1 - eased * 2) * 600 * videoScale; 
-    
-    if (dir === 'up') return `translateY(${-offset}px)`;
-    if (dir === 'down') return `translateY(${offset}px)`;
-    if (dir === 'left') return `translateX(${-offset}px)`;
-    if (dir === 'right') return `translateX(${offset}px)`;
-    return 'translateY(0)';
-  });
-
-  const maskStyle = templateConfig.continuousScroll?.maskGradient || 'linear-gradient(to bottom, transparent 0%, black 15%, black 85%, transparent 100%)';
-
-  // Make the typography a solid texture, larger scale
-  const scrollBaseSize = dynamicBaseSize * 1.5;
-  const scrollHeroSize = dynamicHeroSize * 1.8;
-
-  return (
-    <div className="w-full h-full overflow-hidden relative pointer-events-none flex justify-center items-center"
-      style={{ WebkitMaskImage: maskStyle, maskImage: maskStyle }}>
-      <motion.div style={{ transform: moveOffset }} className="w-[85%] flex flex-col items-center justify-center gap-[0.5em]">
-        
-        {/* Ghost text before to simulate continuous ticker texture */}
-        <div className="flex flex-wrap justify-center gap-[0.2em] opacity-20"
-             style={{ fontFamily: templateConfig.fontFamily, fontSize: `${scrollBaseSize}px`, lineHeight: 0.9 }}>
-          {segment.words.map(w => <span key={`g1-${w.id}`}>{w.text}</span>)}
-        </div>
-
-        {/* Main interactive text block */}
-        <div className="flex flex-wrap justify-center gap-[0.2em] text-center"
-          style={{
-            fontFamily: templateConfig.fontFamily, fontWeight: templateConfig.fontWeight,
-            lineHeight: 0.9 // Tight leading for solid texture
-          }}>
-          {segment.words.map((word, i) => {
-            const isHero = word.emphasis === 'hero' || word.isNumberGroup;
-            return (
-              <AnimatedWord key={word.id} word={word} index={i}
-                segmentStart={segment.start} segmentEnd={segment.end}
-                templateConfig={templateConfig} 
-                time={time} videoScale={videoScale}
-                forceColor={isHero ? templateConfig.heroColor : templateConfig.baseColor}
-                forceFontFamily={isHero ? (templateConfig.heroFontFamily ?? templateConfig.fontFamily) : undefined}
-                forceFontSize={isHero ? scrollHeroSize : scrollBaseSize}
-                forceFontWeight={isHero ? (templateConfig.heroFontWeight ?? templateConfig.fontWeight) : undefined}
-                forceFontStyle={isHero ? (templateConfig.heroFontStyle ?? templateConfig.fontStyle) : undefined}
-                targetDepth={targetDepth} />
-            );
-          })}
-        </div>
-
-        {/* Ghost text after */}
-        <div className="flex flex-wrap justify-center gap-[0.2em] opacity-20"
-             style={{ fontFamily: templateConfig.fontFamily, fontSize: `${scrollBaseSize}px`, lineHeight: 0.9 }}>
-          {segment.words.map(w => <span key={`g2-${w.id}`}>{w.text}</span>)}
-        </div>
-
-      </motion.div>
-    </div>
-  );
-};
-
-// --- SOLO WORD LAYOUT --------------------------------------------------------
+// ─── SOLO WORD LAYOUT ────────────────────────────────────────────────────────
 // One word at a time, huge and centered — the punchy single-word caption
 // style (e.g. giant red serif-italic shouts across the top). Only the
 // currently-spoken word is rendered; each word pops in fresh because the
@@ -829,9 +591,103 @@ export const SoloWordLayout = ({
     </div>
   );
 };
+// Deterministic 32-bit hash of a string (stable across renders/sessions)
+function hashStr(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return h >>> 0;
+}
+// Deterministic pseudo-random in [0, 1) from an integer seed
+function hashRand(seed: number): number {
+  let h = (seed * 2654435761) >>> 0;
+  h ^= h >>> 15;
+  h = Math.imul(h, 2246822519);
+  h ^= h >>> 13;
+  return (h >>> 0) / 4294967295;
+}
+
+/**
+ * ScatteredWordsLayout — kinetic scattered serif type.
+ * Words pop in one at a time at deterministic scattered positions across the
+ * frame (original implementation of the scattered-caption motion behavior).
+ * A rolling window of the most recently spoken words stays visible: the newest
+ * word lands large in full hero color, older words shrink and fade.
+ */
+export const ScatteredWordsLayout = ({
+  segment, templateConfig, time, dynamicBaseSize, videoScale, targetDepth = 'all',
+}: LayoutProps) => {
+  const [, setTick] = React.useState(0);
+  const sigRef = React.useRef('');
+
+  React.useEffect(() => {
+    const update = () => {
+      const t = typeof time.get === 'function' ? time.get() : 0;
+      const spoken = segment.words.filter(w => t >= w.start);
+      const sig = spoken.slice(-6).map(w => w.id).join('|');
+      if (sig !== sigRef.current) {
+        sigRef.current = sig;
+        setTick(n => n + 1);
+      }
+    };
+    update();
+    const unsub = time.on('change', update);
+    return unsub;
+  }, [time, segment]);
+
+  const t = typeof time.get === 'function' ? time.get() : 0;
+  const spoken = segment.words.filter(w => t >= w.start);
+  const WINDOW = 5;
+  const visible = spoken.slice(-WINDOW);
+  if (visible.length === 0) return null;
+
+  const segSeed = hashStr(segment.id || 'seg');
+  const fam = templateConfig.heroFontFamily ?? templateConfig.fontFamily;
+  const wt = templateConfig.heroFontWeight ?? templateConfig.fontWeight;
+  const st = templateConfig.heroFontStyle ?? templateConfig.fontStyle;
+  const newestSize = dynamicBaseSize * (templateConfig.heroScale ?? 1.5);
+
+  return (
+    <div className="absolute inset-0 pointer-events-none overflow-hidden">
+      {visible.map((word, i) => {
+        const age = visible.length - 1 - i; // 0 = newest
+        const wi = word.index ?? segment.words.indexOf(word);
+        const left = 4 + hashRand(segSeed + wi * 2 + 1) * 64;
+        const top = 5 + hashRand(segSeed + wi * 2 + 101) * 72;
+        const scale = Math.pow(0.7, age);
+        const opacity = Math.max(0.22, 1 - age * 0.24);
+        return (
+          <span
+            key={word.id}
+            className="animate-caption-pop absolute"
+            style={{
+              left: `${left.toFixed(2)}%`,
+              top: `${top.toFixed(2)}%`,
+              fontFamily: fam,
+              fontWeight: wt,
+              fontStyle: st as React.CSSProperties['fontStyle'],
+              fontSize: `${Math.max(16, newestSize * scale).toFixed(1)}px`,
+              color: templateConfig.heroColor,
+              opacity: Number(opacity.toFixed(2)),
+              zIndex: 20 - age,
+              textTransform: templateConfig.textTransform as React.CSSProperties['textTransform'],
+              letterSpacing: templateConfig.letterSpacing,
+              lineHeight: templateConfig.lineHeight ?? 1.05,
+              textShadow: templateConfig.shadow && templateConfig.shadow !== 'none' ? templateConfig.shadow : undefined,
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {word.text}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 // Export a registry map to be used by CaptionEngine
 export const LayoutRegistry: Record<string, React.FC<any>> = {
-  'editorial-stack': HeroInterruptionLayout,
   'hero-interruption': HeroInterruptionLayout,
   'corner-hero': CornerHeroLayout,
   'split-hero': SplitHeroLayout,
@@ -849,7 +705,5 @@ export const LayoutRegistry: Record<string, React.FC<any>> = {
   'difference-text': DifferenceTextLayout,
   'bold-behind': BoldBehindLayout,
   'solo-word': SoloWordLayout,
-  'scribble-highlight': ScribbleHighlightLayout,
-  'layered-editorial': LayeredEditorialLayout,
-  'continuous-scroll': ContinuousScrollLayout,
+  'scattered-words': ScatteredWordsLayout,
 };
