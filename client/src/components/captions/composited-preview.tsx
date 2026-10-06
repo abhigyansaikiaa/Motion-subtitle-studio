@@ -187,6 +187,11 @@ export function CompositedPreview() {
     const video = videoRef.current;
     if (!video) return;
     if (isPlaying) {
+      // Mid-recovery (src was just swapped for a fresh token): the canplay
+      // handler owns the resume. Firing play() here would be gesture-less, so
+      // Chrome's autoplay policy may reject it — and the catch below would
+      // then wrongly flip isPlaying to false ("paused itself").
+      if (resumeAfterRecoveryRef.current) return;
       const id = ++playRequestRef.current;
       const p = video.play();
       if (p && typeof (p as Promise<void>).then === 'function') {
@@ -198,7 +203,9 @@ export function CompositedPreview() {
           .catch(() => {
             // play() rejected (interrupted / not allowed) — the element is
             // paused, so tell the store the truth instead of showing "playing".
-            if (playRequestRef.current === id) setIsPlaying(false);
+            // Never do this mid-recovery: a gesture-less play() rejected by
+            // the autoplay policy is not the user's intent to pause.
+            if (playRequestRef.current === id && !resumeAfterRecoveryRef.current) setIsPlaying(false);
           });
       }
     } else {
@@ -235,10 +242,14 @@ export function CompositedPreview() {
       // Only resume if the user still intends to play (they may have paused
       // while the new source was loading).
       if (video && useAppStore.getState().isPlaying) {
-        video.play().catch(() => { /* surfaces via native events */ });
+        video.play().catch(() => {
+          // Autoplay policy rejected the gesture-less resume: reflect the
+          // truth (paused) so one user click resumes playback.
+          setIsPlaying(false);
+        });
       }
     }
-  }, []);
+  }, [setIsPlaying]);
   const handleNativeError = useCallback(() => {
     setIsBuffering(false);
     // If the auth token rotated since the URL was baked, media range requests
