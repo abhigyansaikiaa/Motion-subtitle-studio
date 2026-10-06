@@ -125,6 +125,11 @@ async function captureCaptionVideo(projectId, depth, durationSec, outputPath, to
         const tE1 = performance.now();
         await page.evaluate(async (t) => { 
           window.setRenderTime(t); 
+          // Two rAFs: the first lets motion's useAnimationFrame push the new
+          // time into React state; the second lets React flush that state to
+          // the DOM before we screenshot. Without this, state-driven caption
+          // layouts (solo-word, scattered-words) lag a frame or miss words.
+          await new Promise(resolve => requestAnimationFrame(resolve));
           await new Promise(resolve => requestAnimationFrame(resolve));
         }, timeSec);
         totalEvalTime += (performance.now() - tE1);
@@ -170,7 +175,7 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
   const cdpSession = await page.target().createCDPSession();
 
   if (projectData) {
-    await page.evaluateOnNewDocument((data) => {
+    await page.evaluate((data) => {
       window.injectedProject = data;
     }, projectData);
   }
@@ -210,6 +215,11 @@ async function captureCaptionVideoFast(projectId, depth, durationSec, outputPath
       const tE1 = performance.now();
       await page.evaluate(async (t) => { 
         window.setRenderTime(t); 
+        // Two rAFs: the first lets motion's useAnimationFrame push the new
+        // time into React state; the second lets React flush that state to
+        // the DOM before we screenshot. Without this, state-driven caption
+        // layouts (solo-word, scattered-words) lag a frame or miss words.
+        await new Promise(resolve => requestAnimationFrame(resolve));
         await new Promise(resolve => requestAnimationFrame(resolve));
       }, timeSec);
       totalEvalTime += (performance.now() - tE1);
@@ -369,7 +379,7 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
       cdpSession = await page.target().createCDPSession();
       
       if (projectData) {
-        await page.evaluateOnNewDocument((data) => {
+        await page.evaluate((data) => {
           window.injectedProject = data;
         }, projectData);
       }
@@ -382,6 +392,11 @@ async function captureCaptionVideoConcurrent(projectId, depth, durationSec, outp
         const timeSec = i / fps;
         await page.evaluate(async (t) => { 
           window.setRenderTime(t); 
+          // Two rAFs: the first lets motion's useAnimationFrame push the new
+          // time into React state; the second lets React flush that state to
+          // the DOM before we screenshot. Without this, state-driven caption
+          // layouts (solo-word, scattered-words) lag a frame or miss words.
+          await new Promise(resolve => requestAnimationFrame(resolve));
           await new Promise(resolve => requestAnimationFrame(resolve));
         }, timeSec);
         

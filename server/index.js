@@ -559,6 +559,18 @@ app.post('/api/render', authMiddleware, heavyLimiter, async (req, res) => {
         const { supabase: sb } = require('./supabase');
         const { data: j } = await sb.from('jobs').select('status').eq('id', fallbackJobId).single();
         if (j && j.status === 'QUEUED') {
+          if (!process.env.GITHUB_PAT || !process.env.GITHUB_REPO) {
+            // Honest failure: the primary worker never claimed the job and the
+            // backup renderer isn't configured — tell the user exactly what to
+            // fix instead of spinning forever.
+            console.warn(`[RENDER FALLBACK] job ${fallbackJobId} still QUEUED after 45s; GITHUB_PAT/GITHUB_REPO not set — marking FAILED`);
+            await sb.from('jobs').update({
+              status: 'FAILED',
+              message: 'Render worker is offline and the backup renderer is not configured. Set GITHUB_PAT and GITHUB_REPO in the backend env, or deploy the render worker, then retry.',
+              updated_at: new Date().toISOString()
+            }).eq('id', fallbackJobId);
+            return;
+          }
           console.log(`[RENDER FALLBACK] job ${fallbackJobId} still QUEUED after 45s — dispatching GitHub Action backup`);
           await sb.from('jobs').update({
             message: 'Primary render worker unreachable — starting backup renderer (takes a few minutes)…',
