@@ -396,6 +396,32 @@ app.post('/api/transcribe', authMiddleware, heavyLimiter, async (req, res) => {
     await updateProjectStatus(project.id, 'QUEUED_RENDER_TRANS', { language });
     res.json({ status: 'QUEUED_RENDER_TRANS', projectId: project.id });
 
+    // FALLBACK: if the HF worker hasn't claimed the job within 60s (service
+    // down, asleep, or URL not configured), dispatch the GitHub Actions backup
+    // transcriber. The media-worker.yml workflow handles type='transcribe'.
+    const fallbackProjectId = project.id;
+    setTimeout(async () => {
+      try {
+        const { supabase: sb } = require('./supabase');
+        const { data: p } = await sb.from('projects').select('status').eq('id', fallbackProjectId).single();
+        if (p && (p.status === 'QUEUED_RENDER_TRANS' || p.status === 'TRANSCRIBING')) {
+          if (!process.env.GITHUB_PAT || !process.env.GITHUB_REPO) {
+            console.warn(`[TRANSCRIBE FALLBACK] project ${fallbackProjectId} still ${p.status} after 60s; GITHUB_PAT/GITHUB_REPO not set — marking FAILED`);
+            await sb.from('projects').update({
+              status: 'FAILED',
+              error: 'Transcription worker is offline and the backup transcriber is not configured. Set GITHUB_PAT and GITHUB_REPO in the backend env, or deploy the transcription worker, then retry.',
+              updated_at: new Date().toISOString()
+            }).eq('id', fallbackProjectId);
+            return;
+          }
+          console.log(`[TRANSCRIBE FALLBACK] project ${fallbackProjectId} still ${p.status} after 60s — dispatching GitHub Action backup`);
+          await dispatchGitHubAction(fallbackProjectId, 'transcribe');
+        }
+      } catch (e) {
+        console.error('[TRANSCRIBE FALLBACK] check failed:', e.message);
+      }
+    }, 60000).unref();
+
     // Wake up the HF Space if a URL is provided
     const hfWorkerUrl = process.env.HF_TRANSCRIPTION_WORKER_URL;
     if (!hfWorkerUrl) {
